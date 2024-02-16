@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### Application Properties ###
-!**/src/main/resources/application.properties
+/TermverseWeb/src/main/resources/application.properties

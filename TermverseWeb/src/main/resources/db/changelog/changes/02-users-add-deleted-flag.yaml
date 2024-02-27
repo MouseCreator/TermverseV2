@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: users-add-deleted-column-1
+      author: Mykhailo Tyshchenko
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValue: 'false'
+                  constraints:
+                    nullable: false

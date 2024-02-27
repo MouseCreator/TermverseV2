@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import mouse.project.termverseweb.dto.UserResponseDTO;
 import mouse.project.termverseweb.exception.UpdateException;
 import mouse.project.termverseweb.mapper.Mapper;
@@ -22,8 +23,8 @@ public class UserServiceImpl implements UserService {
         this.userMapper = userMapper;
     }
     @Override
-    public UserResponseDTO save(User model) {
-        User savedUser = userRepository.save(model);
+    public UserResponseDTO save(User user) {
+        User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
     }
     @Override
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO getById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
-        User user = userOptional.orElseThrow(() -> new NoSuchElementException("Cannot find user by id: " + id));
+        User user = userOptional.orElseThrow(() -> new EntityNotFoundException("Cannot find user by id: " + id));
         return Mapper.transform(user, userMapper::toResponse);
     }
 
@@ -51,10 +52,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void removeById(Long id) {
-        userRepository.deleteById(id);
+        User userToRemove = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No user with id " + id + " found to delete."));
+        userToRemove.setDeleted(true);
+        userRepository.save(userToRemove);
+
     }
     @Override
     public List<User> getByNameIgnoreCase(String name) {
         return userRepository.findAllByNameIgnoreCase(name);
+    }
+
+    @Override
+    public List<User> getDeletedUsers() {
+        return userRepository.findAllDeletedUsers();
+    }
+    @Override
+    public User hardGetUserById(Long id) {
+        Optional<User> user = userRepository.findByIdIgnoringDeleted(id);
+        return user.orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
     }
 }

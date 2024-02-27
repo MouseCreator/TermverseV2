@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
@@ -52,24 +51,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void removeById(Long id) {
-        User userToRemove = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No user with id " + id + " found to delete."));
-        userToRemove.setDeleted(true);
-        userRepository.save(userToRemove);
-
+        userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cannot find user by id: " + id));
+        userRepository.deleteById(id);
     }
     @Override
     public List<User> getByNameIgnoreCase(String name) {
         return userRepository.findAllByNameIgnoreCase(name);
-    }
-
-    @Override
-    public List<User> getDeletedUsers() {
-        return userRepository.findAllDeletedUsers();
-    }
-    @Override
-    public User hardGetUserById(Long id) {
-        Optional<User> user = userRepository.findByIdIgnoringDeleted(id);
-        return user.orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
     }
 }

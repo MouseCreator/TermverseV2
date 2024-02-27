@@ -34,3 +34,6 @@ build/
 
 ### Application Properties ###
 TermverseWeb/src/main/resources/application.properties
+
+#Enviroment variables
+.env

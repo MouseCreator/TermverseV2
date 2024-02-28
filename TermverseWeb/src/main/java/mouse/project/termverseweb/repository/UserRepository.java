@@ -12,24 +12,24 @@ import java.util.Optional;
 @org.springframework.stereotype.Repository
 public interface UserRepository extends Repository<User, Long> {
 
-    @Query("SELECT u FROM User u WHERE u.deleted = false")
+    @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL")
     List<User> findAll();
     @Query("SELECT u FROM User u")
     List<User> findAllIncludeDeleted();
-    @Query("SELECT u FROM User u WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%')) AND u.deleted = false")
+    @Query("SELECT u FROM User u WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%')) AND u.deletedAt IS NULL")
     List<User> findAllByNameIgnoreCase(@Param("name") String name);
     @Transactional
     @Modifying
-    @Query("UPDATE User u SET u.deleted = true WHERE u.id = :id")
+    @Query(value = "UPDATE users u SET deleted_at = NOW() WHERE u.id = :id", nativeQuery = true)
     void deleteById(@Param("id") Long id);
     @Transactional
     @Modifying
-    @Query("UPDATE User u SET u.deleted = false WHERE u.id = :id")
+    @Query("UPDATE User u SET u.deletedAt = NULL WHERE u.id = :id")
     void restoreById(@Param("id") Long id);
 
     @Transactional
     User save(User user);
-    @Query("SELECT u FROM User u WHERE u.id = :id AND u.deleted = false")
+    @Query("SELECT u FROM User u WHERE u.id = :id AND u.deletedAt IS NULL")
     Optional<User> findById(@Param("id") Long id);
     @Query("SELECT u FROM User u WHERE u.id = :id")
     Optional<User> findByIdIncludeDeleted(@Param("id")  Long id);

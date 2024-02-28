@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-create-study-sets-table-001
+      author: Mykhailo Tyshchenko
+      changes:
+        - createTable:
+            tableName: study_sets
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+  - changeSet:
+      id: 03-create-study-sets-table-002
+      author: Mykhailo Tyshchenko
+      changes:
+        - createTable:
+            tableName: users_study_sets
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_study_set_user
+                    references: users(id)
+              - column:
+                  name: study_set_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_study_set_study_set
+                    references: study_sets(id)
+              - column:
+                  name: type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+

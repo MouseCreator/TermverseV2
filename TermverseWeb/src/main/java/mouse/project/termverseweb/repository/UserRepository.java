@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 @org.springframework.stereotype.Repository
 public interface UserRepository extends Repository<User, Long> {
+
     @Query("SELECT u FROM User u WHERE u.deleted = false")
     List<User> findAll();
     @Query("SELECT u FROM User u")
@@ -20,7 +21,7 @@ public interface UserRepository extends Repository<User, Long> {
     @Transactional
     @Modifying
     @Query("UPDATE User u SET u.deleted = true WHERE u.id = :id")
-    int deleteById(@Param("id") Long id);
+    void deleteById(@Param("id") Long id);
     @Transactional
     @Modifying
     @Query("UPDATE User u SET u.deleted = false WHERE u.id = :id")

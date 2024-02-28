@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponseDTO> findAll() {
         List<User> models = userRepository.findAll();
-        return Mapper.mapAll(models).toAndGet(userMapper::toResponse);
+        return toResponse(models);
     }
     @Override
     public UserResponseDTO getById(Long id) {
@@ -55,8 +55,8 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
     @Override
-    public List<User> getByNameIgnoreCase(String name) {
-        return userRepository.findAllByNameIgnoreCase(name);
+    public List<UserResponseDTO> getByNameIgnoreCase(String name) {
+        return toResponse(userRepository.findAllByNameIgnoreCase(name));
     }
 
     @Override
@@ -69,5 +69,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public void restoreById(Long id) {
         userRepository.restoreById(id);
+    }
+
+    @Override
+    public List<UserResponseDTO> findAllWithDeleted() {
+        List<User> models = userRepository.findAllIncludeDeleted();
+        return toResponse(models);
+    }
+
+    private List<UserResponseDTO> toResponse(List<User> models) {
+        return Mapper.mapAll(models).toAndGet(userMapper::toResponse);
     }
 }

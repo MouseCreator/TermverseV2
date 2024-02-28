@@ -54,10 +54,17 @@ class UserServiceImplTest {
         userService.removeById(id);
         Assertions.assertThrows(EntityNotFoundException.class, () -> userService.getById(id));
         Assertions.assertThrows(EntityNotFoundException.class, () -> userService.removeById(id));
+
+        UserResponseDTO expectedDTO = new UserResponseDTO();
+        expectedDTO.setId(id);
+        expectedDTO.setName(user.getName());
+        expectedDTO.setProfilePictureUrl(user.getProfilePictureUrl());
+        Assertions.assertFalse(userService.findAll().contains(expectedDTO));
+        Assertions.assertTrue(userService.findAllWithDeleted().contains(expectedDTO));
     }
 
     @Test
-    void testFindAllAndDeleted() {
+    void testDeleteWithRestore() {
         User lenny = generateUserWithName("Lenny");
         UserResponseDTO savedLenny = userService.save(lenny);
         Long id = savedLenny.getId();

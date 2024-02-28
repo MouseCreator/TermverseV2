@@ -10,10 +10,10 @@ public interface UserService {
     UserResponseDTO save(User model);
     List<UserResponseDTO> findAll();
     UserResponseDTO getById(Long id);
-    UserResponseDTO updateById(User model, Long id);
+    UserResponseDTO update(User model);
     void removeById(Long id);
-    List<UserResponseDTO> getByNameIgnoreCase(String name);
     UserResponseDTO hardGet(Long id);
     void restoreById(Long id);
     List<UserResponseDTO> findAllWithDeleted();
+    List<UserResponseDTO> findByName(String name);
 }

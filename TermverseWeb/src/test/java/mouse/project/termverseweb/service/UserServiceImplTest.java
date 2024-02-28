@@ -2,6 +2,7 @@ package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import mouse.project.termverseweb.dto.UserResponseDTO;
+import mouse.project.termverseweb.exception.UpdateException;
 import mouse.project.termverseweb.model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -55,12 +56,8 @@ class UserServiceImplTest {
         Assertions.assertThrows(EntityNotFoundException.class, () -> userService.getById(id));
         Assertions.assertThrows(EntityNotFoundException.class, () -> userService.removeById(id));
 
-        UserResponseDTO expectedDTO = new UserResponseDTO();
-        expectedDTO.setId(id);
-        expectedDTO.setName(user.getName());
-        expectedDTO.setProfilePictureUrl(user.getProfilePictureUrl());
-        Assertions.assertFalse(userService.findAll().contains(expectedDTO));
-        Assertions.assertTrue(userService.findAllWithDeleted().contains(expectedDTO));
+        Assertions.assertFalse(userService.findAll().contains(savedUser));
+        Assertions.assertTrue(userService.findAllWithDeleted().contains(savedUser));
     }
 
     @Test
@@ -79,5 +76,45 @@ class UserServiceImplTest {
         userService.restoreById(id);
         UserResponseDTO restoredUser = userService.getById(id);
         Assertions.assertEquals(expectedName, restoredUser.getName());
+    }
+
+    @Test
+    void testSearchingByName() {
+        User perry = generateUserWithName("Perry");
+        UserResponseDTO savedPerry = userService.save(perry);
+        Long id = savedPerry.getId();
+        Assertions.assertTrue(includesNameAndId("Perry", id));
+        Assertions.assertTrue(includesNameAndId("PeR", id));
+        Assertions.assertTrue(includesNameAndId("perry", id));
+        Assertions.assertTrue(includesNameAndId(" perry ", id));
+
+        Assertions.assertFalse(includesNameAndId("perrytto", id));
+        Assertions.assertFalse(includesNameAndId("Per ry", id));
+    }
+    private boolean includesNameAndId(String name, Long id) {
+        return userService.findByName(name)
+                .stream()
+                .anyMatch(p -> p.getId().equals(id));
+    }
+
+    @Test
+    void testUpdate() {
+        User nikki = generateUserWithName("Nikki");
+
+        Assertions.assertThrows(UpdateException.class, () -> userService.update(nikki));
+
+        UserResponseDTO savedNikki = userService.save(nikki);
+        Long id = savedNikki.getId();
+
+        nikki.setId(id);
+        nikki.setProfilePictureUrl(null);
+
+        UserResponseDTO updatedNikki = userService.update(nikki);
+        Assertions.assertNull(updatedNikki.getProfilePictureUrl());
+
+        UserResponseDTO nikkiById = userService.getById(id);
+        Assertions.assertNull(nikkiById.getProfilePictureUrl());
+
+
     }
 }

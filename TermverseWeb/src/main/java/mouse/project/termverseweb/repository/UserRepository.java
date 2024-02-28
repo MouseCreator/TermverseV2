@@ -16,7 +16,7 @@ public interface UserRepository extends Repository<User, Long> {
     List<User> findAll();
     @Query("SELECT u FROM User u")
     List<User> findAllIncludeDeleted();
-    @Query("SELECT u FROM User u WHERE LOWER(u.name) = LOWER(:name) AND u.deleted = false")
+    @Query("SELECT u FROM User u WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%')) AND u.deleted = false")
     List<User> findAllByNameIgnoreCase(@Param("name") String name);
     @Transactional
     @Modifying

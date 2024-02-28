@@ -39,11 +39,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO updateById(User model, Long id) {
-        if (model.getId() == null) {
-            model.setId(id);
-        } else if (!model.getId().equals(id)) {
-            throw new UpdateException("Updating user with wrong ID. ID mismatch: " + model.getId() + ", " + id);
+    public UserResponseDTO update(User model) {
+        if (model.getId()==null) {
+            throw new UpdateException("Cannot update model without id: " + model);
         }
         User savedModel = userRepository.save(model);
         return Mapper.transform(savedModel, userMapper::toResponse);
@@ -53,10 +51,6 @@ public class UserServiceImpl implements UserService {
     public void removeById(Long id) {
         userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cannot find user by id: " + id));
         userRepository.deleteById(id);
-    }
-    @Override
-    public List<UserResponseDTO> getByNameIgnoreCase(String name) {
-        return toResponse(userRepository.findAllByNameIgnoreCase(name));
     }
 
     @Override
@@ -74,6 +68,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponseDTO> findAllWithDeleted() {
         List<User> models = userRepository.findAllIncludeDeleted();
+        return toResponse(models);
+    }
+
+    @Override
+    public List<UserResponseDTO> findByName(String name) {
+        String trimName = name.trim();
+        List<User> models = userRepository.findAllByNameIgnoreCase(trimName);
         return toResponse(models);
     }
 

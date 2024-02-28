@@ -6,13 +6,10 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mouse.project.termverseweb.model.id.LongIdIterable;
-import org.hibernate.annotations.*;
 
 @Data
 @Entity
 @Table(name = "users")
-@SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
 @NoArgsConstructor
 public class User implements LongIdIterable {
     @Id

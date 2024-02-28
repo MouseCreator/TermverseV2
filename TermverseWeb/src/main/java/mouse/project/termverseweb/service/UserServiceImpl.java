@@ -58,4 +58,16 @@ public class UserServiceImpl implements UserService {
     public List<User> getByNameIgnoreCase(String name) {
         return userRepository.findAllByNameIgnoreCase(name);
     }
+
+    @Override
+    public UserResponseDTO hardGet(Long id) {
+        Optional<User> userOptional = userRepository.findByIdIncludeDeleted(id);
+        User user = userOptional.orElseThrow(() -> new EntityNotFoundException("Cannot find user by id: " + id));
+        return Mapper.transform(user, userMapper::toResponse);
+    }
+
+    @Override
+    public void restoreById(Long id) {
+        userRepository.restoreById(id);
+    }
 }

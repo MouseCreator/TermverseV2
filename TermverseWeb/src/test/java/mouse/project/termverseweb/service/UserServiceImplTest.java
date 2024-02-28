@@ -55,4 +55,22 @@ class UserServiceImplTest {
         Assertions.assertThrows(EntityNotFoundException.class, () -> userService.getById(id));
         Assertions.assertThrows(EntityNotFoundException.class, () -> userService.removeById(id));
     }
+
+    @Test
+    void testFindAllAndDeleted() {
+        User lenny = generateUserWithName("Lenny");
+        UserResponseDTO savedLenny = userService.save(lenny);
+        Long id = savedLenny.getId();
+        UserResponseDTO foundUser = userService.getById(id);
+        String expectedName = lenny.getName();
+        Assertions.assertEquals(expectedName, foundUser.getName());
+        userService.removeById(id);
+        Assertions.assertThrows(EntityNotFoundException.class, () -> userService.getById(id));
+        UserResponseDTO deletedUser = userService.hardGet(id);
+        Assertions.assertEquals(expectedName, deletedUser.getName());
+
+        userService.restoreById(id);
+        UserResponseDTO restoredUser = userService.getById(id);
+        Assertions.assertEquals(expectedName, restoredUser.getName());
+    }
 }

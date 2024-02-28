@@ -5,13 +5,12 @@ import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mouse.project.termverseweb.model.id.LongIdIterable;
 
 @Data
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
-public class User implements LongIdIterable {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Nonnull

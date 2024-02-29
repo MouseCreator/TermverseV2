@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changes/02-users-add-deleted-flag.yaml
   - include:
       file: db/changelog/changes/03-create-study-sets-table.yaml
+  - include:
+      file: db/changelog/changes/04-study-sets-add-created-timestamp.yaml

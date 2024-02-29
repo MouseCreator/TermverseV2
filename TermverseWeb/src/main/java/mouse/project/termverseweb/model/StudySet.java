@@ -22,6 +22,9 @@ public class StudySet {
     @Nonnull
     private String name;
     @Nonnull
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Nonnull
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt = null;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

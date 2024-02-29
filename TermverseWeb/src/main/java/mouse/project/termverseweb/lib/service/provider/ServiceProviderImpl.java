@@ -46,4 +46,8 @@ public class ServiceProviderImpl implements ServiceProviderContainer {
         }
         throw new NoSuchElementException("Cannot find implementation for provider interface " + interfaceClass.getName());
     }
+
+    public <T extends ServiceProvider> T require(Class<T> interfaceClass) {
+        return find(interfaceClass);
+    }
 }

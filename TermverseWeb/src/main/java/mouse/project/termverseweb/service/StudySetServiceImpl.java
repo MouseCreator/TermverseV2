@@ -10,16 +10,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class StudySetServiceImpl implements StudySetService {
     private final StudySetRepository repository;
     private final StudySetMapper studySetMapper;
+    private final GenericServiceHelper genericService;
     @Override
     public List<StudySetResponseDTO> findAll() {
-        return List.of();
+        return genericService.with(repository).findAll().to(studySetMapper::toResponse);
     }
 
     @Override
@@ -39,31 +39,33 @@ public class StudySetServiceImpl implements StudySetService {
 
     @Override
     public void deleteById(Long id) {
-
+        genericService.with(repository).removeById(id);
     }
 
     @Override
     public void restoreById(Long id) {
-
+        genericService.use(repository).none(r -> r.restoreById(id));
     }
 
     @Override
     public StudySetResponseDTO save(StudySetCreateDTO model) {
-        return null;
+        return genericService.with(repository).save(model, studySetMapper::fromCreate).to(studySetMapper::toResponse);
     }
 
     @Override
     public StudySetResponseDTO update(StudySetUpdateDTO model) {
-        return null;
+        return genericService.with(repository).update(model, studySetMapper::fromUpdate).to(studySetMapper::toResponse);
     }
 
     @Override
-    public Optional<StudySetResponseDTO> findById(Long id) {
-        return Optional.empty();
+    public StudySetResponseDTO findById(Long id) {
+        return genericService.with(repository).findById(id).to(studySetMapper::toResponse);
     }
 
     @Override
-    public Optional<StudySetResponseDTO> findByIdIncludeDeleted(Long id) {
-        return Optional.empty();
+    public StudySetResponseDTO findByIdIncludeDeleted(Long id) {
+        return genericService.use(repository).
+                optional(r -> r.findByIdIncludeDeleted(id)).
+                orThrow(studySetMapper::toResponse);
     }
 }

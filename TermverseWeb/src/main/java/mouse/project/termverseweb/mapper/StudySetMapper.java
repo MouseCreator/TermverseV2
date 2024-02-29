@@ -10,5 +10,8 @@ import mouse.project.termverseweb.model.StudySet;
 import org.mapstruct.Mapper;
 
 @Mapper(config = MapperConfig.class)
-public interface StudySetMapper extends ModelMapper<StudySet, StudySetCreateDTO, StudySetUpdateDTO, StudySetResponseDTO> {
+public interface StudySetMapper {
+    StudySetResponseDTO toResponse(StudySet model);
+    StudySet fromCreate(StudySetCreateDTO createDTO);
+    StudySet fromUpdate(StudySetUpdateDTO updateDTO);
 }

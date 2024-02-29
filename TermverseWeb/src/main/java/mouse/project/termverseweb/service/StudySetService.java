@@ -8,7 +8,6 @@ import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface StudySetService {
     List<StudySetResponseDTO> findAll();
@@ -19,6 +18,6 @@ public interface StudySetService {
     void restoreById(Long id);
     StudySetResponseDTO save(StudySetCreateDTO model);
     StudySetResponseDTO update(StudySetUpdateDTO model);
-    Optional<StudySetResponseDTO> findById(Long id);
-    Optional<StudySetResponseDTO> findByIdIncludeDeleted(Long id);
+    StudySetResponseDTO findById(Long id);
+    StudySetResponseDTO findByIdIncludeDeleted(Long id);
 }

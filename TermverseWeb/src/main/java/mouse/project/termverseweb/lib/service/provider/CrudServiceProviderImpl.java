@@ -1,7 +1,8 @@
-package mouse.project.termverseweb.lib.service.helper;
+package mouse.project.termverseweb.lib.service.provider;
 
 import jakarta.persistence.EntityNotFoundException;
 import mouse.project.termverseweb.lib.service.GenericServiceHelper;
+import mouse.project.termverseweb.lib.service.helper.CrudHelper;
 import mouse.project.termverseweb.lib.service.result.OptionalResult;
 import mouse.project.termverseweb.lib.service.result.RawResult;
 import mouse.project.termverseweb.lib.service.result.RawResultCollection;
@@ -12,10 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.function.Function;
 
 @Service
-public class CrudServiceHelper implements CrudServiceProvider {
+public class CrudServiceProviderImpl implements CrudServiceProvider {
     private final GenericServiceHelper genericService;
     @Autowired
-    public CrudServiceHelper(GenericServiceHelper genericService) {
+    public CrudServiceProviderImpl(GenericServiceHelper genericService) {
         this.genericService = genericService;
     }
 

@@ -1,6 +1,7 @@
-package mouse.project.termverseweb.lib.service.helper;
+package mouse.project.termverseweb.lib.service.provider;
 
 
+import mouse.project.termverseweb.lib.service.helper.CrudHelper;
 import mouse.project.termverseweb.lib.service.repository.CustomCrudRepository;
 
 public interface CrudServiceProvider extends ServiceProvider {

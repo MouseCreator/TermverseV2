@@ -1,6 +1,7 @@
-package mouse.project.termverseweb.lib.service.helper;
+package mouse.project.termverseweb.lib.service.provider;
 
 import mouse.project.termverseweb.lib.service.GenericServiceHelper;
+import mouse.project.termverseweb.lib.service.helper.SoftDeleteHelper;
 import mouse.project.termverseweb.lib.service.result.OptionalResult;
 import mouse.project.termverseweb.lib.service.result.RawResultCollection;
 import mouse.project.termverseweb.lib.service.repository.SoftDeleteRepository;

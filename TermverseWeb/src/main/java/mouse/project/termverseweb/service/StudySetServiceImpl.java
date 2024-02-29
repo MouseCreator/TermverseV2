@@ -5,7 +5,7 @@ import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
 
-import mouse.project.termverseweb.lib.service.provider.ServiceProviderContainer;
+import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
 import mouse.project.termverseweb.mapper.StudySetMapper;
 import mouse.project.termverseweb.repository.StudySetRepository;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,11 @@
-package mouse.project.termverseweb.lib.service.provider;
+package mouse.project.termverseweb.lib.service.container;
 
 import mouse.project.termverseweb.lib.service.GenericServiceHelper;
 import mouse.project.termverseweb.lib.service.StatefulRepositoryCaller;
 import mouse.project.termverseweb.lib.service.helper.*;
-import mouse.project.termverseweb.lib.service.helper.ServiceProvider;
+import mouse.project.termverseweb.lib.service.provider.CrudServiceProvider;
+import mouse.project.termverseweb.lib.service.provider.ServiceProvider;
+import mouse.project.termverseweb.lib.service.provider.SoftDeleteProvider;
 import mouse.project.termverseweb.lib.service.repository.CustomCrudRepository;
 import mouse.project.termverseweb.lib.service.repository.GenericRepository;
 import mouse.project.termverseweb.lib.service.repository.SoftDeleteRepository;

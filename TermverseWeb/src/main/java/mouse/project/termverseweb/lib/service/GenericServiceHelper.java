@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class GenericServiceHelper {
 
-    public <MODEL, ID, REPOSITORY extends GenericRepository<MODEL, ID>>
-    StatefulRepositoryCaller<REPOSITORY, MODEL, ID> use(REPOSITORY repository) {
+    public <REPOSITORY extends GenericRepository>
+    StatefulRepositoryCaller<REPOSITORY> use(REPOSITORY repository) {
         return new StatefulRepositoryCaller<>(repository);
     }
 

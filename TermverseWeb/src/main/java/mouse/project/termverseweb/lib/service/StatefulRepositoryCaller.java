@@ -10,7 +10,7 @@ import mouse.project.termverseweb.lib.service.result.RawResultCollection;
 import mouse.project.termverseweb.lib.service.result.OptionalResult;
 import mouse.project.termverseweb.lib.service.repository.GenericRepository;
 
-public class StatefulRepositoryCaller<REPOSITORY extends GenericRepository<MODEL, ID>, MODEL, ID> {
+public class StatefulRepositoryCaller<REPOSITORY extends GenericRepository> {
     private final REPOSITORY repository;
 
     public StatefulRepositoryCaller(REPOSITORY repository) {

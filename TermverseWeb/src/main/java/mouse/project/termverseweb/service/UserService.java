@@ -1,16 +1,17 @@
 package mouse.project.termverseweb.service;
 
+import mouse.project.termverseweb.dto.UserCreateDTO;
 import mouse.project.termverseweb.dto.UserResponseDTO;
-import mouse.project.termverseweb.model.User;
+import mouse.project.termverseweb.dto.UserUpdateDTO;
 
 import java.util.List;
 
 
 public interface UserService {
-    UserResponseDTO save(User model);
+    UserResponseDTO save(UserCreateDTO model);
     List<UserResponseDTO> findAll();
     UserResponseDTO getById(Long id);
-    UserResponseDTO update(User model);
+    UserResponseDTO update(UserUpdateDTO model);
     void removeById(Long id);
     UserResponseDTO hardGet(Long id);
     void restoreById(Long id);

@@ -1,7 +1,9 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import mouse.project.termverseweb.dto.UserCreateDTO;
 import mouse.project.termverseweb.dto.UserResponseDTO;
+import mouse.project.termverseweb.dto.UserUpdateDTO;
 import mouse.project.termverseweb.exception.UpdateException;
 import mouse.project.termverseweb.mapper.Mapper;
 import mouse.project.termverseweb.mapper.UserMapper;
@@ -22,7 +24,8 @@ public class UserServiceImpl implements UserService {
         this.userMapper = userMapper;
     }
     @Override
-    public UserResponseDTO save(User user) {
+    public UserResponseDTO save(UserCreateDTO userCreateDTO) {
+        User user = userMapper.toUser(userCreateDTO);
         User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
     }
@@ -39,7 +42,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO update(User model) {
+    public UserResponseDTO update(UserUpdateDTO userUpdateDTO) {
+        User model = userMapper.toUser(userUpdateDTO);
         if (model.getId()==null) {
             throw new UpdateException("Cannot update model without id: " + model);
         }

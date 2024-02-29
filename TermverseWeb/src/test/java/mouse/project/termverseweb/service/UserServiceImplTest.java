@@ -1,9 +1,10 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import mouse.project.termverseweb.dto.UserCreateDTO;
 import mouse.project.termverseweb.dto.UserResponseDTO;
+import mouse.project.termverseweb.dto.UserUpdateDTO;
 import mouse.project.termverseweb.exception.UpdateException;
-import mouse.project.termverseweb.model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,8 +24,8 @@ class UserServiceImplTest {
         this.userService = userService;
     }
 
-    private User generateUserWithName(String name) {
-        User user = new User();
+    private UserCreateDTO generateUserWithName(String name) {
+        UserCreateDTO user = new UserCreateDTO();
         user.setName(name);
         String urlName = name.toLowerCase();
         user.setProfilePictureUrl(String.format("https://%s/profile.image.jpg", urlName));
@@ -33,7 +34,7 @@ class UserServiceImplTest {
 
     @Test
     void save() {
-        User user = generateUserWithName("Michael");
+        UserCreateDTO user = generateUserWithName("Michael");
         UserResponseDTO savedUser = userService.save(user);
         Assertions.assertNotNull(savedUser.getId());
         Long id = savedUser.getId();
@@ -49,7 +50,7 @@ class UserServiceImplTest {
 
     @Test
     void testSoftDelete() {
-        User user = generateUserWithName("Denis");
+        UserCreateDTO user = generateUserWithName("Denis");
         UserResponseDTO savedUser = userService.save(user);
         Long id = savedUser.getId();
         userService.removeById(id);
@@ -62,7 +63,7 @@ class UserServiceImplTest {
 
     @Test
     void testDeleteWithRestore() {
-        User lenny = generateUserWithName("Lenny");
+        UserCreateDTO lenny = generateUserWithName("Lenny");
         UserResponseDTO savedLenny = userService.save(lenny);
         Long id = savedLenny.getId();
         UserResponseDTO foundUser = userService.getById(id);
@@ -80,7 +81,7 @@ class UserServiceImplTest {
 
     @Test
     void testSearchingByName() {
-        User perry = generateUserWithName("Perry");
+        UserCreateDTO perry = generateUserWithName("Perry");
         UserResponseDTO savedPerry = userService.save(perry);
         Long id = savedPerry.getId();
         Assertions.assertTrue(includesNameAndId("Perry", id));
@@ -99,17 +100,19 @@ class UserServiceImplTest {
 
     @Test
     void testUpdate() {
-        User nikki = generateUserWithName("Nikki");
+        UserCreateDTO nikki = generateUserWithName("Nikki");
 
-        Assertions.assertThrows(UpdateException.class, () -> userService.update(nikki));
+        UserUpdateDTO nikkiUpdate = new UserUpdateDTO();
+        nikkiUpdate.setName(nikki.getName());
+        nikkiUpdate.setProfilePictureUrl(null);
+
+        Assertions.assertThrows(UpdateException.class, () -> userService.update(nikkiUpdate));
 
         UserResponseDTO savedNikki = userService.save(nikki);
         Long id = savedNikki.getId();
+        nikkiUpdate.setId(id);
 
-        nikki.setId(id);
-        nikki.setProfilePictureUrl(null);
-
-        UserResponseDTO updatedNikki = userService.update(nikki);
+        UserResponseDTO updatedNikki = userService.update(nikkiUpdate);
         Assertions.assertNull(updatedNikki.getProfilePictureUrl());
 
         UserResponseDTO nikkiById = userService.getById(id);

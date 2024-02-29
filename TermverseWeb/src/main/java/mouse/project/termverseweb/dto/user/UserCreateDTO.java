@@ -1,4 +1,4 @@
-package mouse.project.termverseweb.dto;
+package mouse.project.termverseweb.dto.user;
 
 import lombok.Data;
 

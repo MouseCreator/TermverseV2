@@ -1,7 +1,7 @@
 package mouse.project.termverseweb.controller;
 
 import lombok.RequiredArgsConstructor;
-import mouse.project.termverseweb.dto.StudySetResponseDTO;
+import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.service.StudySetService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,7 +1,9 @@
 package mouse.project.termverseweb.mapper;
 
 import mouse.project.termverseweb.config.MapperConfig;
-import mouse.project.termverseweb.dto.*;
+import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
+import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
+import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
 import mouse.project.termverseweb.model.StudySet;
 import org.mapstruct.Mapper;
 

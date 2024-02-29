@@ -1,8 +1,8 @@
 package mouse.project.termverseweb.service;
 
-import mouse.project.termverseweb.dto.UserCreateDTO;
-import mouse.project.termverseweb.dto.UserResponseDTO;
-import mouse.project.termverseweb.dto.UserUpdateDTO;
+import mouse.project.termverseweb.dto.user.UserCreateDTO;
+import mouse.project.termverseweb.dto.user.UserResponseDTO;
+import mouse.project.termverseweb.dto.user.UserUpdateDTO;
 
 import java.util.List;
 

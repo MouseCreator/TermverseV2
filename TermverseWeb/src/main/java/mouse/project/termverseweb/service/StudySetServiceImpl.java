@@ -1,7 +1,7 @@
 package mouse.project.termverseweb.service;
 
 import lombok.RequiredArgsConstructor;
-import mouse.project.termverseweb.dto.StudySetResponseDTO;
+import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.mapper.StudySetMapper;
 import mouse.project.termverseweb.repository.StudySetRepository;
 import org.springframework.stereotype.Service;

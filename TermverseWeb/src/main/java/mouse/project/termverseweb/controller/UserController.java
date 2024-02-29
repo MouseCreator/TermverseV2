@@ -1,7 +1,7 @@
 package mouse.project.termverseweb.controller;
 
 import lombok.RequiredArgsConstructor;
-import mouse.project.termverseweb.dto.UserResponseDTO;
+import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

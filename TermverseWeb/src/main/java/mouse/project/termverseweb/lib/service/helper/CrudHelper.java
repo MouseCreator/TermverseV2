@@ -14,4 +14,5 @@ public interface CrudHelper<MODEL, ID> {
     <UPDATE> RawResult<MODEL> update(UPDATE createDTO, Function<UPDATE, MODEL> fromCreate);
     RawResult<MODEL> update(MODEL model);
     void removeById(ID id);
+    void safeRemove(ID id);
 }

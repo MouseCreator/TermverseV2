@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.function.Function;
 
 @Service
-public class CrudServiceHelper {
+public class CrudServiceHelper implements CrudServiceProvider {
     private final GenericServiceHelper genericService;
     @Autowired
     public CrudServiceHelper(GenericServiceHelper genericService) {
@@ -23,7 +23,7 @@ public class CrudServiceHelper {
         return new CrudServiceState<>(repository, genericService);
     }
 
-    public static class CrudServiceState<MODEL, ID> {
+    public static class CrudServiceState<MODEL, ID> implements CrudHelper<MODEL, ID> {
         private final CustomCrudRepository<MODEL, ID> repository;
         private final GenericServiceHelper genericService;
         public CrudServiceState(CustomCrudRepository<MODEL, ID> repository, GenericServiceHelper genericService) {

@@ -8,8 +8,6 @@ import mouse.project.termverseweb.model.User;
 import org.mapstruct.Mapper;
 
 @Mapper(config = MapperConfig.class)
-public interface UserMapper {
-    UserResponseDTO toResponse(User user);
-    User toUser(UserCreateDTO userCreateDTO);
-    User toUser(UserUpdateDTO userCreateDTO);
+public interface UserMapper extends ModelMapper<User, UserCreateDTO, UserUpdateDTO, UserResponseDTO> {
+
 }

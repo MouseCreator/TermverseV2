@@ -10,8 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 @org.springframework.stereotype.Repository
-public interface UserRepository extends Repository<User, Long> {
-
+public interface UserRepository extends Repository<User, Long>, SoftDeleteCrudRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL")
     List<User> findAll();
     @Query("SELECT u FROM User u")
@@ -26,7 +25,6 @@ public interface UserRepository extends Repository<User, Long> {
     @Modifying
     @Query("UPDATE User u SET u.deletedAt = NULL WHERE u.id = :id")
     void restoreById(@Param("id") Long id);
-
     @Transactional
     User save(User user);
     @Query("SELECT u FROM User u WHERE u.id = :id AND u.deletedAt IS NULL")

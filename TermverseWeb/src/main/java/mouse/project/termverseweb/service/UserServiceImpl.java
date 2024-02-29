@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public UserResponseDTO save(UserCreateDTO userCreateDTO) {
-        User user = userMapper.toUser(userCreateDTO);
+        User user = userMapper.fromCreate(userCreateDTO);
         User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
     }
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO update(UserUpdateDTO userUpdateDTO) {
-        User model = userMapper.toUser(userUpdateDTO);
+        User model = userMapper.fromUpdate(userUpdateDTO);
         if (model.getId()==null) {
             throw new UpdateException("Cannot update model without id: " + model);
         }

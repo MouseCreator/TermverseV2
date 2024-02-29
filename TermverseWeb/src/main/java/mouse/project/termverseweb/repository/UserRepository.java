@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.repository;
 
 import jakarta.transaction.Transactional;
+import mouse.project.termverseweb.lib.service.repository.SoftDeleteCrudRepository;
 import mouse.project.termverseweb.model.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

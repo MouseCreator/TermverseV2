@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class SoftDeleteServiceHelper {
+public class SoftDeleteProviderImpl implements SoftDeleteProvider {
     private final GenericServiceHelper genericService;
     @Autowired
-    public SoftDeleteServiceHelper(GenericServiceHelper genericService) {
+    public SoftDeleteProviderImpl(GenericServiceHelper genericService) {
         this.genericService = genericService;
     }
 
@@ -20,7 +20,7 @@ public class SoftDeleteServiceHelper {
         return new SoftDeleteServiceState<>(repository, genericService);
     }
 
-    public static class SoftDeleteServiceState<MODEL, ID> {
+    public static class SoftDeleteServiceState<MODEL, ID> implements SoftDeleteHelper<MODEL, ID> {
         private final SoftDeleteRepository<MODEL, ID> repository;
         private final GenericServiceHelper genericService;
 

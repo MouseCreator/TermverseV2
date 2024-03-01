@@ -21,4 +21,5 @@ public interface StudySetService {
     StudySetResponseDTO findById(Long id);
     StudySetResponseDTO findByIdIncludeDeleted(Long id);
     List<StudySetResponseDTO> findStudySetsByUser(Long userId);
+    StudySetResponseDTO saveWithCustomTime(StudySetCreateDTO createDTO, LocalDateTime customTime);
 }

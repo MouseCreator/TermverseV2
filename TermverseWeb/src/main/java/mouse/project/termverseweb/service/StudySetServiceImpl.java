@@ -87,4 +87,13 @@ public class StudySetServiceImpl implements StudySetService {
     public List<StudySetResponseDTO> findStudySetsByUser(Long userId) {
         return services.use(repository).multi(r -> r.findAllByUserId(userId)).to(studySetMapper::toResponse);
     }
+
+    @Override
+    public StudySetResponseDTO saveWithCustomTime(StudySetCreateDTO createDTO, LocalDateTime customTime) {
+        return services.crud(repository).save(() -> {
+            StudySet studySet = studySetMapper.fromCreate(createDTO);
+            studySet.setCreatedAt(DateUtils.toSeconds(customTime));
+            return studySet;
+        }).to(studySetMapper::toResponse);
+    }
 }

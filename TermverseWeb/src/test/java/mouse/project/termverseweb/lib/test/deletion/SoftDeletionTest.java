@@ -51,17 +51,17 @@ public class SoftDeletionTest {
             this.mapper = mapper;
         }
 
-        public AfterSoftDeletion<MODEL, ID> validateAllAbsentIn(List<MODEL> modelsToTest) {
+        public AfterSoftDeletion<MODEL, ID> validateAbsentIn(List<MODEL> modelsToTest) {
             confirmer.confirmThatAll(modelsToTest).doesNotContain(models);
             return this;
         }
 
-        public AfterSoftDeletion<MODEL, ID> validateAllPresentIn(List<MODEL> modelsToTest) {
+        public AfterSoftDeletion<MODEL, ID> validatePresentIn(List<MODEL> modelsToTest) {
             confirmer.confirmThatAll(modelsToTest).hasAll(models);
             return this;
         }
 
-        public AfterSoftDeletion<MODEL, ID> validateContainsAll(List<MODEL> modelsToTest) {
+        public AfterSoftDeletion<MODEL, ID> validateContains(List<MODEL> modelsToTest) {
             confirmer.confirmThatAll(modelsToTest).isSubsetOf(models);
             return this;
         }
@@ -71,7 +71,7 @@ public class SoftDeletionTest {
             return this;
         }
 
-        public AfterSoftDeletion<MODEL, ID> validateContainsAnyOf(List<MODEL> modelsToTest) {
+        public AfterSoftDeletion<MODEL, ID> validateDoesntContain(List<MODEL> modelsToTest) {
             confirmer.confirmThatAll(modelsToTest).isExcludedFrom(models);
             return this;
         }

@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
@@ -8,6 +9,7 @@ import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.models.Factories;
 import mouse.project.termverseweb.models.StudySetFactory;
 import mouse.project.termverseweb.models.UserFactory;
+import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.utils.DateUtils;
 import mouse.project.termverseweb.utils.UserStudySetRelation;
 import org.junit.jupiter.api.Test;
@@ -31,15 +33,17 @@ class StudySetServiceImplTest {
     private final UserStudySetService userStudySetService;
     private final UserService userService;
     private final Factories factories;
+    private final SoftDeletionTest softDeletionTest;
     @Autowired
     public StudySetServiceImplTest(StudySetService studySetService,
                                    UserStudySetService userStudySetService,
                                    UserService userService,
-                                   Factories factories) {
+                                   Factories factories, SoftDeletionTest softDeletionTest) {
         this.studySetService = studySetService;
         this.userStudySetService = userStudySetService;
         this.userService = userService;
         this.factories = factories;
+        this.softDeletionTest = softDeletionTest;
     }
 
     private UserResponseDTO saveUser(String userName) {
@@ -137,6 +141,20 @@ class StudySetServiceImplTest {
     }
 
     @Test
+    void testSoftDeletion() {
+        StudySetResponseDTO studySet1 = saveStudySet("Soft delete 1");
+        Long id = studySet1.getId();
+        assertTrue(studySetService.findAll().contains(studySet1));
+
+        softDeletionTest.remove(studySet1)
+                .using(studySetService::deleteById, StudySetResponseDTO::getId)
+                .validateAllAbsentIn(studySetService.findAll())
+                .validateAllPresentIn(studySetService.findAllIncludeDeleted())
+                .validateThrows(EntityNotFoundException.class, () -> studySetService.findById(id))
+                .restoreWith(studySetService::restoreById);
+    }
+
+    @Test
     void findStudySetsByUser() {
         UserResponseDTO annaResponse = saveUser("Anna");
         UserResponseDTO benResponse = saveUser("Ben");
@@ -175,4 +193,6 @@ class StudySetServiceImplTest {
         assertTrue(studySetService.findStudySetsByUser(benId).isEmpty());
 
     }
+
+
 }

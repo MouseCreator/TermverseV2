@@ -23,7 +23,11 @@ public class StudySetServiceImpl implements StudySetService {
     private final ServiceProviderContainer services;
     @Override
     public List<StudySetResponseDTO> findAll() {
-        return services.crud(repository).findAll().to(studySetMapper::toResponse);
+        List<StudySetResponseDTO> to = services.crud(repository)
+                .findAll()
+                .to(studySetMapper::toResponse);
+        System.out.println(to);
+        return to;
     }
 
     private void assignTime(StudySet studySet) {

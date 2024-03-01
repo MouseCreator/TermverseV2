@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
-
+@org.springframework.stereotype.Repository
 public interface UserStudySetRepository extends Repository<UserStudySet, Long>,
         CustomCrudRepository<UserStudySet, Long> {
     List<UserStudySet> findAll();

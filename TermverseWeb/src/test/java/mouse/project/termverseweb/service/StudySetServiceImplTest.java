@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -21,11 +23,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class StudySetServiceImplTest {
     private final StudySetService studySetService;
+    private final UserStudySetService userStudySetService;
     private final UserService userService;
     private final Factories factories;
     @Autowired
-    public StudySetServiceImplTest(StudySetService studySetService, UserService userService, Factories factories) {
+    public StudySetServiceImplTest(StudySetService studySetService,
+                                   UserStudySetService userStudySetService,
+                                   UserService userService,
+                                   Factories factories) {
         this.studySetService = studySetService;
+        this.userStudySetService = userStudySetService;
         this.userService = userService;
         this.factories = factories;
     }
@@ -39,6 +46,9 @@ class StudySetServiceImplTest {
         return factories.getFactory(StudySetFactory.class).studySetCreateDTO(setName);
     }
 
+    private StudySetResponseDTO saveStudySet(String setName) {
+        return studySetService.save(createStudySet(setName));
+    }
 
     @Test
     void findAll() {
@@ -69,6 +79,46 @@ class StudySetServiceImplTest {
 
     @Test
     void findById() {
+
+    }
+
+    @Test
+    void findStudySetsByUser() {
+        UserResponseDTO annaResponse = saveUser("Anna");
+        UserResponseDTO benResponse = saveUser("Ben");
+
+        Long annaId = annaResponse.getId();
+        Long benId = benResponse.getId();
+
+        StudySetResponseDTO studySet1 = saveStudySet("find-study-set-by-user-1-Anna");
+        StudySetResponseDTO studySet2 = saveStudySet("find-study-set-by-user-2-Ben");
+        StudySetResponseDTO studySet3 = saveStudySet("find-study-set-by-user-3-AlsoBen");
+        StudySetResponseDTO studySet4 = saveStudySet("find-study-set-by-user-4-Shared");
+
+        userStudySetService.save(annaId, studySet1.getId(), "owner");
+        userStudySetService.save(benId, studySet2.getId(), "owner");
+        userStudySetService.save(benId, studySet3.getId(), "owner");
+
+        userStudySetService.save(annaId, studySet4.getId(), "owner");
+        userStudySetService.save(benId, studySet4.getId(), "viewer");
+
+        List<StudySetResponseDTO> annaStudySets = studySetService.findStudySetsByUser(annaId);
+        List<StudySetResponseDTO> benStudySets = studySetService.findStudySetsByUser(benId);
+        assertEquals(2, annaStudySets.size());
+        assertTrue(annaStudySets.containsAll(List.of(studySet1, studySet4)));
+        assertEquals(3, benStudySets.size());
+        assertTrue(benStudySets.containsAll(List.of(studySet2, studySet3, studySet4)));
+
+        studySetService.deleteById(studySet4.getId());
+
+        List<StudySetResponseDTO> benStudySetsAfterDeletion = studySetService.findStudySetsByUser(benId);
+
+        assertEquals(2, benStudySetsAfterDeletion.size());
+        assertTrue(benStudySets.containsAll(List.of(studySet2, studySet3)));
+
+        userService.removeById(benId);
+
+        assertTrue(studySetService.findStudySetsByUser(benId).isEmpty());
 
     }
 }

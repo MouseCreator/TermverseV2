@@ -4,7 +4,9 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ public class User {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt = null;
     private String profilePictureUrl;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
             name = "users_study_sets",
@@ -31,4 +35,8 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id")
     )
     private List<UserStudySet> studySets = new ArrayList<>();
+
+    public User(Long id) {
+        this.id = id;
+    }
 }

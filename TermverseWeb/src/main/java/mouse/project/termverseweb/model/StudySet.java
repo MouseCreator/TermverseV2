@@ -3,7 +3,9 @@ package mouse.project.termverseweb.model;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "study_sets")
 public class StudySet {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Nonnull
@@ -28,10 +29,15 @@ public class StudySet {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt = null;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JoinTable(
             name = "users_study_sets",
             joinColumns = @JoinColumn(name = "study_set_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<UserStudySet> users = new ArrayList<>();
+    public StudySet(Long id) {
+        this.id = id;
+    }
 }

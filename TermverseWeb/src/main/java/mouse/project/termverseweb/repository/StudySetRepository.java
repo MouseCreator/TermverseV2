@@ -35,9 +35,15 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
     @Query("UPDATE StudySet s SET s.deletedAt = NULL WHERE s.id = :id")
     void restoreById(@Param("id") Long id);
     @Transactional
+    @Modifying
     StudySet save(StudySet model);
     @Query("SELECT s FROM StudySet s WHERE s.id = :id AND s.deletedAt IS NULL")
     Optional<StudySet> findById(@Param("id") Long id);
     @Query("SELECT s FROM StudySet s WHERE s.id = :id")
     Optional<StudySet> findByIdIncludeDeleted(@Param("id")  Long id);
+    @Query("SELECT s " +
+            "FROM StudySet s JOIN s.users u " +
+            "WHERE u.id = :userId " +
+            "AND s.deletedAt IS NULL AND u.user.deletedAt IS NULL")
+    List<StudySet> findAllByUserId(@Param("userId") Long userId);
 }

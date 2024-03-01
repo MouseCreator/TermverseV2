@@ -27,9 +27,11 @@ public interface UserRepository extends Repository<User, Long>, SoftDeleteCrudRe
     @Query("UPDATE User u SET u.deletedAt = NULL WHERE u.id = :id")
     void restoreById(@Param("id") Long id);
     @Transactional
+    @Modifying
     User save(User user);
     @Query("SELECT u FROM User u WHERE u.id = :id AND u.deletedAt IS NULL")
     Optional<User> findById(@Param("id") Long id);
     @Query("SELECT u FROM User u WHERE u.id = :id")
     Optional<User> findByIdIncludeDeleted(@Param("id")  Long id);
+
 }

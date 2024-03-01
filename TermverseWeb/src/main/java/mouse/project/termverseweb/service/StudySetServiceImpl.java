@@ -7,7 +7,9 @@ import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
 
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
 import mouse.project.termverseweb.mapper.StudySetMapper;
+import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.repository.StudySetRepository;
+import mouse.project.termverseweb.utils.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,11 @@ public class StudySetServiceImpl implements StudySetService {
     @Override
     public List<StudySetResponseDTO> findAll() {
         return services.crud(repository).findAll().to(studySetMapper::toResponse);
+    }
+
+    private void assignTime(StudySet studySet) {
+        LocalDateTime timeNow = DateUtils.timeNowToSeconds();
+        studySet.setCreatedAt(timeNow);
     }
 
     @Override
@@ -53,8 +60,12 @@ public class StudySetServiceImpl implements StudySetService {
     }
 
     @Override
-    public StudySetResponseDTO save(StudySetCreateDTO model) {
-        return services.crud(repository).save(model, studySetMapper::fromCreate).to(studySetMapper::toResponse);
+    public StudySetResponseDTO save(StudySetCreateDTO dto) {
+        return services.crud(repository).save(() -> {
+            StudySet studySet = studySetMapper.fromCreate(dto);
+            assignTime(studySet);
+            return studySet;
+        }).to(studySetMapper::toResponse);
     }
 
     @Override
@@ -70,5 +81,10 @@ public class StudySetServiceImpl implements StudySetService {
     @Override
     public StudySetResponseDTO findByIdIncludeDeleted(Long id) {
         return services.soft(repository).getByIdIncludeDeleted(id).orThrow(studySetMapper::toResponse);
+    }
+
+    @Override
+    public List<StudySetResponseDTO> findStudySetsByUser(Long userId) {
+        return services.use(repository).multi(r -> r.findAllByUserId(userId)).to(studySetMapper::toResponse);
     }
 }

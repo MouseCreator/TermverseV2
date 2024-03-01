@@ -20,4 +20,5 @@ public interface StudySetService {
     StudySetResponseDTO update(StudySetUpdateDTO model);
     StudySetResponseDTO findById(Long id);
     StudySetResponseDTO findByIdIncludeDeleted(Long id);
+    List<StudySetResponseDTO> findStudySetsByUser(Long userId);
 }

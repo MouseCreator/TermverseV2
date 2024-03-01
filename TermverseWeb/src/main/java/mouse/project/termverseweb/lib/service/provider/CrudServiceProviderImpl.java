@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Service
 public class CrudServiceProviderImpl implements CrudServiceProvider {
@@ -35,6 +36,11 @@ public class CrudServiceProviderImpl implements CrudServiceProvider {
         public <CREATE> RawResult<MODEL> save(CREATE createDTO,
                                               Function<CREATE, MODEL> fromCreate) {
             return genericService.use(repository).single(r -> r.save(fromCreate.apply(createDTO)));
+        }
+
+        @Override
+        public RawResult<MODEL> save(Supplier<MODEL> fromCreate) {
+            return save(fromCreate.get());
         }
 
         public RawResult<MODEL> save(MODEL model) {

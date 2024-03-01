@@ -5,6 +5,8 @@ import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.user.UserUpdateDTO;
 import mouse.project.termverseweb.exception.UpdateException;
+import mouse.project.termverseweb.models.Factories;
+import mouse.project.termverseweb.models.UserFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,17 +21,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class UserServiceImplTest {
 
     private final UserService userService;
+    private final Factories factories;
     @Autowired
-    public UserServiceImplTest(UserService userService) {
+    public UserServiceImplTest(UserService userService, Factories factories) {
         this.userService = userService;
+        this.factories = factories;
     }
 
     private UserCreateDTO generateUserWithName(String name) {
-        UserCreateDTO user = new UserCreateDTO();
-        user.setName(name);
-        String urlName = name.toLowerCase();
-        user.setProfilePictureUrl(String.format("https://%s/profile.image.jpg", urlName));
-        return user;
+        return factories.getFactory(UserFactory.class).userCreateDTO(name);
     }
 
     @Test
@@ -46,6 +46,10 @@ class UserServiceImplTest {
 
     @Test
     void findAll() {
+        UserCreateDTO user = generateUserWithName("Luis");
+        UserResponseDTO userResponseDTO = userService.save(user);
+        Assertions.assertFalse(userService.findAll().isEmpty());
+        Assertions.assertTrue(userService.findAll().contains(userResponseDTO));
     }
 
     @Test

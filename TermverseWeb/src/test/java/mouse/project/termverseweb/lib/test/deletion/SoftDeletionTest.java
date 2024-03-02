@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Service
 public class SoftDeletionTest {
@@ -51,17 +52,17 @@ public class SoftDeletionTest {
             this.mapper = mapper;
         }
 
-        public AfterSoftDeletion<MODEL, ID> validateAbsentIn(List<MODEL> modelsToTest) {
+        public AfterSoftDeletion<MODEL, ID> validateAbsentIn(Supplier<List<MODEL>> modelsToTest) {
             confirmer.confirmThatAll(modelsToTest).doesNotContain(models);
             return this;
         }
 
-        public AfterSoftDeletion<MODEL, ID> validatePresentIn(List<MODEL> modelsToTest) {
+        public AfterSoftDeletion<MODEL, ID> validatePresentIn(Supplier<List<MODEL>>  modelsToTest) {
             confirmer.confirmThatAll(modelsToTest).hasAll(models);
             return this;
         }
 
-        public AfterSoftDeletion<MODEL, ID> validateContains(List<MODEL> modelsToTest) {
+        public AfterSoftDeletion<MODEL, ID> validateContains(Supplier<List<MODEL>>  modelsToTest) {
             confirmer.confirmThatAll(modelsToTest).isSubsetOf(models);
             return this;
         }
@@ -71,7 +72,7 @@ public class SoftDeletionTest {
             return this;
         }
 
-        public AfterSoftDeletion<MODEL, ID> validateDoesntContain(List<MODEL> modelsToTest) {
+        public AfterSoftDeletion<MODEL, ID> validateDoesntContain(Supplier<List<MODEL>> modelsToTest) {
             confirmer.confirmThatAll(modelsToTest).isExcludedFrom(models);
             return this;
         }

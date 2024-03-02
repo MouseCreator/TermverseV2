@@ -143,7 +143,7 @@ class StudySetServiceImplTest {
         assertTrue(inGivenTime.contains(response1));
         softDeletionTest.using(studySetService::deleteById, StudySetResponseDTO::getId)
                 .removeAll(List.of(response1, response2))
-                .validateAbsentIn(getInRange.get())
+                .validateAbsentIn(getInRange)
                 .restoreWith(studySetService::restoreById);
     }
 
@@ -155,8 +155,8 @@ class StudySetServiceImplTest {
 
         softDeletionTest.using(studySetService::deleteById, StudySetResponseDTO::getId)
                 .remove(studySet1)
-                .validateAbsentIn(studySetService.findAll())
-                .validatePresentIn(studySetService.findAllIncludeDeleted())
+                .validateAbsentIn(studySetService::findAll)
+                .validatePresentIn(studySetService::findAllIncludeDeleted)
                 .validateThrows(EntityNotFoundException.class, () -> studySetService.findById(id))
                 .restoreWith(studySetService::restoreById);
 
@@ -180,7 +180,7 @@ class StudySetServiceImplTest {
 
         softDeletionTest.using(studySetService::deleteById, StudySetResponseDTO::getId)
                 .removeAll(both)
-                .validateAbsentIn(studySetService.findAllByNameIgnoreCase("N"));
+                .validateAbsentIn(() -> studySetService.findAllByNameIgnoreCase("N"));
 
     }
 

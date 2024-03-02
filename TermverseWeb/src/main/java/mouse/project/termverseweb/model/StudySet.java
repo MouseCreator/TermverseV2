@@ -22,10 +22,11 @@ public class StudySet {
     private Long id;
     @Nonnull
     private String name;
+    @Column(name = "picture_url")
+    private String pictureUrl = null;
     @Nonnull
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @Nonnull
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt = null;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

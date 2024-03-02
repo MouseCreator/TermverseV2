@@ -8,5 +8,5 @@ public class StudySetResponseDTO {
     private Long id;
     private String name;
     private LocalDateTime createdAt;
-    private String deletedAt;
+    private String pictureUrl;
 }

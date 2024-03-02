@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class StudySetCreateDTO  {
     private String name;
-
+    private String pictureUrl;
 }

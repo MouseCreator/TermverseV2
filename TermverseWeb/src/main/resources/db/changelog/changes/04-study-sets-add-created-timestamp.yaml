@@ -11,3 +11,14 @@ databaseChangeLog:
                   type: timestamp
                   constraints:
                     nullable: false
+
+  - changeSet:
+      id: 04-study-sets-add-picture-url-002
+      author: Mykhailo Tyshchenko
+      changes:
+        - addColumn:
+            tableName: study_sets
+            columns:
+              - column:
+                  name: picture_url
+                  type: varchar(255)

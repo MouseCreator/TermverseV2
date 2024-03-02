@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 06-create-user-term-progress-table-001
+      author: Mykhailo Tyshchenko
+      changes:
+        - createTable:
+            tableName: users_terms
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_users
+                    references: users(id)
+              - column:
+                  name: term_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_terms
+                    references: terms(id)
+              - column:
+                  name: progress
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

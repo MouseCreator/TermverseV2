@@ -13,7 +13,7 @@ public interface CrudHelper<MODEL, ID> {
     RawResult<MODEL> save(MODEL model);
     RawResultCollection<MODEL> findAll();
     OptionalResult<MODEL> findById(ID id);
-    <UPDATE> RawResult<MODEL> update(UPDATE createDTO, Function<UPDATE, MODEL> fromCreate);
+    <UPDATE> RawResult<MODEL> update(UPDATE updateDTO, Function<UPDATE, MODEL> fromUpdate);
     RawResult<MODEL> update(MODEL model);
     void removeById(ID id);
     void safeRemove(ID id);

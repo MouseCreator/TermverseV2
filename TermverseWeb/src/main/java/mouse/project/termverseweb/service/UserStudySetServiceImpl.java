@@ -53,7 +53,7 @@ public class UserStudySetServiceImpl implements UserStudySetService {
         UserStudySetCreateDTO createDTO = new UserStudySetCreateDTO();
         createDTO.setUserId(userId);
         createDTO.setStudySetId(studySetId);
-        createDTO.setRelationType(type);
+        createDTO.setType(type);
         return save(createDTO);
     }
 }

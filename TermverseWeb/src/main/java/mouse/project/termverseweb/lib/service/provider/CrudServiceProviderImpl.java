@@ -56,8 +56,9 @@ public class CrudServiceProviderImpl implements CrudServiceProvider {
         }
 
         public <UPDATE> RawResult<MODEL> update(UPDATE createDTO,
-                                                Function<UPDATE, MODEL> fromCreate) {
-            return genericService.use(repository).single(r -> r.save(fromCreate.apply(createDTO)));
+                                                Function<UPDATE, MODEL> fromUpdate) {
+            return genericService.use(repository).single(r ->
+                    r.save(fromUpdate.apply(createDTO)));
         }
 
         public RawResult<MODEL> update(MODEL model) {

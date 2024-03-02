@@ -6,5 +6,5 @@ import lombok.Data;
 public class UserStudySetCreateDTO {
     private Long userId;
     private Long studySetId;
-    private String relationType;
+    private String type;
 }

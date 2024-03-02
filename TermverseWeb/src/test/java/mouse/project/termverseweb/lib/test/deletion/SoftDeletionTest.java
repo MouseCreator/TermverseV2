@@ -66,8 +66,18 @@ public class SoftDeletionTest {
             confirmer.confirmThatAll(modelsToTest).isSubsetOf(models);
             return this;
         }
+        public AfterSoftDeletion<MODEL, ID> validate(Runnable method) {
+            method.run();
+            return this;
+        }
+        public AfterSoftDeletion<MODEL, ID> validate(Consumer<MODEL> consumer) {
+            for (MODEL model : models) {
+                consumer.accept(model);
+            }
+            return this;
+        }
 
-        public AfterSoftDeletion<MODEL, ID> validate(Consumer<List<MODEL>> consumer) {
+        public AfterSoftDeletion<MODEL, ID> validateAll(Consumer<List<MODEL>> consumer) {
             consumer.accept(models);
             return this;
         }

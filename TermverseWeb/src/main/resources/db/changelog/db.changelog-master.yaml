@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/changes/04-study-sets-add-created-timestamp.yaml
   - include:
       file: db/changelog/changes/05-create-term-table.yaml
+  - include:
+      file: db/changelog/changes/06-create-user-term-progress-table.yaml

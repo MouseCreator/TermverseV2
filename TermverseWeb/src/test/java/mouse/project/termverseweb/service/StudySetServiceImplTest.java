@@ -22,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -125,9 +126,11 @@ class StudySetServiceImplTest {
         LocalDateTime customTime2 = DateUtils.fromString("2010-01-11 10:00:00");
         StudySetResponseDTO response2 = studySetService.saveWithCustomTime(createDTO2, customTime2);
 
-        List<StudySetResponseDTO> inJanuary2010 = studySetService.findAllByCreatedDateRange(
+        Supplier<List<StudySetResponseDTO>> getInRange = () -> studySetService.findAllByCreatedDateRange(
                 DateUtils.fromString("2010-01-01 10:00:00"),
                 DateUtils.fromString("2010-02-01 10:00:00"));
+
+        List<StudySetResponseDTO> inJanuary2010 = getInRange.get();
 
         assertEquals(2, inJanuary2010.size());
         assertTrue(inJanuary2010.containsAll(List.of(response1, response2)));
@@ -137,7 +140,11 @@ class StudySetServiceImplTest {
                 customTime.plus(Duration.ofSeconds(10)));
 
         assertEquals(1, inGivenTime.size());
-        assertTrue(inJanuary2010.contains(response1));
+        assertTrue(inGivenTime.contains(response1));
+        softDeletionTest.using(studySetService::deleteById, StudySetResponseDTO::getId)
+                .removeAll(List.of(response1, response2))
+                .validateAbsentIn(getInRange.get())
+                .restoreWith(studySetService::restoreById);
     }
 
     @Test

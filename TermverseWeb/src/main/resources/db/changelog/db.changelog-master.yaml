@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/changes/03-create-study-sets-table.yaml
   - include:
       file: db/changelog/changes/04-study-sets-add-created-timestamp.yaml
+  - include:
+      file: db/changelog/changes/05-create-term-table.yaml

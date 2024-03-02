@@ -39,6 +39,11 @@ public class StudySet implements LongIterable {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<UserStudySet> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "setId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<Term> terms;
     public StudySet(Long id) {
         this.id = id;
     }

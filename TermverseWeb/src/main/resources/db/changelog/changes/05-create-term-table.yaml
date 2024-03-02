@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 05-create-term-table-001
+      author: Mykhailo Tyshchenko
+      changes:
+        - createTable:
+            tableName: terms
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: term
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: definition
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: hint
+                  type: varchar(255)
+              - column:
+                  name: picture_url
+                  type: varchar(255)
+              - column:
+                  name: order
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: set_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_terms_sets
+                    references: study_sets(id)
+              - column:
+                  name: deleted_at
+                  type: timestamp
+
+        - createIndex:
+            indexName: idx_set_id
+            tableName: terms
+            columns:
+              - column:
+                  name: set_id

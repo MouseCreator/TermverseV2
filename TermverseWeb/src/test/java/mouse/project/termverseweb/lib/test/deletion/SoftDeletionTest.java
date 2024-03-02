@@ -17,26 +17,26 @@ public class SoftDeletionTest {
         this.deletion = deletion;
     }
 
-    public <MODEL> BeforeSoftDeletion<MODEL> removeAll(List<MODEL> models) {
-        return new BeforeSoftDeletion<>(models);
+    public <MODEL, ID> BeforeSoftDeletion<MODEL, ID> using(Consumer<ID> deleteFunction, Function<MODEL, ID> mapper) {
+        return new BeforeSoftDeletion<>(deleteFunction, mapper);
     }
 
-    public <MODEL> BeforeSoftDeletion<MODEL> remove(MODEL model) {
-        return removeAll(List.of(model));
-    }
-
-    public class BeforeSoftDeletion<MODEL> {
-        private final List<MODEL> models;
-
-        public BeforeSoftDeletion(List<MODEL> models) {
-            this.models = models;
+    public class BeforeSoftDeletion<MODEL, ID> {
+        private final Consumer<ID> deleteFunction;
+        private final Function<MODEL, ID> mapper;
+        public BeforeSoftDeletion(Consumer<ID> deleteFunction, Function<MODEL, ID> mapper) {
+            this.deleteFunction = deleteFunction;
+            this.mapper = mapper;
         }
 
-        public <ID> AfterSoftDeletion<MODEL, ID> using(Consumer<ID> deleteFunction, Function<MODEL, ID> mapper) {
-            Deletion.Confirmer confirmer = deletion.
-                    withIdDeletion(deleteFunction).
-                    deleteEntities(models, mapper).then();
+        public AfterSoftDeletion<MODEL, ID> removeAll(List<MODEL> models) {
+            Deletion.Confirmer confirmer = deletion.withIdDeletion(deleteFunction)
+                    .deleteEntities(models, mapper).then();
             return new AfterSoftDeletion<>(models, confirmer, mapper);
+        }
+
+        public AfterSoftDeletion<MODEL, ID> remove(MODEL model) {
+            return removeAll(List.of(model));
         }
     }
 

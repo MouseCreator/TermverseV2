@@ -146,14 +146,35 @@ class StudySetServiceImplTest {
         Long id = studySet1.getId();
         assertTrue(studySetService.findAll().contains(studySet1));
 
-        softDeletionTest.remove(studySet1)
-                .using(studySetService::deleteById, StudySetResponseDTO::getId)
+        softDeletionTest.using(studySetService::deleteById, StudySetResponseDTO::getId)
+                .remove(studySet1)
                 .validateAbsentIn(studySetService.findAll())
                 .validatePresentIn(studySetService.findAllIncludeDeleted())
                 .validateThrows(EntityNotFoundException.class, () -> studySetService.findById(id))
                 .restoreWith(studySetService::restoreById);
 
         assertTrue(studySetService.findAll().contains(studySet1));
+    }
+
+    @Test
+    void testSearchByName() {
+        StudySetResponseDTO set1 = saveStudySet("Penguin");
+        StudySetResponseDTO set2 = saveStudySet("Lion");
+        List<StudySetResponseDTO> both = List.of(set1, set2);
+
+        assertTrue(studySetService.findAllByNameIgnoreCase("pen").contains(set1));
+        assertTrue(studySetService.findAllByNameIgnoreCase("lion").contains(set2));
+        assertTrue(studySetService.findAllByNameIgnoreCase("N").containsAll(both));
+
+        assertFalse(studySetService.findAllByNameIgnoreCase("Lion").containsAll(both));
+        assertFalse(studySetService.findAllByNameIgnoreCase("Lion").contains(set1));
+        assertFalse(studySetService.findAllByNameIgnoreCase("Penguin").contains(set2));
+
+
+        softDeletionTest.using(studySetService::deleteById, StudySetResponseDTO::getId)
+                .removeAll(both)
+                .validateAbsentIn(studySetService.findAllByNameIgnoreCase("N"));
+
     }
 
     @Test

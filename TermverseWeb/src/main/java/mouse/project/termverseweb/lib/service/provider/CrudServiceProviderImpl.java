@@ -3,6 +3,7 @@ package mouse.project.termverseweb.lib.service.provider;
 import jakarta.persistence.EntityNotFoundException;
 import mouse.project.termverseweb.lib.service.GenericServiceHelper;
 import mouse.project.termverseweb.lib.service.helper.CrudHelper;
+import mouse.project.termverseweb.lib.service.model.IdIterable;
 import mouse.project.termverseweb.lib.service.result.OptionalResult;
 import mouse.project.termverseweb.lib.service.result.RawResult;
 import mouse.project.termverseweb.lib.service.result.RawResultCollection;
@@ -10,6 +11,7 @@ import mouse.project.termverseweb.lib.service.repository.CustomCrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -21,11 +23,11 @@ public class CrudServiceProviderImpl implements CrudServiceProvider {
         this.genericService = genericService;
     }
 
-    public <MODEL, ID> CrudServiceState<MODEL, ID> with(CustomCrudRepository<MODEL, ID> repository) {
+    public <MODEL extends IdIterable<ID>, ID> CrudServiceState<MODEL, ID> with(CustomCrudRepository<MODEL, ID> repository) {
         return new CrudServiceState<>(repository, genericService);
     }
 
-    public static class CrudServiceState<MODEL, ID> implements CrudHelper<MODEL, ID> {
+    public static class CrudServiceState<MODEL  extends IdIterable<ID>, ID> implements CrudHelper<MODEL, ID> {
         private final CustomCrudRepository<MODEL, ID> repository;
         private final GenericServiceHelper genericService;
         public CrudServiceState(CustomCrudRepository<MODEL, ID> repository, GenericServiceHelper genericService) {
@@ -55,14 +57,23 @@ public class CrudServiceProviderImpl implements CrudServiceProvider {
             return genericService.use(repository).optional(r -> r.findById(id));
         }
 
-        public <UPDATE> RawResult<MODEL> update(UPDATE createDTO,
+        public <UPDATE> RawResult<MODEL> update(UPDATE updateDTO,
                                                 Function<UPDATE, MODEL> fromUpdate) {
-            return genericService.use(repository).single(r ->
-                    r.save(fromUpdate.apply(createDTO)));
+            return genericService.use(repository).single(r -> {
+                MODEL model = fromUpdate.apply(updateDTO);
+                Optional<MODEL> byId = r.findById(model.getId());
+                byId.orElseThrow(EntityNotFoundException::new);
+                return r.save(model);
+            });
         }
 
         public RawResult<MODEL> update(MODEL model) {
-            return genericService.use(repository).single(r -> r.save(model));
+            return genericService.use(repository).single(
+                    r -> {
+                        Optional<MODEL> byId = r.findById(model.getId());
+                        byId.orElseThrow(EntityNotFoundException::new);
+                        return r.save(model);
+                    });
         }
 
         public void safeRemove(ID id) {

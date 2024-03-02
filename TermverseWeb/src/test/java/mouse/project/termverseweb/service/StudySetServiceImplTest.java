@@ -114,6 +114,9 @@ class StudySetServiceImplTest {
 
         StudySetResponseDTO byId = studySetService.findById(id);
         assertEquals(newName, byId.getName());
+
+        softDeletionTest.using(studySetService::deleteById, StudySetResponseDTO::getId)
+                .remove(byId).validateThrows(EntityNotFoundException.class, ()->studySetService.update(updateDTO));
     }
 
     @Test

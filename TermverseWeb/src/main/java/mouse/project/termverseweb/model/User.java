@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import mouse.project.termverseweb.lib.service.model.LongIterable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
-public class User {
+public class User implements LongIterable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Nonnull

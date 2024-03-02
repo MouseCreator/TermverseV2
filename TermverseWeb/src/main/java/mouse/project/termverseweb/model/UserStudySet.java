@@ -4,11 +4,13 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mouse.project.termverseweb.lib.service.model.LongIterable;
+
 @Data
 @Entity
 @NoArgsConstructor
 @Table(name = "users_study_sets")
-public class UserStudySet {
+public class UserStudySet implements LongIterable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,10 +26,4 @@ public class UserStudySet {
     private StudySet studySet;
     @Nonnull
     private String type;
-    public UserStudySet(Long id, User user, StudySet studySet, String type) {
-        this.id = id;
-        this.user = user;
-        this.studySet = studySet;
-        this.type = type;
-    }
 }

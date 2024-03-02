@@ -3,6 +3,7 @@ package mouse.project.termverseweb.lib.service.container;
 import mouse.project.termverseweb.lib.service.GenericServiceHelper;
 import mouse.project.termverseweb.lib.service.StatefulRepositoryCaller;
 import mouse.project.termverseweb.lib.service.helper.*;
+import mouse.project.termverseweb.lib.service.model.IdIterable;
 import mouse.project.termverseweb.lib.service.provider.CrudServiceProvider;
 import mouse.project.termverseweb.lib.service.provider.ServiceProvider;
 import mouse.project.termverseweb.lib.service.provider.SoftDeleteProvider;
@@ -26,7 +27,7 @@ public class ServiceProviderImpl implements ServiceProviderContainer {
     }
 
     @Override
-    public <MODEL, ID> CrudHelper<MODEL, ID> crud(CustomCrudRepository<MODEL, ID> crudRepository) {
+    public <MODEL extends IdIterable<ID>, ID> CrudHelper<MODEL, ID> crud(CustomCrudRepository<MODEL, ID> crudRepository) {
         return find(CrudServiceProvider.class).with(crudRepository);
     }
 

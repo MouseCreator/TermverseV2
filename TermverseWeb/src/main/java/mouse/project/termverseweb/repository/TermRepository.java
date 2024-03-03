@@ -34,4 +34,7 @@ public interface TermRepository extends Repository<Term, Long>,
     @Transactional
     @Modifying
     Term save(Term  model);
+    @Query(value = "DELETE FROM study_sets_terms WHERE term_id = :termId", nativeQuery = true)
+    @Modifying
+    void removeTermFormStudySetsById(Long termId);
 }

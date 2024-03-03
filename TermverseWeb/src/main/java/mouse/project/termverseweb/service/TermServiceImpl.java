@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.dto.term.TermCreateDTO;
 import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermUpdateDTO;
@@ -16,11 +17,16 @@ public class TermServiceImpl implements TermService {
     private final ServiceProviderContainer services;
     private final TermRepository repository;
     private final TermMapper mapper;
+    private final StudySetService studySetService;
 
-    public TermServiceImpl(ServiceProviderContainer services, TermRepository termRepository, TermMapper mapper) {
+    public TermServiceImpl(ServiceProviderContainer services,
+                           TermRepository termRepository,
+                           TermMapper mapper,
+                           StudySetService studySetService) {
         this.services = services;
         this.repository = termRepository;
         this.mapper = mapper;
+        this.studySetService = studySetService;
     }
 
     @Override
@@ -44,12 +50,19 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
+    @Transactional
     public void removeById(Long id) {
         services.crud(repository).removeById(id);
+        repository.removeTermFormStudySetsById(id);
     }
 
     @Override
     public List<TermResponseDTO> getAllWithDeleted() {
        return services.soft(repository).findAllWithDeleted().to(mapper::toResponse);
+    }
+
+    @Override
+    public void restoreById(Long id) {
+        services.soft(repository).restoreById(id);
     }
 }

@@ -47,11 +47,9 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "AND s.deletedAt IS NULL AND u.user.deletedAt IS NULL")
     List<StudySet> findAllByUserId(@Param("userId") Long userId);
 
-    @Query(value = "SELECT s.*  " +
-            "FROM study_sets s  " +
-            "LEFT JOIN study_sets_terms ts ON s.id = ts.set_id  " +
-            "LEFT JOIN terms t ON ts.term_id = t.id AND t.deleted_at IS NULL " +
-            "WHERE s.id = :id AND s.deleted_at IS NULL " +
-            "GROUP BY s.id", nativeQuery = true)
+    @Query("SELECT s FROM StudySet s " +
+            "LEFT JOIN FETCH s.terms t " +
+            "WHERE s.id = :id " +
+            "AND s.deletedAt IS NULL")
     Optional<StudySet> findAllByIdWithTerms(@Param("id") Long id);
 }

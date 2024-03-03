@@ -26,7 +26,5 @@ public class Term {
     private Integer order;
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
-    @Nonnull
-    private Long setId;
 
 }

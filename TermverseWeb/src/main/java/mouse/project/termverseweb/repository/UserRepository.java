@@ -20,7 +20,7 @@ public interface UserRepository extends Repository<User, Long>, SoftDeleteCrudRe
     List<User> findAllByNameIgnoreCase(@Param("name") String name);
     @Transactional
     @Modifying
-    @Query(value = "UPDATE User u SET u.deletedAt = NOW() WHERE u.id = :id")
+    @Query(value = "UPDATE users u SET deleted_at = NOW() WHERE u.id = :id", nativeQuery = true)
     void deleteById(@Param("id") Long id);
     @Transactional
     @Modifying

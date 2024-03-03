@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/changes/05-create-term-table.yaml
   - include:
       file: db/changelog/changes/06-create-user-term-progress-table.yaml
+  - include:
+      file: db/changelog/changes/07-change-study-sets-terms-relation.yaml

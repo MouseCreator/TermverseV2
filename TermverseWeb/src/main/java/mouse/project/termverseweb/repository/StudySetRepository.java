@@ -28,7 +28,7 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
                                              @Param("end_date") LocalDateTime endDate);
     @Transactional
     @Modifying
-    @Query(value = "UPDATE StudySet s SET s.deletedAt = NOW() WHERE s.id = :id")
+    @Query(value = "UPDATE study_sets s SET deleted_at = NOW() WHERE s.id = :id", nativeQuery = true)
     void deleteById(@Param("id") Long id);
     @Transactional
     @Modifying

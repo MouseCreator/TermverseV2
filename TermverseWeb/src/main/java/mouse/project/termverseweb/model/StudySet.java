@@ -47,7 +47,8 @@ public class StudySet implements LongIterable {
             joinColumns = @JoinColumn(name = "set_id"),
             inverseJoinColumns = @JoinColumn(name = "term_id")
     )
-    private List<Term> terms;
+    @OrderBy("order ASC")
+    private List<Term> terms = new ArrayList<>();
     public StudySet(Long id) {
         this.id = id;
     }

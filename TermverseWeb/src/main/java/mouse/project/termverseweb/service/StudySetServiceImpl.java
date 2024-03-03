@@ -1,10 +1,13 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
 
+import mouse.project.termverseweb.dto.studyset.StudySetWithTermsResponseDTO;
+import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
 import mouse.project.termverseweb.mapper.StudySetMapper;
 import mouse.project.termverseweb.model.StudySet;
@@ -99,5 +102,17 @@ public class StudySetServiceImpl implements StudySetService {
             studySet.setCreatedAt(DateUtils.toSeconds(customTime));
             return studySet;
         }).to(studySetMapper::toResponse);
+    }
+
+    @Override
+    @Transactional
+    public StudySetWithTermsResponseDTO findByIdWithTerms(Long id) {
+        StudySetWithTermsResponseDTO studySet = services.use(repository)
+                .optional(r -> r.findAllByIdWithTerms(id))
+                .orThrow(studySetMapper::toResponseWithTerms);
+        List<TermResponseDTO> termResponseDTOS = studySet.getTerms().stream().filter(
+                t -> t.getDeletedAt() == null).toList();
+        studySet.setTerms(termResponseDTOS);
+        return studySet;
     }
 }

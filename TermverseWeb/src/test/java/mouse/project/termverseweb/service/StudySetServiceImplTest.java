@@ -4,10 +4,14 @@ import jakarta.persistence.EntityNotFoundException;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
+import mouse.project.termverseweb.dto.studyset.StudySetWithTermsResponseDTO;
+import mouse.project.termverseweb.dto.term.TermCreateDTO;
+import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.models.Factories;
 import mouse.project.termverseweb.models.StudySetFactory;
+import mouse.project.termverseweb.models.TermFactory;
 import mouse.project.termverseweb.models.UserFactory;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.utils.DateUtils;
@@ -35,25 +39,31 @@ class StudySetServiceImplTest {
     private final UserService userService;
     private final Factories factories;
     private final SoftDeletionTest softDeletionTest;
+    private final TermService termService;
     @Autowired
     public StudySetServiceImplTest(StudySetService studySetService,
                                    UserStudySetService userStudySetService,
                                    UserService userService,
-                                   Factories factories, SoftDeletionTest softDeletionTest) {
+                                   Factories factories,
+                                   SoftDeletionTest softDeletionTest,
+                                   TermService termService) {
         this.studySetService = studySetService;
         this.userStudySetService = userStudySetService;
         this.userService = userService;
         this.factories = factories;
         this.softDeletionTest = softDeletionTest;
+        this.termService = termService;
     }
 
     private UserResponseDTO saveUser(String userName) {
         UserCreateDTO userCreateDTO = factories.getFactory(UserFactory.class).userCreateDTO(userName);
         return userService.save(userCreateDTO);
     }
-
     private StudySetCreateDTO createStudySet(String setName) {
         return factories.getFactory(StudySetFactory.class).studySetCreateDTO(setName);
+    }
+    private TermCreateDTO createTerm(String name, int order) {
+        return factories.getFactory(TermFactory.class).termCreateDTO(name, order);
     }
 
     private StudySetResponseDTO saveStudySet(String setName) {
@@ -226,6 +236,28 @@ class StudySetServiceImplTest {
         assertTrue(studySetService.findStudySetsByUser(benId).isEmpty());
 
     }
+    @Test
+    void testSavingWithTerms() {
+        StudySetCreateDTO studySet = createStudySet("Set with terms 1");
+        studySet.setTerms(List.of(createTerm("T1", 1), createTerm("T2", 2)));
+
+        StudySetResponseDTO studySetSaved = studySetService.save(studySet);
+        Long id = studySetSaved.getId();
+        StudySetWithTermsResponseDTO byIdWithTerms = studySetService.findByIdWithTerms(id);
+        assertEquals(2, byIdWithTerms.getTerms().size());
+        System.out.println(byIdWithTerms.getTerms());
+
+        softDeletionTest.using(termService::removeById, TermResponseDTO::getId)
+                .removeAll(byIdWithTerms.getTerms())
+                .validate(() -> {
+                    List<TermResponseDTO> terms = studySetService.findByIdWithTerms(id).getTerms();
+                    System.out.println(terms);
+                    assertEquals(0, terms.size());
+                });
+
+    }
+
+
 
 
 }

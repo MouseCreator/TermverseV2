@@ -30,3 +30,12 @@ databaseChangeLog:
                     foreignKeyName: fk_study_sets_terms_term
                     references: terms(id)
                     deleteCascade: true
+  - changeSet:
+      id: 07-change-study-sets-terms-relation-003
+      author: Mykhailo Tyshchenko
+      changes:
+        - renameColumn:
+            tableName: terms
+            oldColumnName: order
+            newColumnName: term_order
+            columnDataType: integer

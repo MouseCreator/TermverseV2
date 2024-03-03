@@ -4,6 +4,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mouse.project.termverseweb.lib.service.model.LongIterable;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Table(name = "terms")
-public class Term {
+public class Term implements LongIterable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Nonnull
@@ -23,6 +24,7 @@ public class Term {
     private String hint;
     private String picture_url;
     @Nonnull
+    @Column(name = "term_order")
     private Integer order;
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;

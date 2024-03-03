@@ -4,6 +4,7 @@ package mouse.project.termverseweb.service;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
+import mouse.project.termverseweb.dto.studyset.StudySetWithTermsResponseDTO;
 
 
 import java.time.LocalDateTime;
@@ -22,4 +23,5 @@ public interface StudySetService {
     StudySetResponseDTO findByIdIncludeDeleted(Long id);
     List<StudySetResponseDTO> findStudySetsByUser(Long userId);
     StudySetResponseDTO saveWithCustomTime(StudySetCreateDTO createDTO, LocalDateTime customTime);
+    StudySetWithTermsResponseDTO findByIdWithTerms(Long id);
 }

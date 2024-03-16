@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.defines.Progress;
 import mouse.project.termverseweb.dto.progress.TermProgressResponseDTO;
 import mouse.project.termverseweb.dto.progress.TermProgressUpdateDTO;
@@ -11,6 +12,8 @@ import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.model.UserTerm;
 import mouse.project.termverseweb.repository.StudySetRepository;
+import mouse.project.termverseweb.repository.TermRepository;
+import mouse.project.termverseweb.repository.UserRepository;
 import mouse.project.termverseweb.repository.UserTermRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,23 +28,31 @@ public class UserTermServiceImpl implements UserTermService {
     private final UserTermRepository repository;
     private final TermProgressMapper mapper;
     private final ServiceProviderContainer services;
+    private final TermRepository termRepository;
+    private final UserRepository userRepository;
     @Autowired
     public UserTermServiceImpl(StudySetRepository studySetRepository,
                                UserTermRepository repository,
                                TermProgressMapper mapper,
-                               ServiceProviderContainer services) {
+                               ServiceProviderContainer services,
+                               TermRepository termRepository,
+                               UserRepository userRepository) {
         this.studySetRepository = studySetRepository;
         this.repository = repository;
         this.mapper = mapper;
         this.services = services;
+        this.termRepository = termRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
+    @Transactional
     public TermProgressResponseDTO update(TermProgressUpdateDTO dto) {
         return services.use(repository).single(r -> r.save(mapper.fromUpdate(dto))).to(mapper::toResponse);
     }
 
     @Override
+    @Transactional
     public List<TermProgressResponseDTO> updateAll(List<TermProgressUpdateDTO> dtoList) {
         return dtoList.stream().map(dto ->
             services.use(repository)
@@ -72,15 +83,25 @@ public class UserTermServiceImpl implements UserTermService {
     }
 
     @Override
+    @Transactional
     public TermProgressResponseDTO save(Long userId, Long termId, String progress) {
         UserTerm userTerm = new UserTerm();
-        userTerm.setUser(new User(userId));
-        userTerm.setTerm(new Term(termId));
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("No user with id: " + userId);
+        }
+        userTerm.setUser(userOptional.get());
+        Optional<Term> termOptional = termRepository.findById(termId);
+        if (termOptional.isEmpty()) {
+            throw new EntityNotFoundException("No term with id: " + termId);
+        }
+        userTerm.setTerm(termOptional.get());
         userTerm.setProgress(progress);
         return services.use(repository).single(r -> r.save(userTerm)).to(mapper::toResponse);
     }
 
     @Override
+    @Transactional
     public List<TermProgressResponseDTO> initializeProgress(Long userId, Long studySetId) {
         List<Long> termIds = getTermsIdsFromSet(studySetId);
         List<TermProgressResponseDTO> responseDTOS = new ArrayList<>();
@@ -100,6 +121,7 @@ public class UserTermServiceImpl implements UserTermService {
     }
 
     @Override
+    @Transactional
     public void removeProgress(Long userId, Long studySetId) {
         List<Long> terms = getTermsIdsFromSet(studySetId);
         removeAll(userId, terms);

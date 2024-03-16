@@ -82,6 +82,19 @@ class OptimizedTermServiceImplTest {
         insertedData.setUserSet(relationSaved);
         return insertedData;
     }
+
+    private static class ExpectedProgress {
+        private boolean studied;
+
+        public ExpectedProgress() {
+            studied = true;
+        }
+        public String next() {
+            String s = studied ? Progress.LEARNED : Progress.FAMILIAR;
+            studied = !studied;
+            return s;
+        }
+    }
     @Test
     void updateAll() {
         InsertedData insertedData = insertData("Alice");
@@ -90,19 +103,22 @@ class OptimizedTermServiceImplTest {
                 optimizedTermService.initializeProgress(
                         insertedData.getUser().getId(),
                         insertedData.getStudySet().getId());
-        optimizedTermService.updateAll(updates);
+        initialProgress.forEach(p -> assertEquals(Progress.UNFAMILIAR, p.getProgress()));
+        List<TermWithProgressResponseDTO> updated = optimizedTermService.updateAll(updates);
+        assertEquals(5, updated.size());
+        ExpectedProgress ex = new ExpectedProgress();
+        updated.forEach(u -> assertEquals(ex.next(), u.getProgress()));
     }
 
     private TermProgressUpdates generateUpdates(InsertedData insertedData) {
         List<TermResponseDTO> terms = insertedData.getTerms();
         Long userId = insertedData.getUser().getId();
         TermProgressUpdates updates = new TermProgressUpdates();
-        boolean studied = true;
         List<TermProgressPair> pairs = new ArrayList<>();
+        ExpectedProgress ex = new ExpectedProgress();
         for (TermResponseDTO term : terms) {
-            TermProgressPair pair = new TermProgressPair(term.getId(), studied ? Progress.LEARNED : Progress.FAMILIAR);
+            TermProgressPair pair = new TermProgressPair(term.getId(), ex.next());
             pairs.add(pair);
-            studied = !studied;
         }
         updates.setUpdatesList(pairs);
         updates.setUserId(userId);

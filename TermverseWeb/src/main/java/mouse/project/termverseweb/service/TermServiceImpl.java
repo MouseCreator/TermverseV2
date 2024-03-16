@@ -17,16 +17,13 @@ public class TermServiceImpl implements TermService {
     private final ServiceProviderContainer services;
     private final TermRepository repository;
     private final TermMapper mapper;
-    private final StudySetService studySetService;
 
     public TermServiceImpl(ServiceProviderContainer services,
                            TermRepository termRepository,
-                           TermMapper mapper,
-                           StudySetService studySetService) {
+                           TermMapper mapper) {
         this.services = services;
         this.repository = termRepository;
         this.mapper = mapper;
-        this.studySetService = studySetService;
     }
 
     @Override

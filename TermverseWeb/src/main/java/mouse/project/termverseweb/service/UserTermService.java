@@ -11,7 +11,9 @@ public interface UserTermService {
     List<TermProgressResponseDTO> updateAll(List<TermProgressUpdateDTO> dtoList);
     List<TermProgressResponseDTO> getAll();
     List<TermProgressResponseDTO> getForTerms(Long userId, List<Long> termIds);
-    List<TermProgressResponseDTO> removeAll(Long userId, List<Long> termIds);
+    void removeAll(Long userId, List<Long> termIds);
     List<TermProgressResponseDTO> getForStudySet(Long userId, Long studySetId);
     TermProgressResponseDTO save(Long userId, Long studySetId, String progress);
+    List<TermProgressResponseDTO> initializeProgress(Long userId, Long studySetId);
+    void removeProgress(Long userId, Long studySetId);
 }

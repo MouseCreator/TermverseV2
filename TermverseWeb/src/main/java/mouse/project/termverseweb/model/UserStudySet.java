@@ -3,13 +3,8 @@ package mouse.project.termverseweb.model;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import mouse.project.termverseweb.lib.service.model.LongIterable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity

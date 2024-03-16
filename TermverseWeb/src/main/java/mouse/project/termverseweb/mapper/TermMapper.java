@@ -5,7 +5,6 @@ import mouse.project.termverseweb.dto.term.TermCreateDTO;
 import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermUpdateDTO;
 import mouse.project.termverseweb.model.Term;
-import mouse.project.termverseweb.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 

@@ -29,4 +29,7 @@ public class Term implements LongIterable {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    public Term(@Nonnull Long id) {
+        this.id = id;
+    }
 }

@@ -36,8 +36,7 @@ public class User implements LongIterable {
             joinColumns = @JoinColumn(name = "user_id")
     )
     private List<UserStudySet> studySets = new ArrayList<>();
-
-    public User(Long id) {
+    public User(@Nonnull Long id) {
         this.id = id;
     }
 }

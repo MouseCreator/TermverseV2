@@ -2,7 +2,6 @@ package mouse.project.termverseweb.repository;
 
 import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.lib.service.repository.CustomCrudRepository;
-import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.model.UserTerm;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,5 +27,5 @@ public interface UserTermRepository extends Repository<UserTerm, Long>, CustomCr
             "FROM UserTerm ut " +
             "WHERE ut.user = :userId AND ut.term IN (:termIds) AND " +
             "ut.user.deletedAt IS NULL AND ut.term.deletedAt IS NULL ")
-    Optional<User> findByUserAndTerms(@Param("user") Long userId, @Param("termIds") List<Long> terms);
+    List<UserTerm> findByUserAndTerms(@Param("userId") Long userId, @Param("termIds") List<Long> terms);
 }

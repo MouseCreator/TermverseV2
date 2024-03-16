@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import mouse.project.termverseweb.defines.Progress;
 import mouse.project.termverseweb.dto.progress.TermProgressPair;
 import mouse.project.termverseweb.dto.progress.TermProgressUpdates;
 import mouse.project.termverseweb.dto.term.TermWithProgressResponseDTO;
@@ -67,12 +68,25 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
         return result;
     }
 
-    private List<Term> getTermsFromSet(Long studySetId) {
+    private TermsOfSet getTermsFromSet(Long studySetId) {
         Optional<StudySet> byId = studySetRepository.findAllByIdWithTerms(studySetId);
         if(byId.isEmpty()) {
             throw new EntityNotFoundException("No study set with id " + studySetId + " found");
         }
-        return byId.get().getTerms();
+        return new TermsOfSet (byId.get().getTerms());
+    }
+    private static class TermsOfSet {
+        private final List<Term> terms;
+
+        public TermsOfSet(List<Term> terms) {
+            this.terms = terms;
+        }
+        public List<Term> terms() {
+            return new ArrayList<>(terms);
+        }
+        public List<Long> ids() {
+            return terms.stream().map(Term::getId).toList();
+        }
     }
 
     private List<UserTerm> createUserTerms(Long userId, List<TermProgressPair> updatesList) {
@@ -87,11 +101,51 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
 
     @Override
     public List<TermWithProgressResponseDTO> getForUserFromStudySet(Long userId, Long studySetId) {
-        List<Term> termsFromSet = getTermsFromSet(studySetId);
-        List<Long> idList = termsFromSet.stream().map(Term::getId).toList();
+        TermsOfSet termsFromSet = getTermsFromSet(studySetId);
+        Map<Long, UserTerm> map = getProgressMap(userId, termsFromSet.ids());
+        return toTermsWithProgress(termsFromSet.terms(), map, userId);
+    }
+
+    @Override
+    public List<TermWithProgressResponseDTO> initializeProgress(Long userId, Long studySetId) {
+        TermsOfSet termsFromSet = getTermsFromSet(studySetId);
+        List<Term> terms = termsFromSet.terms;
+        List<TermWithProgressResponseDTO> result = new ArrayList<>();
+        terms.forEach(t -> {
+            UserTerm userTerm = new UserTerm();
+            userTerm.setUser(new User(userId));
+            userTerm.setProgress(Progress.UNFAMILIAR);
+            userTerm.setTerm(t);
+            UserTerm saved = repository.save(userTerm);
+            result.add(termMapper.toResponseWithProgress(t, saved.getProgress()));
+        });
+        return result;
+    }
+
+    private Map<Long, UserTerm> getProgressMap(Long userId, List<Long> idList) {
         List<UserTerm> userTerm = repository.findByUserAndTerms(userId, idList);
         Map<Long, UserTerm> map = new HashMap<>();
         userTerm.forEach(ut -> map.put(ut.getTerm().getId(), ut));
-        return toTermsWithProgress(termsFromSet, map, userId);
+        return map;
+    }
+
+    @Override
+    public List<TermWithProgressResponseDTO> resetProgress(Long userId, Long studySetId) {
+        TermsOfSet termsFromSet = getTermsFromSet(studySetId);
+        Map<Long, UserTerm> map = getProgressMap(userId, termsFromSet.ids());
+        List<TermWithProgressResponseDTO> result = new ArrayList<>();
+        termsFromSet.terms().forEach(t -> {
+            UserTerm ut = map.get(t.getId());
+            ut.setProgress(Progress.UNFAMILIAR);
+            UserTerm save = repository.save(ut);
+            result.add(termMapper.toResponseWithProgress(t, save.getProgress()));
+        });
+        return result;
+    }
+
+    @Override
+    public void removeProgress(Long userId, Long studySetId) {
+        TermsOfSet termsFromSet = getTermsFromSet(studySetId);
+        repository.deleteByUserAndTerms(userId, termsFromSet.ids());
     }
 }

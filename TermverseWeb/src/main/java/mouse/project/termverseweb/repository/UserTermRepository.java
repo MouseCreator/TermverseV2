@@ -16,7 +16,7 @@ public interface UserTermRepository extends Repository<UserTerm, Long>, GenericR
     @Query("DELETE " +
             "FROM UserTerm ut " +
             "WHERE ut.user = :userId AND ut.term IN (:termIds)")
-    void deleteByUserAndTerms(@Param("id") Long id, @Param("termIds") List<Long> termIds);
+    void deleteByUserAndTerms(@Param("userId") Long id, @Param("termIds") List<Long> termIds);
     @Transactional
     @Modifying
     UserTerm save(UserTerm model);

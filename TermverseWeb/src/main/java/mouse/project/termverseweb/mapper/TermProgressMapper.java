@@ -13,7 +13,7 @@ public interface TermProgressMapper {
     @Mapping(source = "term", target = "termId", qualifiedByName = "termToId")
     TermProgressResponseDTO toResponse(UserTerm userStudySet);
 
-    @Mapping(source = "userId", target = "user", qualifiedByName = "userFromId")
+    @Mapping(source = "userId", target = "user", qualifiedByName = "userById")
     @Mapping(source = "termId", target = "term", qualifiedByName = "termFromId")
     UserTerm fromUpdate(TermProgressUpdateDTO userStudySet);
 

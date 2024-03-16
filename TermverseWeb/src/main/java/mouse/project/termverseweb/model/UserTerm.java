@@ -10,6 +10,7 @@ import mouse.project.termverseweb.lib.service.model.LongIterable;
 @Entity
 @NoArgsConstructor
 @Table(name = "users_terms")
+@IdClass(UserTermId.class)
 public class UserTerm {
 
     @ManyToOne

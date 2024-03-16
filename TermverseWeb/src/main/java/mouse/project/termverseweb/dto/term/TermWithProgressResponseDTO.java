@@ -10,5 +10,5 @@ public class TermWithProgressResponseDTO {
     private String hint;
     private String picture_url;
     private Integer order;
-    private String progress;
+    private String progress = null;
 }

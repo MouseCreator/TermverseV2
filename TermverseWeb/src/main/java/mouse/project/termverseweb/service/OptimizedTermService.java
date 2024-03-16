@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.dto.progress.TermProgressUpdates;
 import mouse.project.termverseweb.dto.term.TermWithProgressResponseDTO;
 

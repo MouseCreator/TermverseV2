@@ -1,4 +1,4 @@
-package mouse.project.termverseweb.utils;
+package mouse.project.termverseweb.defines;
 
 public class UserStudySetRelation {
     public static String OWNER = "owner";

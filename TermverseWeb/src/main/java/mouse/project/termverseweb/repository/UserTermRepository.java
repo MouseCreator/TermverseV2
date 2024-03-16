@@ -3,7 +3,6 @@ package mouse.project.termverseweb.repository;
 import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.lib.service.repository.GenericRepository;
 import mouse.project.termverseweb.model.UserTerm;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
@@ -18,7 +17,6 @@ public interface UserTermRepository extends Repository<UserTerm, Long>, GenericR
             "WHERE ut.user = :userId AND ut.term IN (:termIds)")
     void deleteByUserAndTerms(@Param("userId") Long id, @Param("termIds") List<Long> termIds);
     @Transactional
-    @Modifying
     UserTerm save(UserTerm model);
     @Query("SELECT ut " +
             "FROM UserTerm ut " +

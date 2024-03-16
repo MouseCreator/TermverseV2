@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.defines.Progress;
 import mouse.project.termverseweb.dto.progress.TermProgressPair;
 import mouse.project.termverseweb.dto.progress.TermProgressUpdates;
@@ -13,7 +14,9 @@ import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.model.UserTerm;
 import mouse.project.termverseweb.repository.StudySetRepository;
 import mouse.project.termverseweb.repository.TermRepository;
+import mouse.project.termverseweb.repository.UserRepository;
 import mouse.project.termverseweb.repository.UserTermRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,14 +29,18 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
     private final UserTermRepository repository;
     private final TermRepository termRepository;
     private final TermMapper termMapper;
+    private final UserRepository userRepository;
     @Autowired
     public OptimizedTermServiceImpl(StudySetRepository studySetRepository,
                                     UserTermRepository repository,
-                                    TermMapper termMapper, TermRepository termRepository) {
+                                    TermMapper termMapper,
+                                    TermRepository termRepository,
+                                    UserRepository userRepository) {
         this.studySetRepository = studySetRepository;
         this.repository = repository;
         this.termRepository = termRepository;
         this.termMapper = termMapper;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -73,7 +80,7 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
         if(byId.isEmpty()) {
             throw new EntityNotFoundException("No study set with id " + studySetId + " found");
         }
-        return new TermsOfSet (byId.get().getTerms());
+        return new TermsOfSet(byId.get().getTerms());
     }
     private static class TermsOfSet {
         private final List<Term> terms;
@@ -93,7 +100,7 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
         return updatesList.stream().map(u -> {
             UserTerm userTerm = new UserTerm();
             userTerm.setProgress(u.getProgress());
-            userTerm.setUser(new User(userId));
+            userTerm.setUser(getUser(userId));
             userTerm.setTerm(new Term(u.getTerm()));
             return userTerm;
         }).toList();
@@ -107,19 +114,30 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
     }
 
     @Override
+    @Transactional
     public List<TermWithProgressResponseDTO> initializeProgress(Long userId, Long studySetId) {
+        User user = getUser(userId);
         TermsOfSet termsFromSet = getTermsFromSet(studySetId);
-        List<Term> terms = termsFromSet.terms;
+        List<Term> terms = termsFromSet.terms();
         List<TermWithProgressResponseDTO> result = new ArrayList<>();
         terms.forEach(t -> {
             UserTerm userTerm = new UserTerm();
-            userTerm.setUser(new User(userId));
+            userTerm.setUser(user);
             userTerm.setProgress(Progress.UNFAMILIAR);
             userTerm.setTerm(t);
             UserTerm saved = repository.save(userTerm);
             result.add(termMapper.toResponseWithProgress(t, saved.getProgress()));
         });
         return result;
+    }
+
+    @NotNull
+    private User getUser(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException("No user with id: " + userId);
+        }
+        return user.get();
     }
 
     private Map<Long, UserTerm> getProgressMap(Long userId, List<Long> idList) {
@@ -130,6 +148,7 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
     }
 
     @Override
+    @Transactional
     public List<TermWithProgressResponseDTO> resetProgress(Long userId, Long studySetId) {
         TermsOfSet termsFromSet = getTermsFromSet(studySetId);
         Map<Long, UserTerm> map = getProgressMap(userId, termsFromSet.ids());
@@ -144,6 +163,7 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
     }
 
     @Override
+    @Transactional
     public void removeProgress(Long userId, Long studySetId) {
         TermsOfSet termsFromSet = getTermsFromSet(studySetId);
         repository.deleteByUserAndTerms(userId, termsFromSet.ids());

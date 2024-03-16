@@ -12,7 +12,7 @@ import mouse.project.termverseweb.models.Factories;
 import mouse.project.termverseweb.models.StudySetFactory;
 import mouse.project.termverseweb.models.UserFactory;
 import mouse.project.termverseweb.models.UserStudySetFactory;
-import mouse.project.termverseweb.utils.UserStudySetRelation;
+import mouse.project.termverseweb.defines.UserStudySetRelation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

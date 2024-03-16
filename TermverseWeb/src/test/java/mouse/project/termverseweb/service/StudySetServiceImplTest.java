@@ -15,7 +15,7 @@ import mouse.project.termverseweb.models.TermFactory;
 import mouse.project.termverseweb.models.UserFactory;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.utils.DateUtils;
-import mouse.project.termverseweb.utils.UserStudySetRelation;
+import mouse.project.termverseweb.defines.UserStudySetRelation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

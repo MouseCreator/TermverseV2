@@ -10,19 +10,18 @@ import mouse.project.termverseweb.lib.service.model.LongIterable;
 @Entity
 @NoArgsConstructor
 @Table(name = "users_terms")
-public class UserTerm implements LongIterable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UserTerm {
 
     @ManyToOne
     @Nonnull
     @JoinColumn(name = "user_id")
+    @Id
     private User user;
 
     @ManyToOne
     @Nonnull
     @JoinColumn(name = "term_id")
+    @Id
     private Term term;
     @Nonnull
     private String progress;

@@ -38,26 +38,21 @@ public class UserTermServiceImpl implements UserTermService {
 
     @Override
     public TermProgressResponseDTO update(TermProgressUpdateDTO dto) {
-        return services.crud(repository).update(dto, mapper::fromUpdate).to(mapper::toResponse);
-    }
-
-    @Override
-    public TermProgressResponseDTO getById(Long id) {
-        return services.crud(repository).findById(id).orThrow(mapper::toResponse);
+        return services.use(repository).single(r -> r.save(mapper.fromUpdate(dto))).to(mapper::toResponse);
     }
 
     @Override
     public List<TermProgressResponseDTO> updateAll(List<TermProgressUpdateDTO> dtoList) {
         return dtoList.stream().map(dto ->
-            services.crud(repository)
-                    .update(dto, mapper::fromUpdate)
+            services.use(repository)
+                    .single(r -> r.save(mapper.fromUpdate(dto)))
                     .to(mapper::toResponse)
         ).toList();
     }
 
     @Override
     public List<TermProgressResponseDTO> getAll() {
-        return services.crud(repository).findAll().to(mapper::toResponse);
+        return services.use(repository).multi(UserTermRepository::findAll).to(mapper::toResponse);
     }
 
     @Override
@@ -82,7 +77,7 @@ public class UserTermServiceImpl implements UserTermService {
         userTerm.setUser(new User(userId));
         userTerm.setTerm(new Term(termId));
         userTerm.setProgress(progress);
-        return services.crud(repository).save(userTerm).to(mapper::toResponse);
+        return services.use(repository).single(r -> r.save(userTerm)).to(mapper::toResponse);
     }
 
     @Override
@@ -108,5 +103,13 @@ public class UserTermServiceImpl implements UserTermService {
     public void removeProgress(Long userId, Long studySetId) {
         List<Long> terms = getTermsIdsFromSet(studySetId);
         removeAll(userId, terms);
+    }
+
+    @Override
+    public int countStudied(Long userId, Long studySetId) {
+        List<Long> termsIdsFromSet = getTermsIdsFromSet(studySetId);
+        return (int) repository.findByUserAndTerms(userId, termsIdsFromSet)
+                .stream().filter(p -> Progress.FAMILIAR.equals(p.getProgress()))
+                .count();
     }
 }

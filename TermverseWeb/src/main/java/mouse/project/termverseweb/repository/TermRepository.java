@@ -37,4 +37,6 @@ public interface TermRepository extends Repository<Term, Long>,
     @Query(value = "DELETE FROM study_sets_terms WHERE term_id = :termId", nativeQuery = true)
     @Modifying
     void removeTermFormStudySetsById(Long termId);
+    @Query("SELECT t FROM Term t WHERE t.id IN :ids AND t.deletedAt IS NULL")
+    List<Term> findAllByIds(@Param("ids") List<Long> termIds);
 }

@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface UserTermService {
     TermProgressResponseDTO update(TermProgressUpdateDTO dto);
-    TermProgressResponseDTO getById(Long id);
     List<TermProgressResponseDTO> updateAll(List<TermProgressUpdateDTO> dtoList);
     List<TermProgressResponseDTO> getAll();
     List<TermProgressResponseDTO> getForTerms(Long userId, List<Long> termIds);
@@ -16,4 +15,5 @@ public interface UserTermService {
     TermProgressResponseDTO save(Long userId, Long studySetId, String progress);
     List<TermProgressResponseDTO> initializeProgress(Long userId, Long studySetId);
     void removeProgress(Long userId, Long studySetId);
+    int countStudied(Long userId, Long studySetId);
 }

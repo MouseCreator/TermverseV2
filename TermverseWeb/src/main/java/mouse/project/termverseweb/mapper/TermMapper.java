@@ -4,6 +4,7 @@ import mouse.project.termverseweb.config.MapperConfig;
 import mouse.project.termverseweb.dto.term.TermCreateDTO;
 import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermUpdateDTO;
+import mouse.project.termverseweb.dto.term.TermWithProgressResponseDTO;
 import mouse.project.termverseweb.model.Term;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,7 +16,7 @@ import java.util.List;
 public interface TermMapper {
     TermResponseDTO toResponse(Term model);
     @Mapping(target = "progress", source = "progress")
-    TermResponseDTO toResponseWithProgress(Term model, String progress);
+    TermWithProgressResponseDTO toResponseWithProgress(Term model, String progress);
     Term fromCreate(TermCreateDTO createDTO);
     Term fromUpdate(TermUpdateDTO updateDTO);
     @Named("termToResponse")

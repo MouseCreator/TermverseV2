@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-drop-id-in-users-terms-001
+      author: Mykhailo Tyshchenko
+      changes:
+        - dropPrimaryKey:
+            tableName: users_terms
+        - addForeignKeyConstraint:
+            baseTableName: users_terms
+            baseColumnNames: user_id
+            constraintName: fk_users_terms_user
+            referencedTableName: users
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: users_terms
+            baseColumnNames: term_id
+            constraintName: fk_users_terms_term
+            referencedTableName: terms
+            referencedColumnNames: id
+  - changeSet:
+      id: 08-drop-id-in-users-terms-002
+      author: Mykhailo Tyshchenko
+      changes:
+        - addPrimaryKey:
+            tableName: users_terms
+            columnNames: user_id, term_id
+            constraintName: pk_users_terms_composite

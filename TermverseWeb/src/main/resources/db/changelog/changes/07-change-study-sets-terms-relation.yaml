@@ -39,3 +39,4 @@ databaseChangeLog:
             oldColumnName: order
             newColumnName: term_order
             columnDataType: integer
+

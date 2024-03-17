@@ -110,6 +110,9 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
     public List<TermWithProgressResponseDTO> getForUserFromStudySet(Long userId, Long studySetId) {
         TermsOfSet termsFromSet = getTermsFromSet(studySetId);
         Map<Long, UserTerm> map = getProgressMap(userId, termsFromSet.ids());
+        if (map.isEmpty() && !termsFromSet.terms().isEmpty()) {
+            throw new EntityNotFoundException("No progress defined for user " + userId + " and set " + studySetId);
+        }
         return toTermsWithProgress(termsFromSet.terms(), map, userId);
     }
 

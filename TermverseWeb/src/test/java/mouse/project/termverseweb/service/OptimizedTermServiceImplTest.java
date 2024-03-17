@@ -1,8 +1,8 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import mouse.project.termverseweb.defines.Progress;
-import mouse.project.termverseweb.defines.UserStudySetRelation;
 import mouse.project.termverseweb.dto.progress.TermProgressPair;
 import mouse.project.termverseweb.dto.progress.TermProgressUpdates;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
@@ -12,7 +12,6 @@ import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermWithProgressResponseDTO;
 import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
-import mouse.project.termverseweb.dto.userstudyset.UserStudySetCreateDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.models.*;
 import org.springframework.context.ApplicationContext;
@@ -74,12 +73,6 @@ class OptimizedTermServiceImplTest {
         insertedData.setTerms(studySetService.findByIdWithTerms(setSaved.getId()).getTerms());
         insertedData.setStudySet(setSaved);
 
-
-        UserStudySetService userStudySetService = context.getBean(UserStudySetService.class);
-        UserStudySetCreateDTO relation = factories.getFactory(UserStudySetFactory.class).getCreateDTO(savedUser.getId(),
-                setSaved.getId(), UserStudySetRelation.OWNER);
-        UserStudySetResponseDTO relationSaved = userStudySetService.save(relation);
-        insertedData.setUserSet(relationSaved);
         return insertedData;
     }
 
@@ -105,7 +98,7 @@ class OptimizedTermServiceImplTest {
                         insertedData.getStudySet().getId());
         initialProgress.forEach(p -> assertEquals(Progress.UNFAMILIAR, p.getProgress()));
         List<TermWithProgressResponseDTO> updated = optimizedTermService.updateAll(updates);
-        assertEquals(5, updated.size());
+        assertEquals(TERMS_CREATED, updated.size());
         ExpectedProgress ex = new ExpectedProgress();
         updated.forEach(u -> assertEquals(ex.next(), u.getProgress()));
     }
@@ -128,7 +121,24 @@ class OptimizedTermServiceImplTest {
 
     @Test
     void getForUserFromStudySet() {
+        InsertedData insertedData = insertData("Bob");
+        initProgress(insertedData);
+        List<TermWithProgressResponseDTO> bobsTerms = optimizedTermService.
+                getForUserFromStudySet(insertedData.getUser().getId(), insertedData.getStudySet().getId());
+        assertEquals(TERMS_CREATED, bobsTerms.size());
+        List<String> strTerms = insertedData.getTerms().stream().map(TermResponseDTO::getTerm).toList();
+        bobsTerms.stream()
+                .map(TermWithProgressResponseDTO::getTerm)
+                .forEach(s -> assertTrue(strTerms.contains(s)));
+        bobsTerms.forEach(t -> assertEquals(Progress.UNFAMILIAR, t.getProgress()));
     }
+
+    private void initProgress(InsertedData insertedData) {
+        Long userId = insertedData.getUser().getId();
+        Long setId = insertedData.getStudySet().getId();
+        optimizedTermService.initializeProgress(userId, setId);
+    }
+
 
     @Test
     void initializeProgress() {
@@ -145,9 +155,31 @@ class OptimizedTermServiceImplTest {
 
     @Test
     void resetProgress() {
+        InsertedData insertedData = insertData("Daisy");
+        initProgress(insertedData);
+        TermProgressUpdates updates = generateUpdates(insertedData);
+        optimizedTermService.updateAll(updates);
+        Long userId = insertedData.getUser().getId();
+        Long studySetId = insertedData.getStudySet().getId();
+        List<TermWithProgressResponseDTO> reset = optimizedTermService.
+                resetProgress(userId, studySetId);
+        for (TermWithProgressResponseDTO dto : reset) {
+            assertEquals(Progress.UNFAMILIAR, dto.getProgress());
+        }
+        List<TermWithProgressResponseDTO> after = optimizedTermService.getForUserFromStudySet(userId, studySetId);
+        for (TermWithProgressResponseDTO dto : after) {
+            assertEquals(Progress.UNFAMILIAR, dto.getProgress());
+        }
+
     }
 
     @Test
     void removeProgress() {
+        InsertedData insertedData = insertData("Elliott");
+        initProgress(insertedData);
+        Long userId = insertedData.getUser().getId();
+        Long studySetId = insertedData.getStudySet().getId();
+        optimizedTermService.removeProgress(userId, studySetId);
+        assertThrows(EntityNotFoundException.class, () -> optimizedTermService.getForUserFromStudySet(userId, studySetId));
     }
 }

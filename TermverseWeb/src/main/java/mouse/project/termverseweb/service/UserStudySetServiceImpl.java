@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetCreateDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetUpdateDTO;
@@ -14,18 +15,24 @@ public class UserStudySetServiceImpl implements UserStudySetService {
     private final UserStudySetRepository repository;
     private final ServiceProviderContainer services;
     private final UserStudySetMapper mapper;
-
+    private final UserTermService userTermService;
     public UserStudySetServiceImpl(UserStudySetRepository repository,
                                    ServiceProviderContainer services,
-                                   UserStudySetMapper mapper) {
+                                   UserStudySetMapper mapper,
+                                   UserTermService userTermService) {
         this.repository = repository;
         this.services = services;
         this.mapper = mapper;
+        this.userTermService = userTermService;
     }
 
     @Override
+    @Transactional
     public UserStudySetResponseDTO save(UserStudySetCreateDTO userStudySetCreateDTO) {
-        return services.crud(repository).save(userStudySetCreateDTO, mapper::fromCreate).to(mapper::toResponse);
+        UserStudySetResponseDTO result = services.crud(repository).
+                save(userStudySetCreateDTO, mapper::fromCreate).to(mapper::toResponse);
+        userTermService.initializeProgress(userStudySetCreateDTO.getUserId(), userStudySetCreateDTO.getStudySetId());
+        return result;
     }
 
     @Override
@@ -40,7 +47,9 @@ public class UserStudySetServiceImpl implements UserStudySetService {
 
     @Override
     public void removeById(Long id) {
+        UserStudySetResponseDTO toRemove = getById(id);
         services.crud(repository).removeById(id);
+        userTermService.removeProgress(toRemove.getUserId(), toRemove.getStudySetId());
     }
 
     @Override
@@ -49,6 +58,7 @@ public class UserStudySetServiceImpl implements UserStudySetService {
     }
 
     @Override
+    @Transactional
     public UserStudySetResponseDTO save(Long userId, Long studySetId, String type) {
         UserStudySetCreateDTO createDTO = new UserStudySetCreateDTO();
         createDTO.setUserId(userId);

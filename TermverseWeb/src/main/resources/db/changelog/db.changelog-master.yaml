@@ -15,3 +15,5 @@ databaseChangeLog:
       file: db/changelog/changes/07-change-study-sets-terms-relation.yaml
   - include:
       file: db/changelog/changes/08-drop-id-in-users-terms.yaml
+  - include:
+      file: db/changelog/changes/09-drop-id-in-users-study-sets.yaml

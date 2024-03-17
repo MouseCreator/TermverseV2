@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 09-drop-id-in-users-study-sets-001
+      author: Mykhailo Tyshchenko
+      changes:
+        - dropPrimaryKey:
+            tableName: users_study_sets
+  - changeSet:
+      id: 09-drop-id-in-users-study-sets-002
+      author: Mykhailo Tyshchenko
+      changes:
+        - addPrimaryKey:
+            tableName: users_study_sets
+            columnNames: user_id, study_set_id
+            constraintName: pk_users_study_sets_composite

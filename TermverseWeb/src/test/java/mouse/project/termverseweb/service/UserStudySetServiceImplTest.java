@@ -66,20 +66,18 @@ class UserStudySetServiceImplTest {
         Long setId = set.getId();
 
         UserStudySetResponseDTO saved = service.save(aliceId, setId, UserStudySetRelation.OWNER);
-        Long id = saved.getId();
-        assertNotNull(id);
 
         assertEquals(aliceId, saved.getUserId());
         assertEquals(setId, saved.getStudySetId());
         assertEquals(UserStudySetRelation.OWNER, saved.getType());
 
-        UserStudySetResponseDTO byId = service.getById(id);
+        UserStudySetResponseDTO byId = service.getByUserAndStudySet(aliceId, setId);
         assertEquals(saved, byId);
 
     }
     private UserStudySetResponseDTO saveRelation(String name) {
-        UserResponseDTO bob = saveUser("name");
-        Long bobId = bob.getId();
+        UserResponseDTO named = saveUser(name);
+        Long bobId = named.getId();
         StudySetResponseDTO set = saveStudySet(name + "'s set");
         Long setId = set.getId();
 
@@ -90,8 +88,6 @@ class UserStudySetServiceImplTest {
         UserStudySetResponseDTO relation = saveRelation("Bob");
 
         UserStudySetUpdateDTO updateDTO = new UserStudySetUpdateDTO();
-        Long id = relation.getId();
-        updateDTO.setId(id);
         updateDTO.setUserId(relation.getUserId());
         updateDTO.setStudySetId(relation.getStudySetId());
         updateDTO.setType(UserStudySetRelation.EDITOR);
@@ -109,20 +105,21 @@ class UserStudySetServiceImplTest {
         Long setId = set.getId();
 
         UserStudySetResponseDTO relation = saveRelation(bobId, setId, UserStudySetRelation.OWNER);
-        Long id = relation.getId();
-        UserStudySetResponseDTO relationById = service.getById(id);
-        assertEquals(id, relationById.getId());
+        UserStudySetResponseDTO relationById = service.getByUserAndStudySet(bobId, setId);
+        assertEquals(relation.getUserId(), relationById.getUserId());
+        assertEquals(relation.getStudySetId(), relationById.getStudySetId());
 
         Long notExisting = Long.MAX_VALUE;
-        assertThrows(EntityNotFoundException.class, ()->service.getById(notExisting));
+        assertThrows(EntityNotFoundException.class, ()->service.getByUserAndStudySet(notExisting, notExisting));
     }
 
     @Test
     void removeById() {
         UserStudySetResponseDTO relation = saveRelation("Elliott");
-        Long id = relation.getId();
-        service.removeById(id);
-        assertThrows(EntityNotFoundException.class, ()->service.getById(id));
+        Long userId = relation.getUserId();
+        Long setId = relation.getStudySetId();
+        service.removeByUserAndStudySet(userId, setId);
+        assertThrows(EntityNotFoundException.class, ()->service.getByUserAndStudySet(userId, setId));
     }
 
     @Test

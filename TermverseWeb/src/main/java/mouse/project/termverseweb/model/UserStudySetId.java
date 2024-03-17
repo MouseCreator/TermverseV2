@@ -8,10 +8,10 @@ import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-public class UserTermId implements Serializable {
+public class UserStudySetId implements Serializable {
     @Serial
-    private static final long serialVersionUID = 4369982846685769906L;
+    private static final long serialVersionUID = -4316510197130191443L;
     private User user;
-    private Term term;
+    private StudySet studySet;
 
 }

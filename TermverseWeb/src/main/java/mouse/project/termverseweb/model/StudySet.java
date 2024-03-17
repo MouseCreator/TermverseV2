@@ -30,7 +30,7 @@ public class StudySet implements LongIterable {
     private LocalDateTime createdAt;
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt = null;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JoinTable(
@@ -38,7 +38,7 @@ public class StudySet implements LongIterable {
             joinColumns = @JoinColumn(name = "study_set_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<UserStudySet> users = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

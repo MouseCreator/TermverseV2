@@ -44,7 +44,7 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
     @Query("SELECT s " +
             "FROM StudySet s JOIN s.users u " +
             "WHERE u.id = :userId " +
-            "AND s.deletedAt IS NULL AND u.user.deletedAt IS NULL")
+            "AND s.deletedAt IS NULL AND u.deletedAt IS NULL")
     List<StudySet> findAllByUserId(@Param("userId") Long userId);
 
     @Query("SELECT s FROM StudySet s " +

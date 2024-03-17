@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class UserStudySetFactory implements Factory{
     public UserStudySetCreateDTO getCreateDTO(Long userId, Long studySetId, String type) {
         UserStudySetCreateDTO userStudySetCreateDTO = new UserStudySetCreateDTO();
-        userStudySetCreateDTO.setStudySetId(userId);
+        userStudySetCreateDTO.setUserId(userId);
         userStudySetCreateDTO.setStudySetId(studySetId);
         userStudySetCreateDTO.setType(type);
         return userStudySetCreateDTO;

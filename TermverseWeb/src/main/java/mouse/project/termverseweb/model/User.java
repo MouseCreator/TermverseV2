@@ -29,13 +29,13 @@ public class User implements LongIterable {
     private String profilePictureUrl;
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_study_sets",
             inverseJoinColumns = @JoinColumn(name = "study_set_id"),
             joinColumns = @JoinColumn(name = "user_id")
     )
-    private List<UserStudySet> studySets = new ArrayList<>();
+    private List<StudySet> studySets = new ArrayList<>();
     public User(@Nonnull Long id) {
         this.id = id;
     }

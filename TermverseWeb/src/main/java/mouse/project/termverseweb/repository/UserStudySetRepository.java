@@ -1,20 +1,28 @@
 package mouse.project.termverseweb.repository;
 
 import jakarta.transaction.Transactional;
-import mouse.project.termverseweb.lib.service.repository.CustomCrudRepository;
+import mouse.project.termverseweb.lib.service.repository.GenericRepository;
 import mouse.project.termverseweb.model.UserStudySet;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 @org.springframework.stereotype.Repository
-public interface UserStudySetRepository extends Repository<UserStudySet, Long>,
-        CustomCrudRepository<UserStudySet, Long> {
+public interface UserStudySetRepository extends Repository<UserStudySet, Long>, GenericRepository {
     List<UserStudySet> findAll();
-    Optional<UserStudySet> findById(@Param("id") Long id);
-    void deleteById(@Param("id") Long id);
+    @Query("SELECT us " +
+            "FROM UserStudySet us " +
+            "WHERE us.user.id = :userId AND us.studySet.id = :setId " +
+            "AND us.user.deletedAt IS NULL ANd us.studySet.deletedAt IS NULL")
+    Optional<UserStudySet> findByUserAndStudySet(@Param("userId") Long user, @Param("setId") Long studySetId);
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM UserStudySet us WHERE us.user.id = :userId AND us.studySet.id = :setId " +
+            "AND us.user.deletedAt IS NULL AND us.studySet.deletedAt IS NULL")
+    void deleteByUserAndStudySet(@Param("userId") Long userId, @Param("setId") Long setId);
     @Transactional
     @Modifying
     UserStudySet save(UserStudySet model);

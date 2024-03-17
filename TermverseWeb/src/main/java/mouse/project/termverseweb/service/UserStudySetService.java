@@ -8,9 +8,10 @@ import java.util.List;
 
 public interface UserStudySetService {
     UserStudySetResponseDTO save(UserStudySetCreateDTO userStudySetCreateDTO);
+    UserStudySetResponseDTO update(Long userId, Long studySetId, String relation);
     UserStudySetResponseDTO update(UserStudySetUpdateDTO userStudySetCreateDTO);
-    UserStudySetResponseDTO getById(Long id);
-    void removeById(Long id);
+    UserStudySetResponseDTO getByUserAndStudySet(Long userId, Long studySetId);
+    void removeByUserAndStudySet(Long userId, Long studySetId);
     List<UserStudySetResponseDTO> getAll();
     UserStudySetResponseDTO save(Long userId, Long studySetId, String type);
 }

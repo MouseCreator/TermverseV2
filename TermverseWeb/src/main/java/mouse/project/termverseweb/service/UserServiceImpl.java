@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO update(UserUpdateDTO userUpdateDTO) {
         User model = userMapper.fromUpdate(userUpdateDTO);
-        if (model.getId()==null) {
+        if (userUpdateDTO.getId()==null) {
             throw new UpdateException("Cannot update model without id: " + model);
         }
         User savedModel = userRepository.save(model);

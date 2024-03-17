@@ -14,6 +14,7 @@ import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.models.*;
+import mouse.project.termverseweb.service.open.OptimizedTermService;
 import org.springframework.context.ApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

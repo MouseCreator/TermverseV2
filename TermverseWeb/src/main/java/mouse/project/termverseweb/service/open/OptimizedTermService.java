@@ -1,4 +1,4 @@
-package mouse.project.termverseweb.service;
+package mouse.project.termverseweb.service.open;
 
 import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.dto.progress.TermProgressUpdates;

@@ -2,7 +2,10 @@ package mouse.project.termverseweb.repository;
 
 import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.lib.service.repository.SoftDeleteCrudRepository;
+import mouse.project.termverseweb.model.SizedStudySet;
 import mouse.project.termverseweb.model.StudySet;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -46,10 +49,20 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "WHERE u.id = :userId " +
             "AND s.deletedAt IS NULL AND u.deletedAt IS NULL")
     List<StudySet> findAllByUserId(@Param("userId") Long userId);
+    @Query("SELECT s " +
+            "FROM StudySet s JOIN s.users u " +
+            "WHERE u.id = :userId " +
+            "AND s.deletedAt IS NULL AND u.deletedAt IS NULL")
+    Page<StudySet> findAllByUserIdAndPage(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT s FROM StudySet s " +
             "LEFT JOIN FETCH s.terms t " +
             "WHERE s.id = :id " +
             "AND s.deletedAt IS NULL")
     Optional<StudySet> findAllByIdWithTerms(@Param("id") Long id);
+    @Query("SELECT new mouse.project.termverseweb.model.SizedStudySet(s, SIZE(s.terms)) " +
+            "FROM StudySet s " +
+            "WHERE s.id = :setId " +
+            "AND s.deletedAt IS NULL")
+    Optional<SizedStudySet> findByIdWithSize(@Param("id") Long id);
 }

@@ -86,16 +86,14 @@ public class UserTermServiceImpl implements UserTermService {
     @Transactional
     public TermProgressResponseDTO save(Long userId, Long termId, String progress) {
         UserTerm userTerm = new UserTerm();
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new EntityNotFoundException("No user with id: " + userId);
-        }
-        userTerm.setUser(userOptional.get());
-        Optional<Term> termOptional = termRepository.findById(termId);
-        if (termOptional.isEmpty()) {
-            throw new EntityNotFoundException("No term with id: " + termId);
-        }
-        userTerm.setTerm(termOptional.get());
+        User user = services.crud(userRepository)
+                .findById(userId)
+                .orThrow("No user with id: " + userId);
+        userTerm.setUser(user);
+        Term term = services.crud(termRepository)
+                .findById(termId)
+                .orThrow("No term with id: " + termId);
+        userTerm.setTerm(term);
         userTerm.setProgress(progress);
         return services.use(repository).single(r -> r.save(userTerm)).to(mapper::toResponse);
     }

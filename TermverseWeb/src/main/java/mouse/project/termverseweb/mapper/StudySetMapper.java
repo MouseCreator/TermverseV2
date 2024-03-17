@@ -3,10 +3,7 @@ package mouse.project.termverseweb.mapper;
 import mouse.project.termverseweb.config.MapperConfig;
 
 
-import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetWithTermsResponseDTO;
+import mouse.project.termverseweb.dto.studyset.*;
 import mouse.project.termverseweb.model.StudySet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -30,4 +27,8 @@ public interface StudySetMapper {
     }
     @Mapping(source = "terms", target = "terms", qualifiedByName = "termToResponse")
     StudySetWithTermsResponseDTO toResponseWithTerms(StudySet studySet);
+    @Mapping(source = "terms", target = "terms", qualifiedByName = "termFromCreate")
+    StudySet fromCreator(StudySetWithCreatorDTO studySetWithCreatorDTO);
+    @Mapping(target = "size", source = "termCount")
+    StudySetDescriptionDTO toShortDescription(StudySet studySet, int termCount);
 }

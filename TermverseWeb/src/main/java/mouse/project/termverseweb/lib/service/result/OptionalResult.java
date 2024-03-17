@@ -34,5 +34,16 @@ public record OptionalResult<MODEL>(MODEL result) {
         }
         return defaultTransformation.apply(result);
     }
+
+    public MODEL orThrow() {
+        return orThrow("Entity not found");
+    }
+
+    public MODEL orThrow(String exception) {
+        if (result == null) {
+            throw new EntityNotFoundException(exception);
+        }
+        return result;
+    }
 }
 

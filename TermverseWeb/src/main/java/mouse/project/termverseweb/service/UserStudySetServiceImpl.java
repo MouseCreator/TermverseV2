@@ -2,10 +2,15 @@ package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import mouse.project.termverseweb.defines.UserStudySetRelation;
+import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetCreateDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetUpdateDTO;
+import mouse.project.termverseweb.exception.EntityStateException;
+import mouse.project.termverseweb.exception.MissingEntityException;
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
+import mouse.project.termverseweb.mapper.UserMapper;
 import mouse.project.termverseweb.mapper.UserStudySetMapper;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.User;
@@ -25,18 +30,21 @@ public class UserStudySetServiceImpl implements UserStudySetService {
     private final UserRepository userRepository;
     private final ServiceProviderContainer services;
     private final UserStudySetMapper mapper;
+    private final UserMapper userMapper;
     private final UserTermService userTermService;
     public UserStudySetServiceImpl(UserStudySetRepository repository,
                                    StudySetRepository studySetRepository,
                                    UserRepository userRepository,
                                    ServiceProviderContainer services,
                                    UserStudySetMapper mapper,
+                                   UserMapper userMapper,
                                    UserTermService userTermService) {
         this.repository = repository;
         this.studySetRepository = studySetRepository;
         this.userRepository = userRepository;
         this.services = services;
         this.mapper = mapper;
+        this.userMapper = userMapper;
         this.userTermService = userTermService;
     }
 
@@ -102,5 +110,27 @@ public class UserStudySetServiceImpl implements UserStudySetService {
         createDTO.setStudySetId(studySetId);
         createDTO.setType(type);
         return save(createDTO);
+    }
+
+    @Override
+    @Transactional
+    public UserResponseDTO getOwnerOfStudySet(Long id) {
+        List<UserStudySet> byUserAndType = repository.findByUserAndType(id, UserStudySetRelation.OWNER);
+        if (byUserAndType.isEmpty()) {
+            throw new MissingEntityException("Study set " + id + " has no owner");
+        }
+        if (byUserAndType.size() > 1) {
+            throw new EntityStateException("Study set " + id + " has " + byUserAndType.size() + " owners.");
+        }
+        User user = byUserAndType.get(0).getUser();
+        return userMapper.toResponse(user);
+    }
+
+    @Override
+    @Transactional
+    public List<UserResponseDTO> getUsersByStudySet(Long userId) {
+        List<UserStudySet> relatedUsers = repository.findByUser(userId);
+        List<User> userList = relatedUsers.stream().map(UserStudySet::getUser).toList();
+        return userList.stream().map(userMapper::toResponse).toList();
     }
 }

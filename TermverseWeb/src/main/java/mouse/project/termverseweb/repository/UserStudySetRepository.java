@@ -26,4 +26,15 @@ public interface UserStudySetRepository extends Repository<UserStudySet, Long>, 
     @Transactional
     @Modifying
     UserStudySet save(UserStudySet model);
+    @Query("SELECT us " +
+            "FROM UserStudySet us " +
+            "WHERE us.user.id = :userId AND us.type = :type " +
+            "AND us.user.deletedAt IS NULL")
+    List<UserStudySet> findByUserAndType(@Param("userId") Long userId, @Param("type") String type);
+
+    @Query("SELECT us " +
+            "FROM UserStudySet us " +
+            "WHERE us.user.id = :userId " +
+            "AND us.user.deletedAt IS NULL")
+    List<UserStudySet> findByUser(@Param("userId") Long userId);
 }

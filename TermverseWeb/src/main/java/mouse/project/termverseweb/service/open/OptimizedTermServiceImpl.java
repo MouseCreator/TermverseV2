@@ -84,7 +84,6 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
     }
     private static class TermsOfSet {
         private final List<Term> terms;
-
         public TermsOfSet(List<Term> terms) {
             this.terms = terms;
         }
@@ -170,5 +169,13 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
     public void removeProgress(Long userId, Long studySetId) {
         TermsOfSet termsFromSet = getTermsFromSet(studySetId);
         repository.deleteByUserAndTerms(userId, termsFromSet.ids());
+    }
+
+    @Override
+    @Transactional
+    public int getUserProgress(Long userId, Long studySetId) {
+        TermsOfSet termsFromSet = getTermsFromSet(studySetId);
+        return (int) repository.findByUserAndTerms(userId, termsFromSet.ids())
+                .stream().filter(t -> t.getProgress().equals(Progress.LEARNED)).count();
     }
 }

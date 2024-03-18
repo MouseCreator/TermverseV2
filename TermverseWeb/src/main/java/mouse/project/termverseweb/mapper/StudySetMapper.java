@@ -4,10 +4,13 @@ import mouse.project.termverseweb.config.MapperConfig;
 
 
 import mouse.project.termverseweb.dto.studyset.*;
+import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.model.StudySet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+
+import java.util.List;
 
 @Mapper(config = MapperConfig.class, uses = TermMapper.class)
 public interface StudySetMapper {
@@ -31,4 +34,10 @@ public interface StudySetMapper {
     StudySet fromCreator(StudySetWithCreatorDTO studySetWithCreatorDTO);
     @Mapping(target = "size", source = "termCount")
     StudySetDescriptionDTO toShortDescription(StudySet studySet, int termCount);
+    @Mapping(target = "size", source = "size")
+    @Mapping(target = "termsLearned", source = "studiedTerms")
+    StudySetDescriptionWithProgressDTO toProgressDescription(StudySet studySet, int size, int studiedTerms);
+    @Mapping(target = "owner", source = "savers")
+    @Mapping(target = "savedByUsers", source = "savers")
+    StudySetHeaderResponseDTO toHeader(StudySet studySet, UserResponseDTO owner, List<UserResponseDTO> savers);
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.defines.UserStudySetRelation;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
+import mouse.project.termverseweb.dto.user.UserWithRelation;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetCreateDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetUpdateDTO;
@@ -128,9 +129,11 @@ public class UserStudySetServiceImpl implements UserStudySetService {
 
     @Override
     @Transactional
-    public List<UserResponseDTO> getUsersByStudySet(Long userId) {
+    public List<UserWithRelation> getUsersByStudySet(Long userId) {
         List<UserStudySet> relatedUsers = repository.findByUser(userId);
-        List<User> userList = relatedUsers.stream().map(UserStudySet::getUser).toList();
-        return userList.stream().map(userMapper::toResponse).toList();
+        return relatedUsers.stream().map(u -> {
+            UserResponseDTO response = userMapper.toResponse(u.getUser());
+            return new UserWithRelation(response, u.getType());
+        }).toList();
     }
 }

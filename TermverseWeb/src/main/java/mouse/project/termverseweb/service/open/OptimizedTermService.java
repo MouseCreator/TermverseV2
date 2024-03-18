@@ -12,4 +12,6 @@ public interface OptimizedTermService {
     List<TermWithProgressResponseDTO> initializeProgress(Long userId, Long studySetId);
     List<TermWithProgressResponseDTO> resetProgress(Long userId, Long studySetId);
     void removeProgress(Long userId, Long studySetId);
+
+    int getUserProgress(Long userId, Long studySetId);
 }

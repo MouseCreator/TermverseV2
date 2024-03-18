@@ -53,7 +53,7 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "FROM StudySet s JOIN s.users u " +
             "WHERE u.id = :userId " +
             "AND s.deletedAt IS NULL AND u.deletedAt IS NULL")
-    Page<StudySet> findAllByUserIdAndPage(@Param("userId") Long userId, Pageable pageable);
+    Page<StudySet> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT s FROM StudySet s " +
             "LEFT JOIN FETCH s.terms t " +
@@ -65,4 +65,9 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "WHERE s.id = :setId " +
             "AND s.deletedAt IS NULL")
     Optional<SizedStudySet> findByIdWithSize(@Param("id") Long id);
+    @Query("SELECT SIZE(s.terms) " +
+            "FROM StudySet s " +
+            "WHERE s.id = :setId " +
+            "AND s.deletedAt IS NULL")
+    Integer getTermCount(Long id);
 }

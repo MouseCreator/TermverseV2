@@ -12,4 +12,5 @@ public interface OptimizedStudySetService {
     StudySetDescriptionWithProgressDTO getDescription(Long id, Long userId);
     StudySetHeaderResponseDTO getHeader(Long id);
 
+
 }

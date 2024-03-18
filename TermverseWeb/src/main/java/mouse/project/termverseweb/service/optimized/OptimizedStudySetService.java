@@ -1,4 +1,4 @@
-package mouse.project.termverseweb.service.open;
+package mouse.project.termverseweb.service.optimized;
 
 import mouse.project.termverseweb.dto.studyset.*;
 

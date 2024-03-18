@@ -1,4 +1,4 @@
-package mouse.project.termverseweb.service.open;
+package mouse.project.termverseweb.service.optimized;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

@@ -15,19 +15,21 @@ public interface TagRepository extends Repository<Tag, Long>, SoftDeleteCrudRepo
     @Transactional
     @Modifying
     Tag save(Tag tag);
-    @Query("SELECT t FROM Term t WHERE t.id = :id AND t.deletedAt IS NULL")
+    @Query("SELECT t FROM Tag t WHERE t.id = :id AND t.deletedAt IS NULL")
     Optional<Tag> findById(Long id);
 
-    @Query("SELECT t FROM Term t WHERE t.deletedAt IS NULL")
+    @Query("SELECT t FROM Tag t WHERE t.deletedAt IS NULL")
     List<Tag> findAll();
-
-    @Query(value = "UPDATE terms t SET deleted_at = NOW() WHERE t.id = :id", nativeQuery = true)
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE tags t SET deleted_at = NOW() WHERE t.id = :id", nativeQuery = true)
     void deleteById(Long id);
 
-    @Query("SELECT t from Term t")
+    @Query("SELECT t from Tag t")
     List<Tag> findAllIncludeDeleted();
-
-    @Query(value = "UPDATE terms t SET deleted_at = NULL WHERE t.id = :id", nativeQuery = true)
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE tags t SET deleted_at = NULL WHERE t.id = :id", nativeQuery = true)
     void restoreById(Long id);
 
     @Query(value = "SELECT t FROM Term t WHERE t.id = :id")

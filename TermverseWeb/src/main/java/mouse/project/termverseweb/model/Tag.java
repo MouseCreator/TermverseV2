@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "tags")
@@ -22,4 +24,6 @@ public class Tag {
     @Nonnull
     @ManyToOne
     private User owner;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

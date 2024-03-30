@@ -30,3 +30,6 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_users_tags
                     references: users(id)
+              - column:
+                  name: deleted_at
+                  type: timestamp

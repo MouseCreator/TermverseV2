@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10-create-tags-table-001
+      author: Mykhailo Tyshchenko
+      changes:
+        - createTable:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: color
+                  type: varchar(8)
+              - column:
+                  name: owner
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_users_tags
+                    references: users(id)

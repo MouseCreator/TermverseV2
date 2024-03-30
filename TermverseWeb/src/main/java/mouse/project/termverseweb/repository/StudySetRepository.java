@@ -64,10 +64,10 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "FROM StudySet s " +
             "WHERE s.id = :setId " +
             "AND s.deletedAt IS NULL")
-    Optional<SizedStudySet> findByIdWithSize(@Param("id") Long id);
+    Optional<SizedStudySet> findByIdWithSize(@Param("setId") Long id);
     @Query("SELECT SIZE(s.terms) " +
             "FROM StudySet s " +
             "WHERE s.id = :setId " +
             "AND s.deletedAt IS NULL")
-    Integer getTermCount(Long id);
+    Integer getTermCount(@Param("setId") Long setId);
 }

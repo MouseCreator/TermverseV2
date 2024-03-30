@@ -37,7 +37,9 @@ public interface StudySetMapper {
     @Mapping(target = "size", source = "size")
     @Mapping(target = "termsLearned", source = "studiedTerms")
     StudySetDescriptionWithProgressDTO toProgressDescription(StudySet studySet, int size, int studiedTerms);
-    @Mapping(target = "owner", source = "savers")
+    @Mapping(target = "owner", source = "owner")
     @Mapping(target = "savedByUsers", source = "savers")
+    @Mapping(target = "id", source = "studySet.id")
+    @Mapping(target = "name", source = "studySet.name")
     StudySetHeaderResponseDTO toHeader(StudySet studySet, UserResponseDTO owner, List<UserResponseDTO> savers);
 }

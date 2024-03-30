@@ -57,7 +57,7 @@ public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
 
     @Override
     public StudySetDescriptionDTO getShortDescription(Long id) {
-        Optional<SizedStudySet> byIdWithSize = repository.findByIdWithSize(id);
+        Optional<SizedStudySet> byIdWithSize = (repository.findByIdWithSize(id));
         if (byIdWithSize.isEmpty()) {
             throw new EntityNotFoundException("Study set with id " + id + " not found");
         }
@@ -110,7 +110,7 @@ public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
     @Override
     @Transactional
     public StudySetDescriptionWithProgressDTO getDescription(Long id, Long userId) {
-        Optional<SizedStudySet> byIdWithSize = repository.findByIdWithSize(id);
+        Optional<SizedStudySet> byIdWithSize = (repository.findByIdWithSize(id));
         if (byIdWithSize.isEmpty()) {
             throw new EntityNotFoundException("Study set with id " + id + " not found");
         }

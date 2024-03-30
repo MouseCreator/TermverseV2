@@ -1,15 +1,20 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import mouse.project.termverseweb.dto.tag.TagCreateDTO;
 import mouse.project.termverseweb.dto.tag.TagResponseDTO;
 import mouse.project.termverseweb.dto.tag.TagUpdateDTO;
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
 import mouse.project.termverseweb.mapper.TagMapper;
+import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.repository.TagRepository;
+import mouse.project.termverseweb.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class TagServiceImpl implements TagService {
@@ -17,6 +22,7 @@ public class TagServiceImpl implements TagService {
     private final TagRepository repository;
     private final TagMapper tagMapper;
     private final ServiceProviderContainer services;
+    private final UserRepository userRepository;
     @Override
     public List<TagResponseDTO> getAll() {
         return services.crud(repository).
@@ -32,6 +38,10 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagResponseDTO save(TagCreateDTO createDTO) {
+        Optional<User> user = userRepository.findById(createDTO.getOwnerId());
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException("No owner for creating tag: " + createDTO);
+        }
         return services.
                 crud(repository).
                 save(createDTO, tagMapper::fromCreate).
@@ -40,6 +50,10 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagResponseDTO update(TagUpdateDTO updateDTO) {
+        Optional<User> user = userRepository.findById(updateDTO.getOwnerId());
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException("No owner for updating tag: " + updateDTO);
+        }
         return services.
                 crud(repository).
                 update(updateDTO, tagMapper::fromUpdate).

@@ -93,7 +93,9 @@ class TagServiceImplTest {
     }
 
     @Test
-    void save() {
+    void saveInvalidId() {
+        TagCreateDTO invalid = factories.getFactory(TagFactory.class).tagCreateDTO(Long.MAX_VALUE, "Unnamed");
+        assertThrows(EntityNotFoundException.class, () -> tagService.save(invalid));
     }
 
     @Test

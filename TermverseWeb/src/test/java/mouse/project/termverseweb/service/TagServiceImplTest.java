@@ -18,7 +18,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -89,7 +88,7 @@ class TagServiceImplTest {
         TagResponseDTO firstTag = tags.get(0);
         prepareSoftDeletion()
                 .remove(firstTag)
-                .validateThrows(EnumConstantNotPresentException.class, () -> tagService.getById(firstTag.getId()))
+                .validateThrows(EntityNotFoundException.class, () -> tagService.getById(firstTag.getId()))
                 .restoreWith(tagService::restoreById);
     }
 

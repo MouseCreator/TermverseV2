@@ -1,9 +1,12 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import mouse.project.termverseweb.dto.tag.TagCreateDTO;
 import mouse.project.termverseweb.dto.tag.TagResponseDTO;
+import mouse.project.termverseweb.dto.tag.TagUpdateDTO;
 import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
+import mouse.project.termverseweb.exception.EntityStateException;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.models.Factories;
 import mouse.project.termverseweb.models.TagFactory;
@@ -63,14 +66,30 @@ class TagServiceImplTest {
         int size = insertedData.tags().size();
         List<TagResponseDTO> all = tagService.getAll();
         assertEquals(size, all.size());
-        softDeletionTest.using(tagService::removeById, TagResponseDTO::getId)
+        prepareSoftDeletion()
                 .removeAll(insertedData.tags)
                 .validateAbsentIn(tagService::getAll)
                 .restoreWith(tagService::restoreById);
     }
 
+    private SoftDeletionTest.BeforeSoftDeletion<TagResponseDTO, Long> prepareSoftDeletion() {
+        return softDeletionTest.using(tagService::removeById, TagResponseDTO::getId);
+    }
+
     @Test
     void getById() {
+        InsertedData insertedData = insertTestData();
+        List<TagResponseDTO> tags = insertedData.tags();
+        for (TagResponseDTO tag : tags) {
+            Long id = tag.getId();
+            TagResponseDTO byId = tagService.getById(id);
+            assertEquals(byId, tag);
+        }
+        TagResponseDTO firstTag = tags.get(0);
+        prepareSoftDeletion()
+                .remove(firstTag)
+                .validateThrows(EnumConstantNotPresentException.class, () -> tagService.getById(firstTag.getId()))
+                .restoreWith(tagService::restoreById);
     }
 
     @Test
@@ -79,6 +98,31 @@ class TagServiceImplTest {
 
     @Test
     void update() {
+        InsertedData insertedData = insertTestData();
+        assert !insertedData.tags().isEmpty();
+        String newName = "Updated!";
+        TagResponseDTO tag = insertedData.tags().get(0);
+        TagUpdateDTO updateDTO = updateDTOFor(tag, newName);
+        TagResponseDTO updated = tagService.update(updateDTO);
+
+        assertEquals(newName, updated.getName());
+
+        TagResponseDTO byId = tagService.getById(updated.getId());
+        assertEquals(newName, byId.getName());
+
+        prepareSoftDeletion()
+                .remove(tag)
+                .validateThrows(EntityNotFoundException.class, () -> tagService.update(updateDTO))
+                .restoreWith(tagService::restoreById);
+    }
+
+    private TagUpdateDTO updateDTOFor(TagResponseDTO tag, String setName) {
+        TagUpdateDTO updateDTO = new TagUpdateDTO();
+        updateDTO.setId(tag.getId());
+        updateDTO.setName(setName);
+        updateDTO.setColorHex(tag.getColorHex());
+        updateDTO.setOwnerId(tag.getOwnerId());
+        return updateDTO;
     }
 
     @Test

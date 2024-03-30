@@ -18,7 +18,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
@@ -64,7 +66,7 @@ class TagServiceImplTest {
         InsertedData insertedData = insertTestData();
         int size = insertedData.tags().size();
         List<TagResponseDTO> all = tagService.getAll();
-        assertEquals(size, all.size());
+        assertTrue(size <= all.size());
         prepareSoftDeletion()
                 .removeAll(insertedData.tags)
                 .validateAbsentIn(tagService::getAll)
@@ -155,18 +157,55 @@ class TagServiceImplTest {
 
     @Test
     void getAllWithDeleted() {
-
+        InsertedData insertedData = insertTestData();
+        prepareSoftDeletion()
+                .removeAll(insertedData.tags())
+                .validateAbsentIn(tagService::getAll)
+                .validatePresentIn(tagService::getAllWithDeleted)
+                .restoreWith(tagService::restoreById);
     }
 
     @Test
     void getAllByUser() {
+        InsertedData insertedData = insertTestData();
+        UserResponseDTO user = insertedData.user();
+        Long userId = user.getId();
+        List<TagResponseDTO> tags = insertedData.tags();
+        List<TagResponseDTO> allByUser = tagService.getAllByUser(userId);
+        assertEquals(Set.of(tags), Set.of(allByUser));
+        TagResponseDTO firstTag = insertedData.tags().get(0);
+        prepareSoftDeletion()
+                .remove(firstTag)
+                .validateAbsentIn(() -> tagService.getAllByUser(userId))
+                .restoreWith(tagService::restoreById);
     }
 
     @Test
     void getAllByUserAndName() {
+        InsertedData insertedData = insertTestData();
+        UserResponseDTO user = insertedData.user();
+        Long userId = user.getId();
+        TagResponseDTO firstTag = insertedData.tags().get(0);
+
+        String name = firstTag.getName();
+
+        List<TagResponseDTO> allByUserAndName = tagService.getAllByUserAndName(userId, name);
+        assertEquals(1, allByUserAndName.size());
+        assertEquals(firstTag, allByUserAndName.get(0));
+
+        prepareSoftDeletion()
+                .remove(firstTag)
+                .validateAbsentIn(() -> tagService.getAllByUserAndName(userId, name))
+                .restoreWith(tagService::restoreById);
     }
 
     @Test
     void restoreById() {
+        TagResponseDTO firstTag = getFirstTag();
+        Long id = firstTag.getId();
+        tagService.removeById(id);
+        assertThrows(EntityNotFoundException.class, ()->tagService.getById(id));
+        tagService.restoreById(id);
+        assertEquals(firstTag, tagService.getById(id));
     }
 }

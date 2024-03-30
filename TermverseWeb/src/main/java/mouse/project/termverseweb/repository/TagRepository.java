@@ -32,7 +32,7 @@ public interface TagRepository extends Repository<Tag, Long>, SoftDeleteCrudRepo
     @Query(value = "UPDATE tags t SET deleted_at = NULL WHERE t.id = :id", nativeQuery = true)
     void restoreById(Long id);
 
-    @Query(value = "SELECT t FROM Term t WHERE t.id = :id")
+    @Query(value = "SELECT t FROM Tag t WHERE t.id = :id")
     Optional<Tag> findByIdIncludeDeleted(Long id);
     @Query("SELECT t FROM Tag t " +
             "WHERE t.owner.id = :ownerId " +

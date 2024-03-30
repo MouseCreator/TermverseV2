@@ -39,6 +39,14 @@ public class SoftDeletionTest {
         public AfterSoftDeletion<MODEL, ID> remove(MODEL model) {
             return removeAll(List.of(model));
         }
+
+        public AfterSoftDeletion<MODEL, ID> passAll(List<MODEL> models) {
+            return new AfterSoftDeletion<>(models, new Deletion.Confirmer(), mapper);
+        }
+
+        public AfterSoftDeletion<MODEL, ID> pass(MODEL model) {
+            return passAll(List.of(model));
+        }
     }
 
     public static class AfterSoftDeletion<MODEL, ID> {

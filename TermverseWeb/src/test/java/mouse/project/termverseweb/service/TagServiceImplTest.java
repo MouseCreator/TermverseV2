@@ -6,7 +6,6 @@ import mouse.project.termverseweb.dto.tag.TagResponseDTO;
 import mouse.project.termverseweb.dto.tag.TagUpdateDTO;
 import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
-import mouse.project.termverseweb.exception.EntityStateException;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.models.Factories;
 import mouse.project.termverseweb.models.TagFactory;
@@ -127,14 +126,36 @@ class TagServiceImplTest {
 
     @Test
     void removeById() {
+        TagResponseDTO tag = getFirstTag();
+        tagService.removeById(tag.getId());
+        assertThrows(EntityNotFoundException.class, () -> tagService.getById(tag.getId()));
+        prepareSoftDeletion()
+                .pass(tag)
+                .validatePresentIn(tagService::getAllWithDeleted)
+                .validateAbsentIn(tagService::getAll);
     }
 
     @Test
     void hardGet() {
+        TagResponseDTO tag = getFirstTag();
+        assertDoesNotThrow(() -> tagService.getById(tag.getId()));
+        assertDoesNotThrow(() -> tagService.hardGet(tag.getId()));
+
+        tagService.removeById(tag.getId());
+
+        assertThrows(EntityNotFoundException.class, () -> tagService.getById(tag.getId()));
+        TagResponseDTO deletedTag = tagService.hardGet(tag.getId());
+        assertEquals(tag.getName(), deletedTag.getName());
+    }
+
+    private TagResponseDTO getFirstTag() {
+        InsertedData insertedData = insertTestData();
+        return insertedData.tags().get(0);
     }
 
     @Test
     void getAllWithDeleted() {
+
     }
 
     @Test

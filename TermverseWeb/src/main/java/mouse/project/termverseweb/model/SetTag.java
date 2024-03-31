@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "set_tags")
 @IdClass(SetTagId.class)
-public class SetTags {
+public class SetTag {
     @ManyToOne
     @Nonnull
     @Id

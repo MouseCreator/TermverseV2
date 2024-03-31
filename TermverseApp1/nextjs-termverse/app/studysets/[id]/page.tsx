@@ -1,12 +1,12 @@
-import {Header} from "@/app/ui/header/header";
-import {SidebarButtons} from "@/app/ui/sidebar/sidebarButtons";
+import {HeadData, getServerSideProps} from "@/app/ui/studysets/headdata";
 
-export default function Home() {
+export default async function Page() {
+    const studySetHead = await getServerSideProps()
     return (
         <div>
             <div className="flex">
                 <main className="flex min-h-screen flex-col items-center justify-between p-24">
-                    <div>Hello, world!</div>
+                    <HeadData headData={ studySetHead.headData }/>
                 </main>
             </div>
 

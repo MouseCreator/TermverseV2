@@ -28,4 +28,10 @@ public class SetTag {
     @Id
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+    public SetTag(@Nonnull User user,@Nonnull StudySet studySet,@Nonnull Tag tag) {
+        this.user = user;
+        this.studySet = studySet;
+        this.tag = tag;
+    }
 }

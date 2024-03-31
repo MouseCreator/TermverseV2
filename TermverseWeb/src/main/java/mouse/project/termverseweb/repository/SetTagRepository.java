@@ -38,6 +38,6 @@ public interface SetTagRepository extends Repository<SetTag, Long>, GenericRepos
     @Modifying
     @Transactional
     @Query("DELETE FROM SetTag st WHERE st.user.id = :userId AND st.studySet.id = :setId AND st.tag = :tagId")
-    SetTag delete(Long userId, Long setId, Long tagId);
+    void delete(Long userId, Long setId, Long tagId);
 
 }

@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import mouse.project.termverseweb.defines.UserStudySetRelation;
 import mouse.project.termverseweb.dto.settag.SetTagResponseDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
@@ -189,10 +190,57 @@ class SetTagServiceImplTest {
 
     @Test
     void getSetTagById() {
+        InsertionResult result = insertData("Getting");
+        UserResponseDTO user = anyUser(result);
+        StudySetResponseDTO set = anyMutual(result);
+        Long userId = user.getId();
+        TagResponseDTO tag = anyTag(result, userId);
+        Long setId = set.getId();
+        Long tagId = tag.getId();
+        service.save(userId, setId, tagId);
+        SetTagResponseDTO byId = service.getSetTagById(userId, setId, tagId);
+        assertNotNull(byId);
+        assertThrows(EntityNotFoundException.class, () -> service.getSetTagById(Long.MAX_VALUE, setId, tagId));
+        assertThrows(EntityNotFoundException.class, () -> service.getSetTagById(userId, Long.MAX_VALUE, tagId));
+        assertThrows(EntityNotFoundException.class, () -> service.getSetTagById(userId, Long.MAX_VALUE, tagId));
     }
 
     @Test
-    void getStudySetsByUserAndTags() {
+    void getStudySetsByUserAndTags_Simple() {
+        InsertionResult insertion = insertData("Simple");
+        UserResponseDTO user = anyUser(insertion);
+        StudySetResponseDTO set = anyMutual(insertion);
+        Long userId = user.getId();
+        TagResponseDTO tag = anyTag(insertion, userId);
+        Long setId = set.getId();
+        Long tagId = tag.getId();
+        service.save(userId, setId, tagId);
+        List<StudySetResponseDTO> result = service.getStudySetsByUserAndTags(userId, List.of(tagId));
+        assertEquals(1, result.size());
+        assertEquals(set, result.get(0));
+    }
+
+    @Test
+    void getStudySetsByUserAndTags_Both() {
+        InsertionResult insertion = insertData("Both");
+        UserResponseDTO user = anyUser(insertion);
+        StudySetResponseDTO set = anyMutual(insertion);
+        Long userId = user.getId();
+        List<TagResponseDTO> tags = userTags(insertion, userId);
+        assert tags.size() > 1;
+        TagResponseDTO tag1 = tags.get(0);
+        TagResponseDTO tag2 = tags.get(1);
+        service.save(userId, set.getId(), tag1.getId());
+        List<StudySetResponseDTO> withBoth = service.getStudySetsByUserAndTags(
+                userId, List.of(tag1.getId(), tag2.getId())
+        );
+        assertTrue(withBoth.isEmpty());
+        List<StudySetResponseDTO> withFirst = service.getStudySetsByUserAndTags(userId, List.of(tag1.getId()));
+        assertEquals(1, withFirst.size());
+        assertEquals(set, withFirst.get(0));
+
+        List<StudySetResponseDTO> withSecond = service.getStudySetsByUserAndTags(userId, List.of(tag2.getId()));
+        assertTrue(withSecond.isEmpty());
     }
 
     @Test

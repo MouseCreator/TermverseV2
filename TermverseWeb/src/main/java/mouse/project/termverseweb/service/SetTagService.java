@@ -12,6 +12,6 @@ public interface SetTagService {
     SetTagResponseDTO save(SetTagCreateDTO setTag);
     SetTagResponseDTO save(Long userId, Long setId, Long tagId);
     SetTagResponseDTO getSetTagById(Long userId, Long setId, Long tagId);
-    List<StudySetResponseDTO> getStudySetsByUserAndTags(@Param("userId") Long userId, @Param("tagIds") List<Long> tagIds);
+    List<StudySetResponseDTO> getStudySetsByUserAndTags(Long userId, List<Long> tagIds);
     void delete(Long userId, Long setId, Long tagId);
 }

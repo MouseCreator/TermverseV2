@@ -24,11 +24,12 @@ public interface SetTagRepository extends Repository<SetTag, Long>, GenericRepos
             "st.tag.deletedAt IS NULL AND st.user.deletedAt IS NULL AND st.studySet.deletedAt IS NULL")
     Optional<SetTag> getSetTagById(@Param("userId") Long userId, @Param("setId") Long setId, @Param("tagId") Long tagId);
 
-    @Query("SELECT st.studySet FROM SetTag st " +
+    @Query("SELECT st.studySet " +
+            "FROM SetTag st " +
             "WHERE st.user.id = :userId AND " +
-            "      st.tag.deletedAt IS NULL AND st.user.deletedAt IS NULL AND st.studySet.deletedAt IS NULL " +
+            "st.tag.deletedAt IS NULL AND st.user.deletedAt IS NULL AND st.studySet.deletedAt IS NULL " +
             "AND NOT EXISTS ( " +
-                "SELECT t.id " +
+                "SELECT t " +
                 "FROM Tag t " +
                 "WHERE t.id IN :tagIds AND t.id NOT IN (" +
                     "SELECT r.tag.id " +

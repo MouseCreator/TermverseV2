@@ -3,7 +3,7 @@ export function Header() {
     return (
         <header className="bg-purple-500 py-4">
             <div className="container mx-auto">
-                <div className=" flex flex-col ml-4 sm:justify-start items-center sm:flex-row">
+                <div className="flex flex-col ml-4 sm:justify-start items-center sm:flex-row">
                     <div className="mb-4 sm:mr-4 sm:mb-0">
                         <Image src="/app-logo.png" alt="App Logo" width={60} height={60} />
                     </div>

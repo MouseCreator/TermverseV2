@@ -2,7 +2,6 @@ package mouse.project.termverseweb.service;
 
 import mouse.project.termverseweb.dto.settag.SetTagCreateDTO;
 import mouse.project.termverseweb.dto.settag.SetTagResponseDTO;
-import mouse.project.termverseweb.dto.settag.SetTagUpdateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import org.springframework.data.repository.query.Param;
 
@@ -12,8 +11,6 @@ public interface SetTagService {
     List<SetTagResponseDTO> getAll();
     SetTagResponseDTO save(SetTagCreateDTO setTag);
     SetTagResponseDTO save(Long userId, Long setId, Long tagId);
-    SetTagResponseDTO update(SetTagUpdateDTO setTag);
-    SetTagResponseDTO update(Long userId, Long setId, Long tagId);
     SetTagResponseDTO getSetTagById(Long userId, Long setId, Long tagId);
     List<StudySetResponseDTO> getStudySetsByUserAndTags(@Param("userId") Long userId, @Param("tagIds") List<Long> tagIds);
     void delete(Long userId, Long setId, Long tagId);

@@ -162,6 +162,11 @@ class SetTagServiceImplTest {
         return list;
     }
 
+    private UserResponseDTO anyUser(InsertionResult result) {
+        assert !result.users().isEmpty();
+        return result.users().get(0);
+    }
+
     @Test
     void save() {
         InsertionResult result = insertData("Saving");
@@ -181,16 +186,6 @@ class SetTagServiceImplTest {
         assertEquals(tagId, byId.getTagId());
     }
 
-
-
-    private UserResponseDTO anyUser(InsertionResult result) {
-        assert !result.users().isEmpty();
-        return result.users().get(0);
-    }
-
-    @Test
-    void update() {
-    }
 
     @Test
     void getSetTagById() {

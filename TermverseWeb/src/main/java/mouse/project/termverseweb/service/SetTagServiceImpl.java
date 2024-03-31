@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mouse.project.termverseweb.dto.settag.SetTagCreateDTO;
 import mouse.project.termverseweb.dto.settag.SetTagResponseDTO;
-import mouse.project.termverseweb.dto.settag.SetTagUpdateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
 import mouse.project.termverseweb.mapper.SetTagMapper;
@@ -59,23 +58,6 @@ public class SetTagServiceImpl implements SetTagService {
     @Transactional
     public SetTagResponseDTO save(Long userId, Long setId, Long tagId) {
        return getAndSave(userId, setId, tagId);
-    }
-
-    @Override
-    @Transactional
-    public SetTagResponseDTO update(SetTagUpdateDTO setTag) {
-        return update(setTag.getUserId(), setTag.getStudySetId(), setTag.getTagId());
-    }
-
-    @Override
-    @Transactional
-    public SetTagResponseDTO update(Long userId, Long setId, Long tagId) {
-        Optional<SetTag> setTagById = repository.getSetTagById(userId, setId, tagId);
-        if (setTagById.isEmpty()) {
-            String format = String.format("No setTag found by given id: %d %d %d", userId, setId, tagId);
-            throw new EntityNotFoundException(format);
-        }
-        return getAndSave(userId, setId, tagId);
     }
 
     private SetTagResponseDTO getAndSave(Long userId, Long setId, Long tagId) {

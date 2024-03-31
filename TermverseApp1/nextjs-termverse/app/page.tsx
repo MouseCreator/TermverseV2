@@ -1,5 +1,5 @@
 import { Header } from '@/app/ui/header/header'
-import { Sidebar } from '@/app/ui/sidebar/sidebar'
+import { SidebarButtons } from '@/app/ui/sidebar/sidebarButtons'
 
 
 export default function Home() {
@@ -7,7 +7,7 @@ export default function Home() {
       <div>
           <Header />
         <div className="flex">
-          <Sidebar />
+          <SidebarButtons />
           <main className="flex min-h-screen flex-col items-center justify-between p-24">
             <div>Hello, world!</div>
           </main>

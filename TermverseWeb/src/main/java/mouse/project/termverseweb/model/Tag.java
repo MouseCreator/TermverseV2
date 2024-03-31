@@ -27,4 +27,8 @@ public class Tag implements LongIterable {
     private User owner;
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    public Tag(@Nonnull Long id) {
+        this.id = id;
+    }
 }

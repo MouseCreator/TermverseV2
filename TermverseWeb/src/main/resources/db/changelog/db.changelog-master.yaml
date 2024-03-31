@@ -19,3 +19,5 @@ databaseChangeLog:
       file: db/changelog/changes/09-drop-id-in-users-study-sets.yaml
   - include:
       file: db/changelog/changes/10-create-tags-table.yaml
+  - include:
+      file: db/changelog/changes/11-create-set-tags-table.yaml

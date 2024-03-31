@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11-create-set-tags-table-001
+      author: Mykhailo Tyshchenko
+      changes:
+        - createTable:
+            tableName: set_tags
+            columns:
+              - column:
+                  name: set_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_set_tags_set
+                    references: study_sets(id)
+                    deleteCascade: true
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_set_tags_user
+                    references: users(id)
+                    deleteCascade: true
+              - column:
+                  name: tag_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_set_tags_tag
+                    references: tags(id)
+                    deleteCascade: true

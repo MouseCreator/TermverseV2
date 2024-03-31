@@ -6,7 +6,7 @@ import mouse.project.termverseweb.model.SetTag;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(config = MapperConfig.class, uses = {TermMapper.class, UserMapper.class, StudySetMapper.class})
+@Mapper(config = MapperConfig.class, uses = {TagMapper.class, UserMapper.class, StudySetMapper.class})
 public interface SetTagMapper {
     @Mapping(source = "user", target = "userId", qualifiedByName = "userToId")
     @Mapping(source = "studySet", target = "studySetId", qualifiedByName = "studySetToId")

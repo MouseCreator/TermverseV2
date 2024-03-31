@@ -14,14 +14,15 @@ import java.util.Optional;
 
 @org.springframework.stereotype.Repository
 public interface SetTagRepository extends Repository<SetTag, Long>, GenericRepository {
-
+    @Query("SELECT st FROM SetTag st")
+    List<SetTag> getAll();
     @Modifying
     @Transactional
     SetTag save(SetTag setTag);
     @Query("SELECT st FROM SetTag st " +
             "WHERE st.user.id = :userId AND st.studySet.id = :setId AND st.tag.id = :tagId AND " +
-            " st.tag.deletedAt IS NULL AND st.user.id IS NULL AND st.studySet.deletedAt IS NULL")
-    Optional<SetTag> getSetTagById(Long userId, Long setId, Long tagId);
+            "st.tag.deletedAt IS NULL AND st.user.deletedAt IS NULL AND st.studySet.deletedAt IS NULL")
+    Optional<SetTag> getSetTagById(@Param("userId") Long userId, @Param("setId") Long setId, @Param("tagId") Long tagId);
 
     @Query("SELECT st.studySet FROM SetTag st " +
             "WHERE st.user.id = :userId AND " +

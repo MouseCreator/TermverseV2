@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mouse.project.termverseweb.dto.settag.SetTagCreateDTO;
 import mouse.project.termverseweb.dto.settag.SetTagResponseDTO;
@@ -43,21 +44,31 @@ public class SetTagServiceImpl implements SetTagService {
     }
 
     @Override
+    public List<SetTagResponseDTO> getAll() {
+        return services.use(repository)
+                .multi(SetTagRepository::getAll).to(mapper::toResponse);
+    }
+
+    @Override
+    @Transactional
     public SetTagResponseDTO save(SetTagCreateDTO setTag) {
         return save(setTag.getUserId(), setTag.getStudySetId(), setTag.getTagId());
     }
 
     @Override
+    @Transactional
     public SetTagResponseDTO save(Long userId, Long setId, Long tagId) {
        return getAndSave(userId, setId, tagId);
     }
 
     @Override
+    @Transactional
     public SetTagResponseDTO update(SetTagUpdateDTO setTag) {
         return update(setTag.getUserId(), setTag.getStudySetId(), setTag.getTagId());
     }
 
     @Override
+    @Transactional
     public SetTagResponseDTO update(Long userId, Long setId, Long tagId) {
         Optional<SetTag> setTagById = repository.getSetTagById(userId, setId, tagId);
         if (setTagById.isEmpty()) {

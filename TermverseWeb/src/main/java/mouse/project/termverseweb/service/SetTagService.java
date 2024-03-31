@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface SetTagService {
+    List<SetTagResponseDTO> getAll();
     SetTagResponseDTO save(SetTagCreateDTO setTag);
     SetTagResponseDTO save(Long userId, Long setId, Long tagId);
     SetTagResponseDTO update(SetTagUpdateDTO setTag);

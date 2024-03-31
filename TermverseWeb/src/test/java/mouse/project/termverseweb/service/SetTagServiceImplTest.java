@@ -60,10 +60,15 @@ class SetTagServiceImplTest {
     }
     private InsertionResult insertData(String name) {
         InsertionResult result = InsertionResult.instance();
-        insertUsers(result, name, 2);
-        insertStudySetsPersonal(result, result.users(), 2);
-        insertStudySetsMutual(result, result.users(), 2);
-        insertTags(result, result.users(), 3);
+        int userCount = 2;
+        int personalSets = 2;
+        int mutualSets = 2;
+        int tags = 3;
+
+        insertUsers(result, name, userCount);
+        insertStudySetsPersonal(result, result.users(), personalSets);
+        insertStudySetsMutual(result, result.users(), mutualSets);
+        insertTags(result, result.users(), tags);
         return result;
     }
 
@@ -126,9 +131,6 @@ class SetTagServiceImplTest {
         }
     }
 
-    private void addRelation(InsertionResult result, Long user, Long studySet) {
-
-    }
     @Test
     void save() {
     }

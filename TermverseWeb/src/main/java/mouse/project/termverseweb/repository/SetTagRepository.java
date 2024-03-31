@@ -39,7 +39,7 @@ public interface SetTagRepository extends Repository<SetTag, Long>, GenericRepos
     List<StudySet> getStudySetsByUserAndTags(@Param("userId") Long userId, @Param("tagIds") List<Long> tagIds);
     @Modifying
     @Transactional
-    @Query("DELETE FROM SetTag st WHERE st.user.id = :userId AND st.studySet.id = :setId AND st.tag = :tagId")
+    @Query("DELETE FROM SetTag st WHERE st.user.id = :userId AND st.studySet.id = :setId AND st.tag.id = :tagId")
     void delete(Long userId, Long setId, Long tagId);
 
 }

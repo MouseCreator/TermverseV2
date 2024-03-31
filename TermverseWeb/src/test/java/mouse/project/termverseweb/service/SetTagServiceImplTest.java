@@ -245,5 +245,18 @@ class SetTagServiceImplTest {
 
     @Test
     void delete() {
+        InsertionResult insertion = insertData("Simple");
+        UserResponseDTO user = anyUser(insertion);
+        StudySetResponseDTO set = anyMutual(insertion);
+        Long userId = user.getId();
+        TagResponseDTO tag = anyTag(insertion, userId);
+        Long setId = set.getId();
+        Long tagId = tag.getId();
+        service.save(userId, setId, tagId);
+        assertDoesNotThrow(() -> service.getSetTagById(userId, setId, tagId));
+        service.delete(userId, setId, tagId);
+        assertThrows(EntityNotFoundException.class, () -> service.getSetTagById(userId, setId, tagId));
+        service.save(userId, setId, tagId);
+        assertDoesNotThrow(() -> service.getSetTagById(userId, setId, tagId));
     }
 }

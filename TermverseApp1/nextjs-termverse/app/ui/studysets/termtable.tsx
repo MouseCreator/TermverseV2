@@ -14,10 +14,10 @@ export function TermsTable(props: TermsProps) {
         <table className="border-collapse table-fixed min-w-80">
             <thead>
             <tr>
-                <th className="px-4 py-2 bg-gray-200 text-left">Term</th>
-                <th className="px-4 py-2 bg-gray-200 text-left">Definition</th>
-                {hasPicture && <th className="px-4 py-2 bg-gray-200">Picture</th>}
-                {hasHint && <th className="px-4 py-2 bg-gray-200">Hint</th>}
+                <th className="px-4 w-1/4 py-2 bg-gray-200 text-left">Term</th>
+                <th className="px-4 w-1/4 py-2 bg-gray-200 text-left">Definition</th>
+                {hasPicture && <th className="w-1/4 min-w-8 px-4 py-2 bg-gray-200">Picture</th>}
+                {hasHint && <th className="w-1/4 px-4 py-2 bg-gray-200">Hint</th>}
             </tr>
             </thead>
             <tbody>

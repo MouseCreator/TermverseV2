@@ -1,6 +1,7 @@
 import {User } from '@/app/ui/data/User'
 import ProfilePictureMid from "@/app/ui/profile/profilePictureMid";
 import {notFound} from "next/navigation";
+import {getUserData} from "@/app/ui/users/userhead";
 
 interface HeadData {
     id: number;
@@ -77,11 +78,7 @@ export async function getStudySetHeadFromServer(setId: number): Promise<HeadData
         picture_url: '/mock/BG1.png',
         description: 'My first study set!',
         created_at: new Date(Date.now()),
-        author: {
-            id: 456,
-            name: 'Tails123',
-            profile_picture_url: '/mock/Tails.png',
-        },
+        author: getUserData(456)
     };
     let headData = sets[setId];
     if (!headData) {

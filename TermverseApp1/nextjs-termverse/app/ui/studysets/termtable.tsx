@@ -11,7 +11,7 @@ export function TermsTable(props: TermsProps) {
     const hasHint = terms.some((term) => term.hint !== null);
 
     return (
-        <table className="w-full border-collapse table-fixed">
+        <table className="border-collapse table-fixed min-w-80">
             <thead>
             <tr>
                 <th className="px-4 py-2 bg-gray-200 text-left">Term</th>

@@ -64,11 +64,11 @@ export function StudySetTitle(props : StudySetTitleProps) {
                     margin: '0 auto',
                 }}
             ></div>
-            <h1 className="text-3xl font-bold text-white absolute bottom-4 left-4">{props.name}</h1>
+            <h1 className="text-4xl font-bold text-white absolute bottom-8 left-4">{props.name}</h1>
         </div>
     );
 }
-export async function getServerSideProps(setId: number): Promise<HeadDataProps>  {
+export async function getStudySetHeadFromServer(setId: number): Promise<HeadDataProps>  {
     console.log('Fetching Study Set Data...');
     const sets: { [id: number]: HeadData; } = {};
     sets[123] = {

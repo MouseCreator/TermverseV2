@@ -1,4 +1,3 @@
-import {AuthorProfile, HeadData, StudySetTitle} from "@/app/ui/studysets/headdata";
 import {User} from "@/app/ui/data/User";
 interface UserDataProps {
     user: User;

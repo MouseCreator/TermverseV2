@@ -112,6 +112,33 @@ export async function getStudySetHeadFromServer(setId: number): Promise<HeadData
         headData
     };
 }
+export interface StudySetI {
+    id: number,
+    name: string,
+    picture_url: string,
+    created_at: Date
+}
+
+export interface StudySetIProps {
+    studySet: StudySetI
+}
+export async function getStudySetGenericInfo(setId: number): Promise<StudySetIProps>  {
+    console.log('Fetching Study Set Generic Data...');
+    const sets: { [id: number]: StudySetI; } = {};
+    sets[123] = {
+        id: 123,
+        name: 'English Words',
+        picture_url: '/mock/BG1.png',
+        created_at: new Date(Date.now()),
+    };
+    let studySet = sets[setId];
+    if (!studySet) {
+        notFound();
+    }
+    return {
+        studySet
+    };
+}
 
 
 export function Description({headData}: HeadDataProps) {

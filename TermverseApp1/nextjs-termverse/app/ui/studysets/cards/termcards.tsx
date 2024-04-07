@@ -27,7 +27,7 @@ export default function Flashcards({ terms }: TermsProps){
             <div className="flex justify-center items-center text-3xl mb-4">
                 <div className="p-2 overflow-hidden select-none">
                     <div
-                    className="border-2 bg-white border-purple-500 shadow-lg p-4 cursor-pointer w-[80vw] max-w-full h-[70vh] flex items-center justify-center"
+                    className="border-2 bg-white border-purple-500 shadow-lg rounded p-4 cursor-pointer w-[80vw] max-w-full h-[70vh] flex items-center justify-center"
                     onClick={handleCardClick}
                     >
                     <div className="flex justify-between items-center w-full">

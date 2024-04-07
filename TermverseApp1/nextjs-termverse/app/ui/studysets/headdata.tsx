@@ -107,7 +107,7 @@ export async function getStudySetHeadFromServer(setId: number): Promise<HeadData
 
 export function Description({headData}: HeadDataProps) {
     return (
-        <div className="mt-4 p-6 pl-8 w-full rounded bg-gray-300">
+        <div className="mt-4 p-6 pl-8 min-h-32 w-full rounded bg-gray-300">
             <h3 className="font-bold text-lg">Description:</h3>
             <p>{headData.description}</p>
         </div>

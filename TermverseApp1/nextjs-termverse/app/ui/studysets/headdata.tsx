@@ -21,9 +21,16 @@ export function HeadData( { headData } : HeadDataProps) {
     return (
         <div className="container mx-auto py-8">
             <StudySetTitle name={headData.name} picture_url={headData.picture_url}/>
-            <div className="pl-8">
-                <AuthorProfile author={headData.author}/>
-                <p className="text-gray-500">{formatDate(headData.created_at)}</p>
+            <div className="flex justify-between">
+                <div className="pl-8">
+                    <AuthorProfile author={headData.author}/>
+                    <p className="text-gray-500">{formatDate(headData.created_at)}</p>
+                </div>
+                <div className="pt-8 pr-8">
+                    <button className="bg-purple-500 text-white px-4 py-2 rounded font-bold w-32 h-12">
+                        Save
+                    </button>
+                </div>
             </div>
         </div>
     );

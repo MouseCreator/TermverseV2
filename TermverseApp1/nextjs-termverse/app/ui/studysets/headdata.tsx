@@ -21,7 +21,7 @@ export function HeadData( { headData } : HeadDataProps) {
     return (
         <div className="container mx-auto">
             <StudySetTitle name={headData.name} picture_url={headData.picture_url}/>
-            <div className="flex justify-between">
+            <div className="flex md:flex-col sm:flex-col lg:flex-row xl:flex-row justify-between">
                 <div className="pl-8">
                     <AuthorProfile author={headData.author}/>
                     <p className="text-gray-500">{formatDate(headData.created_at)}</p>

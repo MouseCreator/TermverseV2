@@ -2,12 +2,9 @@
 import {HeadData, HeadDataI, getStudySetHeadFromServer, HeadDataProps} from "@/app/ui/studysets/headdata";
 import {getStudySetTermsFromServer, TermsTable} from "@/app/ui/studysets/termtable";
 import {StudySetActivity} from "@/app/ui/activity/StudySetActivity";
+import {PageProps} from "@/app/ui/data/Utils";
 
-interface PageProps {
-    params: {
-        id: string;
-    };
-}
+
 export default async function Page({ params }: PageProps) {
     const param = Number.parseInt(params.id);
     const studySetHead = await getStudySetHeadFromServer(param)

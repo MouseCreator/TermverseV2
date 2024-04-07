@@ -17,7 +17,7 @@ export default async function Page({ params }: PageProps) {
             <div className="flex">
                 <main className="flex min-h-screen flex-col justify-between p-12 w-full">
                     <HeadData headData={ studySetHead.headData }/>
-                    <StudySetActivity/>
+                    <StudySetActivity id={param}/>
                     <TermsTable terms={ termsList.terms }/>
                 </main>
             </div>

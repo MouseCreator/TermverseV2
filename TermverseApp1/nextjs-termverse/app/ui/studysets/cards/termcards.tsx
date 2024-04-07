@@ -49,25 +49,31 @@ export default function Flashcards({ terms }: TermsProps){
                     </div>
                 </div>
             </div>
-            <div className="flex justify-center items-start">
-                <button
-                    className={`mr-4 ${
-                        currentIndex > 0 ? 'text-purple-500 cursor-pointer' : 'text-gray-400'
-                    }`}
-                    onClick={handlePrevClick}
-                    disabled={currentIndex === 0}
-                >
-                    {'<'}
-                </button>
-                <button
-                    className={`ml-4 ${
-                        currentIndex < terms.length - 1 ? 'text-purple-500 cursor-pointer' : 'text-gray-400'
-                    }`}
-                    onClick={handleNextClick}
-                    disabled={currentIndex === terms.length - 1}
-                >
-                    {'>'}
-                </button>
+            <div>
+                <div className="flex justify-center items-start">
+                    <button
+                        className={`mr-4 ${
+                            currentIndex > 0 ? 'text-purple-500 cursor-pointer' : 'text-gray-400'
+                        }`}
+                        onClick={handlePrevClick}
+                        disabled={currentIndex === 0}
+                    >
+                        {'<'}
+                    </button>
+                    <div>
+                        {currentIndex+1 + " / " + terms.length}
+                    </div>
+                    <button
+                        className={`ml-4 ${
+                            currentIndex < terms.length - 1 ? 'text-purple-500 cursor-pointer' : 'text-gray-400'
+                        }`}
+                        onClick={handleNextClick}
+                        disabled={currentIndex === terms.length - 1}
+                    >
+                        {'>'}
+                    </button>
+                </div>
+
             </div>
         </div>
     );

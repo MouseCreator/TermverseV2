@@ -1,4 +1,3 @@
-import {getStudySetHeadFromServer} from "@/app/ui/studysets/headdata";
 import {getUserData, UserHead} from "@/app/ui/users/userhead";
 import {Calendar} from "@/app/ui/users/calendar";
 

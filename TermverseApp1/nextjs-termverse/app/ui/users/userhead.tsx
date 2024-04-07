@@ -17,7 +17,7 @@ export function UserHead( { user } : UserDataProps) {
 export function UserTop({user} : UserDataProps) {
     return (
         <div>
-            <div className="flex w-full h-64 bg-purple-500 justify-center items-end">
+            <div className="flex w-full rounded h-64 bg-purple-500 justify-center items-end">
                 <div className="rounded-full bg-white w-40 h-40"
                      style={
                          {

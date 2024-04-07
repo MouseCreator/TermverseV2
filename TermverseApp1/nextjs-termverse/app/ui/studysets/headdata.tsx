@@ -29,6 +29,7 @@ export function HeadData( { headData } : HeadDataProps) {
 
                 <div className="pt-8 pr-8">
                     <SaveBtn/>
+                    <EditBtn/>
                 </div>
             </div>
             <Description headData={headData}/>
@@ -38,8 +39,16 @@ export function HeadData( { headData } : HeadDataProps) {
 
 export function SaveBtn() {
     return (
-        <button className="bg-purple-500 text-white px-4 py-2 rounded font-bold w-32 h-12">
+        <button className="bg-purple-500 text-white px-4 py-2 rounded font-bold w-32 h-12 mx-4">
             Save
+        </button>
+    )
+}
+
+export function EditBtn() {
+    return (
+        <button className="bg-purple-500 text-white px-4 py-2 rounded font-bold w-32 h-12 mx-4">
+            Edit
         </button>
     )
 }

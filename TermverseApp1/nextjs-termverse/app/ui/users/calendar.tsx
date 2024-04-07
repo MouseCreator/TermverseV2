@@ -60,13 +60,15 @@ export function Calendar() {
         ];
         return monthNames[month];
     };
-
+    const sum = daysStudied.map((d) => d.contributions).reduce((sum: number, num) => sum + num, 0);
     const calendarTitle = startDate.getMonth() === endDate.getMonth()
         ? getMonthName(startDate.getMonth())
         : `${getMonthName(startDate.getMonth())}-${getMonthName(endDate.getMonth())}`;
+    const contributionsText = sum + " contributions last month"
     return (
         <div className="flex flex-col content-center w-96">
-            <h2 className="text-2xl font-bold mb-4">{calendarTitle}</h2>
+            <h2 className="text-2xl font-bold">{calendarTitle}</h2>
+            <h4 className="bont-bold mb-2">{contributionsText}</h4>
             <div className="flex flex-col">
                 <div className="flex mb-2">
                     <span className="w-4"/>

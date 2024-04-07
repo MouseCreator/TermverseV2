@@ -3,7 +3,7 @@ import ProfilePictureMid from "@/app/ui/profile/profilePictureMid";
 import {notFound} from "next/navigation";
 import {getUserData} from "@/app/ui/users/userhead";
 
-interface HeadData {
+export interface HeadDataI {
     id: number;
     name: string;
     picture_url: string | null;
@@ -12,28 +12,36 @@ interface HeadData {
     created_at: Date;
 }
 
-interface HeadDataProps {
-    headData: HeadData;
+export interface HeadDataProps {
+    headData: HeadDataI;
 }
 
 export function HeadData( { headData } : HeadDataProps) {
 
     return (
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto">
             <StudySetTitle name={headData.name} picture_url={headData.picture_url}/>
             <div className="flex justify-between">
                 <div className="pl-8">
                     <AuthorProfile author={headData.author}/>
                     <p className="text-gray-500">{formatDate(headData.created_at)}</p>
                 </div>
+
                 <div className="pt-8 pr-8">
-                    <button className="bg-purple-500 text-white px-4 py-2 rounded font-bold w-32 h-12">
-                        Save
-                    </button>
+                    <SaveBtn/>
                 </div>
             </div>
+            <Description headData={headData}/>
         </div>
     );
+}
+
+export function SaveBtn() {
+    return (
+        <button className="bg-purple-500 text-white px-4 py-2 rounded font-bold w-32 h-12">
+            Save
+        </button>
+    )
 }
 
 function formatDate(date: Date): String {
@@ -78,7 +86,7 @@ export function StudySetTitle(props : StudySetTitleProps) {
 }
 export async function getStudySetHeadFromServer(setId: number): Promise<HeadDataProps>  {
     console.log('Fetching Study Set Data...');
-    const sets: { [id: number]: HeadData; } = {};
+    const sets: { [id: number]: HeadDataI; } = {};
     sets[123] = {
         id: 123,
         name: 'English Words',
@@ -94,4 +102,14 @@ export async function getStudySetHeadFromServer(setId: number): Promise<HeadData
     return {
         headData
     };
+}
+
+
+export function Description({headData}: HeadDataProps) {
+    return (
+        <div className="mt-4 p-6 pl-8 w-full rounded bg-gray-300">
+            <h3 className="font-bold text-lg">Description:</h3>
+            <p>{headData.description}</p>
+        </div>
+    )
 }

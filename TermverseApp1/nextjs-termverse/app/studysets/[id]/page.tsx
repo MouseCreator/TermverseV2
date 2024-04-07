@@ -1,6 +1,7 @@
 
-import {HeadData, getStudySetHeadFromServer} from "@/app/ui/studysets/headdata";
+import {HeadData, HeadDataI, getStudySetHeadFromServer, HeadDataProps} from "@/app/ui/studysets/headdata";
 import {getStudySetTermsFromServer, TermsTable} from "@/app/ui/studysets/termtable";
+import {StudySetActivity} from "@/app/ui/activity/StudySetActivity";
 
 interface PageProps {
     params: {
@@ -14,8 +15,9 @@ export default async function Page({ params }: PageProps) {
     return (
         <div>
             <div className="flex">
-                <main className="flex min-h-screen flex-col items-center justify-between p-12 w-full">
+                <main className="flex min-h-screen flex-col justify-between p-12 w-full">
                     <HeadData headData={ studySetHead.headData }/>
+                    <StudySetActivity/>
                     <TermsTable terms={ termsList.terms }/>
                 </main>
             </div>

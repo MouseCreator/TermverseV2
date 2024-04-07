@@ -25,18 +25,18 @@ export default function Flashcards({ terms }: TermsProps){
     return (
         <div>
             <div className="flex justify-center items-center text-3xl mb-4">
-                <div className="p-2 overflow-hidden">
+                <div className="p-2 overflow-hidden select-none">
                     <div
                     className="border-2 bg-white border-purple-500 shadow-lg p-4 cursor-pointer w-[80vw] max-w-full h-[70vh] flex items-center justify-center"
                     onClick={handleCardClick}
                     >
                     <div className="flex justify-between items-center w-full">
                         <div className = {currentTerm.picture_url ? "w-1/2" : "w-full"}>
-                            <p className="w-full p-4 text-center">{showDefinition ? currentTerm.definition : currentTerm.term}</p>
+                            <p className="w-full p-4 text-center pointer-events-none">{showDefinition ? currentTerm.definition : currentTerm.term}</p>
                         </div>
                         {currentTerm.picture_url &&
                             <div className="w-1/2 flex justify-center">
-                                <Image className="rounded w-1/2 image-fit"
+                                <Image className="rounded w-1/2 image-fit pointer-events-none"
                                                                    src={currentTerm.picture_url}
                                                                    alt={currentTerm.term}
                                                                    width={512}
@@ -49,7 +49,7 @@ export default function Flashcards({ terms }: TermsProps){
                     </div>
                 </div>
             </div>
-            <div className="flex justify-center items-start h-[20vh]">
+            <div className="flex justify-center items-start">
                 <button
                     className={`mr-4 ${
                         currentIndex > 0 ? 'text-purple-500 cursor-pointer' : 'text-gray-400'

@@ -1,7 +1,5 @@
 package mouse.project.lib.data.executor.result.write;
 
-import mouse.project.lib.data.exception.ExecutorException;
-
 import java.sql.ResultSet;
 import java.util.function.Consumer;
 
@@ -23,18 +21,9 @@ public class UpdateResultImpl implements WriteResult {
     }
 
     @Override
-    public WriteResult assertAffectedAtLeast(Integer integer) {
-        if (rowsAffected < integer) {
-            throw new ExecutorException("Affected " + rowsAffected + " rows, but expected: " + integer);
-        }
-        return this;
+    public int affectedRows() {
+        return rowsAffected;
     }
 
-    @Override
-    public WriteResult affectOne() {
-        if (rowsAffected != 1) {
-            throw new ExecutorException("Affected " + rowsAffected + " rows, but expected: 1");
-        }
-        return this;
-    }
+
 }

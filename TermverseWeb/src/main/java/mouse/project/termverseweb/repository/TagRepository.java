@@ -3,6 +3,7 @@ package mouse.project.termverseweb.repository;
 import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.lib.service.repository.SoftDeleteCrudRepository;
 import mouse.project.termverseweb.model.Tag;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Repository
+@Primary
 public interface TagRepository extends Repository<Tag, Long>, SoftDeleteCrudRepository<Tag, Long> {
     @Transactional
     @Modifying

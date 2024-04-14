@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.lib.service.repository.GenericRepository;
 import mouse.project.termverseweb.model.SetTag;
 import mouse.project.termverseweb.model.StudySet;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Repository
+@Primary
 public interface SetTagRepository extends Repository<SetTag, Long>, GenericRepository {
     @Query("SELECT st FROM SetTag st")
     List<SetTag> getAll();

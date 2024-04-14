@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 @org.springframework.stereotype.Repository
 public interface UserStudySetRepository extends Repository<UserStudySet, Long>, GenericRepository {
+
+    @Query("SELECT us FROM UserStudySet us WHERE us.studySet.deletedAt IS NULL AND us.user.deletedAt IS NULL")
     List<UserStudySet> findAll();
     @Query("SELECT us " +
             "FROM UserStudySet us " +

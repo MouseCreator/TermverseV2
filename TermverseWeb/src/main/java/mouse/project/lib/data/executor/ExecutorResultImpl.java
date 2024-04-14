@@ -1,6 +1,6 @@
 package mouse.project.lib.data.executor;
 
-import mouse.project.lib.data.executor.result.*;
+import mouse.project.lib.data.executor.result.read.*;
 import mouse.project.lib.data.orm.desc.ModelDescription;
 import mouse.project.lib.data.orm.fill.ModelFill;
 import mouse.project.lib.data.orm.map.OrmMap;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ExecutorResultImpl implements ExecutorResult {
+public class ExecutorResultImpl implements ReadResult {
 
     private final ResultSet resultSet;
     private final ModelFill fill;
@@ -78,7 +78,7 @@ public class ExecutorResultImpl implements ExecutorResult {
     }
 
     @Override
-    public void action(Consumer<ExecutorResult> consumer) {
+    public void action(Consumer<ReadResult> consumer) {
         consumer.accept(this);
     }
 }

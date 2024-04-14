@@ -31,13 +31,14 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteById(Long id) {
-        executor.write(e -> e.executeQuery("UPDATE users u SET deleted_at = NOW() WHERE u.id = ?", id));
+        executor.write(e -> e.execute("UPDATE users u SET deleted_at = NOW() WHERE u.id = ?", id));
     }
 
     @Override
     public User save(User model) {
-        return executor.write(e -> e.executeQuery("INSERT INTO users (name, picture_url, deleted_at) VALUES (?, ?, ?)",
-                model.getName(), model.getProfilePictureUrl(), null).model(User.class));
+        executor.write(e -> e.execute("INSERT INTO users (name, picture_url, deleted_at) VALUES (?, ?, ?)",
+                model.getName(), model.getProfilePictureUrl(), null).singleKey(Long.class, model::setId));
+        return model;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void restoreById(Long id) {
-        executor.write(e -> e.executeQuery("UPDATE users u SET deleted_at = NULL WHERE u.id = ?", id));
+        executor.write(e -> e.execute("UPDATE users u SET deleted_at = NULL WHERE u.id = ?", id));
     }
 
     @Override

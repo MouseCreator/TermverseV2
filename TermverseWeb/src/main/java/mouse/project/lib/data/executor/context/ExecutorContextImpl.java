@@ -3,6 +3,8 @@ package mouse.project.lib.data.executor.context;
 import mouse.project.lib.data.exception.ExecutorException;
 import mouse.project.lib.data.executor.Executor;
 import mouse.project.lib.data.executor.ExecutorImpl;
+import mouse.project.lib.data.executor.WriteExecutor;
+import mouse.project.lib.data.executor.WriteExecutorImpl;
 import mouse.project.lib.data.orm.fill.ModelFill;
 import mouse.project.lib.data.orm.map.OrmMap;
 import mouse.project.lib.data.pool.ConnectionPool;
@@ -28,11 +30,11 @@ public class ExecutorContextImpl implements ExecutorContext {
     }
 
     @Override
-    public <U> U write(Function<Executor, U> function) {
+    public <U> U write(Function<WriteExecutor, U> function) {
         List<Statement> toClose = new ArrayList<>();
         try(Connection connection = pool.getConnection()) {
             try {
-                Executor executor = new ExecutorImpl(fill, map, connection, toClose);
+                WriteExecutor executor = new WriteExecutorImpl(connection, toClose);
                 U result = function.apply(executor);
                 connection.commit();
                 closeAll(toClose);

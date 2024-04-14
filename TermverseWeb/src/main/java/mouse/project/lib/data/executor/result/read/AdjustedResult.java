@@ -1,4 +1,4 @@
-package mouse.project.lib.data.executor.result;
+package mouse.project.lib.data.executor.result.read;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

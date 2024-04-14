@@ -36,8 +36,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User model) {
-        executor.write(e -> e.execute("INSERT INTO users (name, picture_url, deleted_at) VALUES (?, ?, ?)",
-                model.getName(), model.getProfilePictureUrl(), null).singleKey(Long.class, model::setId));
+        executor.write(e -> e.execute("INSERT INTO users (name, profile_picture_url, deleted_at) VALUES (?, ?, ?)",
+                model.getName(), model.getProfilePictureUrl(), null).affectOne().singleKey(Long.class, model::setId));
         return model;
     }
 

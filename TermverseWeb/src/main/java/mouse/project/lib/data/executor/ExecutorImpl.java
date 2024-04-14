@@ -58,7 +58,7 @@ public class ExecutorImpl implements Executor {
             toClose.add(ps);
             for (int i = 0; i < args.size(); i++) {
                 Object arg = args.get(i);
-                setParameter(ps, i, arg);
+                setParameter(ps, i+1, arg);
             }
             ResultSet resultSet = ps.executeQuery();
             return toResult(resultSet);

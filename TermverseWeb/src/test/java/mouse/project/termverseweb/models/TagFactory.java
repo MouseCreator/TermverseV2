@@ -4,6 +4,7 @@ import mouse.project.termverseweb.dto.tag.TagCreateDTO;
 import org.springframework.stereotype.Service;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class TagFactory implements Factory{
     public TagCreateDTO tagCreateDTO(Long owner, String name) {
         TagCreateDTO createDTO = new TagCreateDTO();

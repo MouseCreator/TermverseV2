@@ -1,6 +1,9 @@
 package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
+import mouse.project.termverseweb.model.User;
+import mouse.project.termverseweb.models.Factories;
+import mouse.project.termverseweb.models.UserFactory;
 import mouse.project.termverseweb.mouselib.TestContainer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -17,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserRepositoryImplTest {
     @InitBeforeEach
     private UserRepository userRepository;
-
+    @InitBeforeEach
+    private Factories factories;
     @BeforeAll
     static void beforeAll() {
         TestContainer.initializeData();
@@ -27,12 +34,23 @@ class UserRepositoryImplTest {
     void setUp() {
         TestContainer.setUp(this);
     }
-    private void insertData() {
+    private List<User> insertData(String base, int values) {
+        UserFactory userFactory = factories.getFactory(UserFactory.class);
+        List<User> result = new ArrayList<>();
+        for (int i = 0; i < values; i++) {
+            User user = userFactory.user(base + (i + 1));
+            User saved = userRepository.save(user);
+            result.add(saved);
+        }
+        return result;
 
+    }
+    private List<User> insertData(String base) {
+        return insertData(base, 3);
     }
     @Test
     void findAll() {
-        insertData();
+        insertData("FA");
         userRepository.findAll();
     }
 
@@ -46,6 +64,8 @@ class UserRepositoryImplTest {
 
     @Test
     void save() {
+        List<User> savedUsers = insertData("SAVE", 4);
+        assertEquals(4, savedUsers.size());
     }
 
     @Test

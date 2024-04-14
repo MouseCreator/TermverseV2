@@ -5,6 +5,7 @@ import mouse.project.termverseweb.model.User;
 import org.springframework.stereotype.Service;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class UserFactory implements Factory {
 
     public UserCreateDTO userCreateDTO(String name) {

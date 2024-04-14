@@ -29,4 +29,12 @@ public class UpdateResultImpl implements WriteResult {
         }
         return this;
     }
+
+    @Override
+    public WriteResult affectOne() {
+        if (rowsAffected != 1) {
+            throw new ExecutorException("Affected " + rowsAffected + " rows, but expected: 1");
+        }
+        return this;
+    }
 }

@@ -4,6 +4,7 @@ import mouse.project.termverseweb.dto.term.TermCreateDTO;
 import org.springframework.stereotype.Service;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class TermFactory implements Factory{
 
     public TermCreateDTO termCreateDTO(String term, int order) {

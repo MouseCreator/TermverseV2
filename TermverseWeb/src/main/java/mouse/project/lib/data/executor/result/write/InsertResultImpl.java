@@ -19,7 +19,9 @@ public class InsertResultImpl implements WriteResult {
     @Override
     public <U> WriteResult singleKey(Class<U> keyClass, Consumer<U> keyConsumer) {
         try {
-            U object = statement.getGeneratedKeys().getObject(1, keyClass);
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            generatedKeys.next();
+            U object = generatedKeys.getObject(1, keyClass);
             keyConsumer.accept(object);
         } catch (SQLException e) {
             throw new ExecutorException(e);
@@ -41,6 +43,14 @@ public class InsertResultImpl implements WriteResult {
     public WriteResult assertAffectedAtLeast(Integer integer) {
         if (rowsAffected < integer) {
             throw new ExecutorException("Affected " + rowsAffected + " rows, but expected: " + integer);
+        }
+        return this;
+    }
+
+    @Override
+    public WriteResult affectOne() {
+        if (rowsAffected != 1) {
+            throw new ExecutorException("Affected " + rowsAffected + " rows, but expected: 1");
         }
         return this;
     }

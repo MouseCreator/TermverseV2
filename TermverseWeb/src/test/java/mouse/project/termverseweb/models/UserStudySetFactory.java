@@ -4,6 +4,7 @@ import mouse.project.termverseweb.dto.userstudyset.UserStudySetCreateDTO;
 import org.springframework.stereotype.Service;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class UserStudySetFactory implements Factory{
     public UserStudySetCreateDTO getCreateDTO(Long userId, Long studySetId, String type) {
         UserStudySetCreateDTO userStudySetCreateDTO = new UserStudySetCreateDTO();

@@ -35,7 +35,6 @@ class OptimizedTermServiceImplTest {
     private final ApplicationContext context;
     private final OptimizedTermService optimizedTermService;
     private final Factories factories;
-
     private static final int TERMS_CREATED = 5;
     @Autowired
     public OptimizedTermServiceImplTest(ApplicationContext applicationContext,

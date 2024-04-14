@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.repository;
 
+import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Dao;
 import mouse.project.termverseweb.model.Tag;
 import mouse.project.termverseweb.model.User;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @NoRepositoryBean
 public class TagRepositoryImpl implements TagRepository {
     private final Executor executor;
-
+    @Auto
     public TagRepositoryImpl(Executor executor) {
         this.executor = executor;
     }

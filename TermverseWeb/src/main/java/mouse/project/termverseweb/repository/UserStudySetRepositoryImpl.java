@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.repository;
 
+import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.model.UserStudySet;
@@ -14,10 +15,10 @@ import java.util.Optional;
 @Dao
 @NoRepositoryBean
 public class UserStudySetRepositoryImpl implements UserStudySetRepository {
-
     private final Executor executor;
     private UserRepository userRepository = null;
     private StudySetRepository studySetRepository = null;
+    @Auto
     public UserStudySetRepositoryImpl(Executor executor) {
         this.executor = executor;
     }

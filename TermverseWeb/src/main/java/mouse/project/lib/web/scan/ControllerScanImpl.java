@@ -3,7 +3,7 @@ package mouse.project.lib.web.scan;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Collect;
 import mouse.project.lib.ioc.annotation.Service;
-import mouse.project.lib.utils.Scanners;
+import mouse.project.lib.ioc.injector.ScanUtils;
 import mouse.project.lib.web.annotation.RequestPrefix;
 import mouse.project.lib.web.annotation.URL;
 import mouse.project.lib.web.context.ControllerContext;
@@ -40,7 +40,8 @@ public class ControllerScanImpl implements ControllerScan {
     private Collection<Registration> processController(Object controller) {
         Class<?> clazz = controller.getClass();
         List<Registration> result = new ArrayList<>();
-        Collection<Method> methods = Scanners.getMethodsAnnotatedWith(clazz, URL.class);
+        ScanUtils scanUtils = ScanUtils.getInstance();
+        Collection<Method> methods = scanUtils.getAnnotatedMethod(clazz, URL.class);
         ControllerContext controllerContext = contextFactory.getControllerContext(controller);
         for (Method method : methods) {
             Collection<Registration> regs = getInvoker(controllerContext, method);

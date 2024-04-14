@@ -3,6 +3,7 @@ package mouse.project.lib.ioc.injector.configuration;
 import mouse.project.lib.data.utils.DataConfig;
 import mouse.project.lib.exception.MissingModuleException;
 import mouse.project.lib.modules.MouseModules;
+import mouse.project.lib.tests.TestsConfig;
 import mouse.project.lib.web.config.WebConfig;
 
 import java.util.HashSet;
@@ -28,6 +29,7 @@ public class ModuleConfig {
         return switch (module) {
             case WEB_MODULE -> collector.apply(WebConfig.basePackage());
             case DATA_MODULE -> collector.apply(DataConfig.basePackage());
+            case TEST_MODULE -> collector.apply(TestsConfig.basePackage());
             default -> throw new MissingModuleException("No module: " + module );
         };
     }

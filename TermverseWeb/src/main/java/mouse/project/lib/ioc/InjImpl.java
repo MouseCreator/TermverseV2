@@ -1,10 +1,11 @@
 package mouse.project.lib.ioc;
 
+import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.ioc.injector.card.Cards;
 import mouse.project.lib.ioc.injector.filter.ImplementationFilter;
 
 import java.util.Collection;
-
+@Service
 public class InjImpl implements Inj {
     private final Cards cards;
     public InjImpl(Cards cards) {

@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
@@ -57,6 +58,12 @@ class UserRepositoryImplTest {
 
     @Test
     void findById() {
+        List<User> users = insertData("FA", 1);
+        User user = users.get(0);
+        Long id = user.getId();
+        Optional<User> uOptional = userRepository.findById(id);
+        assertTrue(uOptional.isPresent());
+        assertEquals(user, uOptional.get());
     }
 
     @Test

@@ -14,12 +14,13 @@ public class ExecutorImpl implements Executor {
     private final ModelFill fill;
     private final OrmMap map;
     private final Connection connection;
-
+    private final List<Statement> toClose;
     @Auto
-    public ExecutorImpl(ModelFill fill, OrmMap map, Connection connection) {
+    public ExecutorImpl(ModelFill fill, OrmMap map, Connection connection, List<Statement> toClose) {
         this.fill = fill;
         this.map = map;
         this.connection = connection;
+        this.toClose = toClose;
     }
 
     @Override
@@ -39,7 +40,9 @@ public class ExecutorImpl implements Executor {
         return executePrepared(sql, argList);
     }
     private ExecutorResult executeStatic(String sql) {
-        try(Statement statement = connection.createStatement()) {
+        try {
+            Statement statement = connection.createStatement();
+            toClose.add(statement);
             ResultSet resultSet = statement.executeQuery(sql);
             return toResult(resultSet);
         } catch (Exception e1) {
@@ -53,7 +56,9 @@ public class ExecutorImpl implements Executor {
             String msg = String.format("Input sql has %d place holders, but received %d arguments", questionMarks, args.size());
             throw new ExecutorException(msg);
         }
-        try(PreparedStatement ps = connection.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            toClose.add(ps);
             for (int i = 0; i < args.size(); i++) {
                 Object arg = args.get(i);
                 setParameter(ps, i, arg);

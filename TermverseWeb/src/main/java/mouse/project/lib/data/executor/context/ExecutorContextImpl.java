@@ -11,6 +11,9 @@ import mouse.project.lib.ioc.annotation.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 @Service
 public class ExecutorContextImpl implements ExecutorContext {
@@ -25,15 +28,40 @@ public class ExecutorContextImpl implements ExecutorContext {
     }
 
     @Override
-    public <U> U use(Function<Executor, U> function) {
+    public <U> U write(Function<Executor, U> function) {
+        List<Statement> toClose = new ArrayList<>();
         try(Connection connection = pool.getConnection()) {
             try {
-                Executor executor = new ExecutorImpl(fill, map, connection);
+                Executor executor = new ExecutorImpl(fill, map, connection, toClose);
                 U result = function.apply(executor);
                 connection.commit();
+                closeAll(toClose);
                 return result;
             } catch (Exception e) {
                 connection.rollback();
+                throw new ExecutorException(e);
+            }
+        } catch (SQLException e) {
+            throw new ExecutorException(e);
+        }
+    }
+
+    private void closeAll(List<Statement> toClose) throws SQLException {
+        for (Statement s : toClose) {
+            s.close();
+        }
+    }
+
+    @Override
+    public <U> U read(Function<Executor, U> function) {
+        List<Statement> toClose = new ArrayList<>();
+        try(Connection connection = pool.getConnection()) {
+            try {
+                Executor executor = new ExecutorImpl(fill, map, connection, toClose);
+                U result = function.apply(executor);
+                closeAll(toClose);
+                return result;
+            } catch (Exception e) {
                 throw new ExecutorException(e);
             }
         } catch (SQLException e) {

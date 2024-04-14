@@ -1,9 +1,12 @@
 package mouse.project.lib.ioc.injector.card;
 
+import mouse.project.lib.ioc.InjImpl;
 import mouse.project.lib.ioc.injector.card.container.CardContainer;
 import mouse.project.lib.ioc.injector.card.container.CardContainerImpl;
 import mouse.project.lib.ioc.injector.card.container.Implementation;
+import mouse.project.lib.ioc.injector.card.container.Implementations;
 import mouse.project.lib.ioc.injector.card.definition.DefinedCard;
+import mouse.project.lib.ioc.injector.card.definition.SupplierDefinitionImpl;
 import mouse.project.lib.ioc.injector.card.factory.CardDefinitions;
 import mouse.project.lib.ioc.injector.card.factory.CardDefinitionsImpl;
 import mouse.project.lib.ioc.injector.card.factory.CardFactory;
@@ -20,7 +23,11 @@ public class Cards {
     private final CardFactory cardFactory;
     private final DefinitionsManager definitionsManager;
     private final CardScanner cardScanner;
-    private Cards(CardFactory cardFactory, DefinitionsManager definitionsManager, CardScanner cardScanner) {
+
+    private Cards(
+                  CardFactory cardFactory,
+                  DefinitionsManager definitionsManager,
+                  CardScanner cardScanner) {
         this.cardFactory = cardFactory;
         this.definitionsManager = definitionsManager;
         this.cardScanner = cardScanner;
@@ -32,7 +39,14 @@ public class Cards {
         CardFactory factory = new CardFactoryImpl(container, definitions);
         DefinitionsManager manager = new DefinitionsManager(definitions);
         CardScanner scanner = new DefinedCardScanner();
-        return new Cards(factory, manager, scanner);
+        Cards cards = new Cards(factory, manager, scanner);
+        cards.initSelf(definitions);
+        return cards;
+    }
+    public void initSelf(CardDefinitions definitions) {
+        Implementation<InjImpl> injImplementation = Implementations.create(InjImpl.class);
+        definitions.add(new SupplierDefinitionImpl<>(
+                () -> new InjImpl(this), injImplementation));
     }
 
     public void init(Collection<Class<?>> classes) {

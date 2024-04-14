@@ -12,6 +12,7 @@ import java.util.List;
 
 @org.springframework.stereotype.Repository
 public interface UserTermRepository extends Repository<UserTerm, Long>, GenericRepository {
+    @Query("SELECT ut FROM UserTerm ut WHERE ut.user.deletedAt IS NULL AND ut.term.deletedAt IS NULL")
     List<UserTerm> findAll();
     @Modifying
     @Transactional

@@ -50,8 +50,9 @@ class UserRepositoryImplTest {
     }
     @Test
     void findAll() {
-        insertData("FA");
-        userRepository.findAll();
+        List<User> users = insertData("FA");
+        List<User> all = userRepository.findAll();
+        assertTrue(all.containsAll(users));
     }
 
     @Test

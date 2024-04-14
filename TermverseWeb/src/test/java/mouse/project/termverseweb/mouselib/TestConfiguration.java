@@ -7,7 +7,7 @@ import mouse.project.lib.modules.MouseModules;
 @Configuration(
         basePackage = "mouse.project.termverseweb",
         name = "test",
-        includeModules = {MouseModules.WEB_MODULE, MouseModules.DATA_MODULE},
+        includeModules = {MouseModules.WEB_MODULE, MouseModules.DATA_MODULE, MouseModules.TEST_MODULE},
         includePackages = "mouse.project.termverseweb.mapper.impl"
 )
 public class TestConfiguration {

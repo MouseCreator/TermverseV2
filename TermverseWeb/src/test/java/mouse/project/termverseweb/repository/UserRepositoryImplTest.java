@@ -64,10 +64,19 @@ class UserRepositoryImplTest {
         Optional<User> uOptional = userRepository.findById(id);
         assertTrue(uOptional.isPresent());
         assertEquals(user, uOptional.get());
+
+        Optional<User> noUser = userRepository.findById(Long.MAX_VALUE);
+        assertTrue(noUser.isEmpty());
     }
 
     @Test
     void deleteById() {
+        List<User> users = insertData("FA", 1);
+        User user = users.get(0);
+        Long id = user.getId();
+        assertTrue(userRepository.findById(id).isPresent());
+        userRepository.deleteById(id);
+        assertTrue(userRepository.findById(id).isEmpty());
     }
 
     @Test

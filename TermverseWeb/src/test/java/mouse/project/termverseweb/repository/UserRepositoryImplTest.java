@@ -2,6 +2,7 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.termverseweb.mouselib.TestContainer;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserRepositoryImplTest {
     @InitBeforeEach
     private UserRepository userRepository;
+
+    @BeforeAll
+    static void beforeAll() {
+        TestContainer.initializeData();
+    }
+
     @BeforeEach
     void setUp() {
         TestContainer.setUp(this);
@@ -25,6 +32,8 @@ class UserRepositoryImplTest {
     }
     @Test
     void findAll() {
+        insertData();
+        userRepository.findAll();
     }
 
     @Test

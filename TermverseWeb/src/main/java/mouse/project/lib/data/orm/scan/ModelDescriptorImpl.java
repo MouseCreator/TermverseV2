@@ -1,5 +1,6 @@
 package mouse.project.lib.data.orm.scan;
 
+import jakarta.persistence.Column;
 import mouse.project.lib.data.exception.ModelScanException;
 import mouse.project.lib.data.orm.annotation.NamedColumn;
 import mouse.project.lib.data.orm.desc.FieldDescription;
@@ -46,7 +47,12 @@ public class ModelDescriptorImpl implements ModelDescriptor {
         assert annotation != null;
         String name = annotation.value();
         if (name.isEmpty()) {
-            name = field.getName();
+            Column column = field.getAnnotation(Column.class);
+            if (column == null || column.name().isEmpty()) {
+                name = field.getName();
+            } else {
+                name = column.name();
+            }
         }
         Class<?> type = field.getType();
         return new FieldDescriptionRecord(name, field, type);

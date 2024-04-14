@@ -1,5 +1,8 @@
 package mouse.project.lib.data.executor;
 
+import mouse.project.lib.data.executor.result.AdjustedOptional;
+import mouse.project.lib.data.executor.result.AdjustedResult;
+import mouse.project.lib.data.executor.result.AdjustedResultList;
 import mouse.project.lib.data.transformer.Transformer;
 
 import java.sql.ResultSet;

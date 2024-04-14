@@ -1,4 +1,4 @@
-package mouse.project.lib.data.executor;
+package mouse.project.lib.data.executor.result;
 
 import java.util.ArrayList;
 import java.util.List;

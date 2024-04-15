@@ -2,6 +2,7 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.lib.testutil.MTest;
+import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.model.Tag;
 import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.mouselib.TestContainer;
@@ -23,11 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class TagRepositoryImplTest {
     @InitBeforeEach
     private UserRepository userRepository;
-
     @InitBeforeEach
     private TagRepository tagRepository;
     @InitBeforeEach
     private Insertions insertions;
+    @InitBeforeEach
+    private SoftDeletionTest soft;
     @BeforeAll
     static void beforeAll() {
         TestContainer.initializeData();
@@ -45,6 +47,10 @@ class TagRepositoryImplTest {
         List<Tag> tags = insertions.generateTags(user, name, count);
         List<Tag> savedTags = insertions.saveAll(tagRepository, tags);
         return new InsertResult(user, savedTags);
+    }
+
+    private SoftDeletionTest.BeforeSoftDeletion<Tag, Long> soft() {
+        return soft.using(tagRepository::deleteById, Tag::getId);
     }
 
     @Test
@@ -84,12 +90,21 @@ class TagRepositoryImplTest {
 
     @Test
     void deleteById() {
+        InsertResult insertResult = insertData("delete", 1);
+        Tag tag = insertResult.tags().get(0);
+        Long id = tag.getId();
+        assertTrue(tagRepository.findById(id).isPresent());
+        tagRepository.deleteById(id);
+        assertTrue(tagRepository.findById(id).isEmpty());
     }
-
-
 
     @Test
     void findAllIncludeDeleted() {
+        InsertResult insertResult = insertData("all-include-deleted", 2);
+        List<Tag> tags = insertResult.tags();
+        soft().removeAll(tags)
+                .byIds().validateAbsentIn(() -> tagRepository.findAll())
+                .byIds().validatePresentIn(() -> tagRepository.findAllIncludeDeleted());
     }
 
     @Test

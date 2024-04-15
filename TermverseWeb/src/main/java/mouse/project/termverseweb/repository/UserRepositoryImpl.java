@@ -1,6 +1,6 @@
 package mouse.project.termverseweb.repository;
 
-import mouse.project.lib.data.executor.context.ExecutorContext;
+import mouse.project.lib.data.executor.Executor;
 import mouse.project.termverseweb.model.User;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Dao;
@@ -11,9 +11,9 @@ import java.util.Optional;
 @Dao
 @NoRepositoryBean
 public class UserRepositoryImpl implements UserRepository {
-    private final ExecutorContext executor;
+    private final Executor executor;
     @Auto
-    public UserRepositoryImpl(ExecutorContext executor) {
+    public UserRepositoryImpl(Executor executor) {
         this.executor = executor;
     }
 
@@ -36,8 +36,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User model) {
-        executor.write(e -> e.execute("INSERT INTO users (name, profile_picture_url, deleted_at) VALUES (?, ?, ?)",
-                model.getName(), model.getProfilePictureUrl(), null).affectOne().singleKey(Long.class, model::setId));
+        executor.write(e -> e.execute("INSERT INTO users " +
+                        "(name, profile_picture_url, deleted_at) " +
+                        "VALUES (?, ?, ?)",
+                model.getName(), model.getProfilePictureUrl(), null)
+                .affectOne()
+                .singleKey(Long.class, model::setId));
         return model;
     }
 

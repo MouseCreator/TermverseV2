@@ -3,7 +3,10 @@ package mouse.project.termverseweb.models;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 
 import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
+import mouse.project.termverseweb.model.StudySet;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @mouse.project.lib.ioc.annotation.Service
@@ -19,5 +22,13 @@ public class StudySetFactory implements Factory {
         updateDTO.setId(id);
         updateDTO.setName(newName);
         return updateDTO;
+    }
+
+    public StudySet studySet(String name) {
+        StudySet studySet = new StudySet();
+        studySet.setName(name);
+        studySet.setPictureUrl(name.toLowerCase() + ".img");
+        studySet.setCreatedAt(LocalDateTime.now());
+        return studySet;
     }
 }

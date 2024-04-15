@@ -1,5 +1,7 @@
 package mouse.project.termverseweb.lib.service.container;
 
+import mouse.project.lib.ioc.annotation.Auto;
+import mouse.project.lib.ioc.annotation.Collect;
 import mouse.project.termverseweb.lib.service.GenericServiceHelper;
 import mouse.project.termverseweb.lib.service.StatefulRepositoryCaller;
 import mouse.project.termverseweb.lib.service.helper.*;
@@ -16,12 +18,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class ServiceProviderImpl implements ServiceProviderContainer {
 
     private final List<ServiceProvider> serviceProviderList;
     private final GenericServiceHelper genericServiceHelper;
     @Autowired
-    public ServiceProviderImpl(List<ServiceProvider> serviceProviderList, GenericServiceHelper genericServiceHelper) {
+    @Auto
+    public ServiceProviderImpl(@Collect(ServiceProvider.class)
+                                   List<ServiceProvider> serviceProviderList, GenericServiceHelper genericServiceHelper) {
         this.serviceProviderList = serviceProviderList;
         this.genericServiceHelper = genericServiceHelper;
     }

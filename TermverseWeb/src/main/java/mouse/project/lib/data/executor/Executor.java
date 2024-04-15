@@ -1,10 +1,11 @@
 package mouse.project.lib.data.executor;
 
-import mouse.project.lib.data.executor.result.read.ReadResult;
+import mouse.project.lib.data.executor.context.ReadExecutor;
+import mouse.project.lib.data.executor.context.WriteExecutor;
 
-import java.util.List;
+import java.util.function.Function;
 
 public interface Executor {
-    ReadResult executeQuery(String sql, Object... args);
-    ReadResult executeListed(String sql, List<Object> argList);
+    <U> U write(Function<WriteExecutor, U> function);
+    <U> U read(Function<ReadExecutor, U> function);
 }

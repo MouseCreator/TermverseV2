@@ -5,7 +5,7 @@ import mouse.project.lib.data.exception.ExecutorException;
 import java.util.List;
 
 public class QMarks {
-    public static void validateQMarks(String sql, List<Object> args) {
+    public static void validateQMarks(String sql, List<?> args) {
         int questionMarks = getQuestionMarks(sql);
         if (args.size() != questionMarks) {
             String msg = String.format("Input sql has %d place holders, but received %d arguments", questionMarks, args.size());

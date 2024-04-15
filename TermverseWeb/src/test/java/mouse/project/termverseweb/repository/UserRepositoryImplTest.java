@@ -2,8 +2,6 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.termverseweb.model.User;
-import mouse.project.termverseweb.models.Factories;
-import mouse.project.termverseweb.models.UserFactory;
 import mouse.project.termverseweb.mouselib.TestContainer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +22,7 @@ class UserRepositoryImplTest {
     @InitBeforeEach
     private UserRepository userRepository;
     @InitBeforeEach
-    private Factories factories;
+    private Insertions insertions;
     @BeforeAll
     static void beforeAll() {
         TestContainer.initializeData();
@@ -36,15 +33,8 @@ class UserRepositoryImplTest {
         TestContainer.setUp(this);
     }
     private List<User> insertData(String base, int values) {
-        UserFactory userFactory = factories.getFactory(UserFactory.class);
-        List<User> result = new ArrayList<>();
-        for (int i = 0; i < values; i++) {
-            User user = userFactory.user(base + (i + 1));
-            User saved = userRepository.save(user);
-            result.add(saved);
-        }
-        return result;
-
+        List<User> users = insertions.generateUsers(base, values);
+        return insertions.saveAll(userRepository, users);
     }
     private List<User> insertData(String base) {
         return insertData(base, 3);

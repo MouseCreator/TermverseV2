@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.lib.service.provider;
 
+import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.termverseweb.lib.service.GenericServiceHelper;
 import mouse.project.termverseweb.lib.service.helper.SoftDeleteHelper;
 import mouse.project.termverseweb.lib.service.result.OptionalResult;
@@ -10,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class SoftDeleteProviderImpl implements SoftDeleteProvider {
     private final GenericServiceHelper genericService;
     @Autowired
+    @Auto
     public SoftDeleteProviderImpl(GenericServiceHelper genericService) {
         this.genericService = genericService;
     }

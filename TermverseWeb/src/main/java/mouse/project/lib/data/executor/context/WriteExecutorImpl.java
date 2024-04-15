@@ -1,6 +1,7 @@
-package mouse.project.lib.data.executor;
+package mouse.project.lib.data.executor.context;
 
 import mouse.project.lib.data.exception.ExecutorException;
+import mouse.project.lib.data.executor.QMarks;
 import mouse.project.lib.data.executor.result.write.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,14 +25,15 @@ public class WriteExecutorImpl implements WriteExecutor {
         return executeListed(sql, fromArgs(args));
     }
 
-    public WriteResult executeListed(String sql, List<Object> args) {
+    public WriteResult executeListed(String sql, List<?> args) {
         String[] split = sql.split("\\s", 2);
         String method = split[0];
         String upperCase = method.trim().toUpperCase();
+        List<Object> arObjects = new ArrayList<>(args);
         return switch (upperCase) {
-            case "INSERT" -> onInsertListed(sql, args);
-            case "DELETE" -> onDeleteListed(sql, args);
-            case "UPDATE" -> onUpdateListed(sql, args);
+            case "INSERT" -> onInsertListed(sql, arObjects);
+            case "DELETE" -> onDeleteListed(sql, arObjects);
+            case "UPDATE" -> onUpdateListed(sql, arObjects);
             default -> throw new ExecutorException("Unknown method: " + upperCase);
         };
     }

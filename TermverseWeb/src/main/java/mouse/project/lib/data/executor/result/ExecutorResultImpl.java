@@ -1,4 +1,4 @@
-package mouse.project.lib.data.executor;
+package mouse.project.lib.data.executor.result;
 
 import mouse.project.lib.data.executor.result.read.*;
 import mouse.project.lib.data.orm.desc.ModelDescription;

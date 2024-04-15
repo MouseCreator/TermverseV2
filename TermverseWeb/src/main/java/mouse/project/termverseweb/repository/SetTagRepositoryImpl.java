@@ -1,7 +1,7 @@
 package mouse.project.termverseweb.repository;
 
-import mouse.project.termverseweb.model.*;
 import mouse.project.lib.data.executor.Executor;
+import mouse.project.termverseweb.model.*;
 import mouse.project.lib.data.utils.DaoUtils;
 import mouse.project.lib.ioc.annotation.After;
 import mouse.project.lib.ioc.annotation.Auto;
@@ -39,24 +39,26 @@ public class SetTagRepositoryImpl implements SetTagRepository {
 
     @Override
     public List<SetTag> getAll() {
-        return executor.executeQuery("SELECT * FROM set_tags")
+        return executor.read(e -> e.executeQuery("SELECT * FROM set_tags")
                 .adjustedList(SetTagModel.class)
                 .map(this::fromModel)
-                .get();
+                .get());
     }
 
     @Override
     public SetTag save(SetTag setTag) {
-        return executor.executeQuery("INSERT INTO set_tags (tag_id, set_id, tag_id) VALUES (?, ?, ?)",
-                setTag.getTag(),
-                setTag.getStudySet(),
-                setTag.getUser()).adjusted(SetTagModel.class)
-                .map(this::fromModel).get();
+        executor.write(e -> e.execute(
+                "INSERT INTO set_tags (tag_id, set_id, tag_id) VALUES (?, ?, ?)",
+                    setTag.getTag(),
+                    setTag.getStudySet(),
+                    setTag.getUser()))
+                .affectOne();
+        return setTag;
     }
 
     @Override
     public Optional<SetTag> getSetTagById(Long userId, Long setId, Long tagId) {
-        return executor.executeQuery(
+        return executor.read(e -> e.executeQuery(
                 "SELECT * FROM set_tags st " +
                     "INNER JOIN sets s ON s.id = st.set_id " +
                     "INNER JOIN tags t ON t.id = st.tag_id " +
@@ -64,7 +66,7 @@ public class SetTagRepositoryImpl implements SetTagRepository {
                     "WHERE s.id = ? AND t.id = ? AND u.id = ? AND " +
                     "s.deleted_at IS NULL AND t.deleted_at IS NULL AND u.deleted_at IS NULL",
                 setId, tagId, userId
-        ).adjustedOptional(SetTagModel.class).map(this::fromModel).get();
+        ).adjustedOptional(SetTagModel.class).map(this::fromModel).get());
     }
 
     @Override
@@ -88,16 +90,16 @@ public class SetTagRepositoryImpl implements SetTagRepository {
                     "FROM set_tags r " +
                     "WHERE r.set_id = st.set_id))", qMarksList
         );
-        return executor.executeQuery(
+        return executor.read(e -> e.executeListed(
           sql, arguments
-        ).list(StudySet.class);
+        ).list(StudySet.class));
     }
 
     @Override
     public void delete(Long userId, Long setId, Long tagId) {
-        executor.executeQuery(
+        executor.write (e -> e.execute(
             "DELETE FROM set_tags st WHERE st.user_id = ? AND st.set_id = ? AND st.tag_id = ?",
-                userId, setId, tagId);
+                userId, setId, tagId));
     }
 
     private SetTag fromModel(SetTagModel model) {

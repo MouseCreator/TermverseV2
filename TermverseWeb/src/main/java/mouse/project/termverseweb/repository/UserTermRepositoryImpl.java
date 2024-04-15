@@ -1,10 +1,10 @@
 package mouse.project.termverseweb.repository;
 
+import mouse.project.lib.data.executor.Executor;
 import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.model.UserTerm;
 import mouse.project.termverseweb.model.UserTermModel;
-import mouse.project.lib.data.executor.Executor;
 import mouse.project.lib.data.utils.DaoUtils;
 import mouse.project.lib.ioc.annotation.After;
 import mouse.project.lib.ioc.annotation.Auto;
@@ -35,12 +35,12 @@ public class UserTermRepositoryImpl implements UserTermRepository {
 
     @Override
     public List<UserTerm> findAll() {
-        return executor.executeQuery(
+        return executor.read(e -> e.executeQuery(
                 "SELECT ut FROM users_terms ut " +
                     "INNER JOIN users u ON ut.user_id = u.id" +
                     "INNER JOIN terms t ON ut.term_id = t.id" +
                     "WHERE u.deletedAt IS NULL AND t.deletedAt IS NULL"
-        ).adjustedList(UserTermModel.class).map(this::fromModel).get();
+        ).adjustedList(UserTermModel.class).map(this::fromModel).get());
     }
 
     private UserTerm fromModel(UserTermModel userTermModel) {
@@ -68,7 +68,7 @@ public class UserTermRepositoryImpl implements UserTermRepository {
         );
         List<Long> args = new ArrayList<>(termIds);
         args.add(0, id);
-        executor.executeQuery(sql, args);
+        executor.write(e -> e.executeListed(sql, args));
     }
 
     @Override
@@ -76,10 +76,10 @@ public class UserTermRepositoryImpl implements UserTermRepository {
         Long termId = model.getTerm().getId();
         Long userId = model.getUser().getId();
         String progress = model.getProgress();
-        return executor.executeQuery("INSERT INTO users_terms (term_id, user_id, progress) VALUES (?,?,?)",
-                termId, userId, progress)
-                .adjusted(UserTermModel.class)
-                .map(t -> new UserTerm(model.getUser(), model.getTerm(), t.getProgress())).get();
+        executor.write (e -> e.execute(
+                "INSERT INTO users_terms (term_id, user_id, progress) VALUES (?,?,?)",
+                termId, userId, progress)).affectOne();
+        return model;
     }
 
     @Override
@@ -94,9 +94,9 @@ public class UserTermRepositoryImpl implements UserTermRepository {
                 "u.deletedAt IS NULL AND t.deletedAt IS NULL", qm
         );
         List<Long> args = new ArrayList<>(termIds);
-        return executor.executeQuery(sql, args)
+        return executor.read(e -> e.executeListed (sql, args)
                 .adjustedList(UserTermModel.class)
                 .map(this::fromModel)
-                .get();
+                .get());
     }
 }

@@ -25,8 +25,8 @@ public class ExecutorResultImpl implements ReadResult {
     }
 
     @Override
-    public ResultSet getRaw() {
-        return resultSet;
+    public RawResult getRaw() {
+        return new RawResultImpl(resultSet);
     }
 
     @Override

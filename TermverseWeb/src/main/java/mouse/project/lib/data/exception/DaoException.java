@@ -1,9 +1,13 @@
 package mouse.project.lib.data.exception;
 
-import java.sql.SQLException;
+
+import java.io.Serial;
 
 public class DaoException extends RuntimeException{
-    public DaoException(SQLException e) {
+    @Serial
+    private static final long serialVersionUID = 8258805303642237800L;
+
+    public DaoException(Exception e) {
         super(e);
     }
 }

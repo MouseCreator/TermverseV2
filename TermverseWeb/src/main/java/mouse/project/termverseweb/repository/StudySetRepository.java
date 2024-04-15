@@ -66,7 +66,6 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
         List<StudySet> studySets = p.stream().toList();
         return new PageImpl<>(studySets, pageDescription);
     }
-
     @Query("SELECT s FROM StudySet s " +
             "LEFT JOIN FETCH s.terms t " +
             "WHERE s.id = :id " +

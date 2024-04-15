@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public interface ReadResult {
-    ResultSet getRaw();
+    RawResult getRaw();
     <T> T to(Transformer<T> transformer);
     <T> T model(Class<T> model);
     <T> List<T> list(Class<T> model);

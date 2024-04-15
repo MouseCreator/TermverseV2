@@ -1,11 +1,11 @@
 package mouse.project.termverseweb.repository;
 
-import mouse.project.lib.data.exception.ExecutorException;
+import mouse.project.lib.data.exception.DaoException;
 import mouse.project.lib.data.executor.Executor;
+import mouse.project.lib.data.executor.result.Raw;
 import mouse.project.termverseweb.model.SizedStudySet;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.Term;
-import mouse.project.lib.data.exception.DaoException;
 import mouse.project.lib.data.page.Page;
 import mouse.project.lib.data.page.PageDescription;
 import mouse.project.lib.data.page.PageFactory;
@@ -151,21 +151,15 @@ public class StudySetRepositoryImpl implements StudySetRepository {
 
     @Override
     public Integer getTermCount(Long setId) {
-        return executor.read(e -> {
-            try {
-                return e.executeQuery(
-                        "SELECT COUNT(*) " +
+        return executor.read(e ->
+            e.executeQuery(
+                    "SELECT COUNT(*) " +
                             "FROM terms t " +
                             "INNER JOIN study_sets_terms st ON t.id = st.term_id " +
                             "INNER JOIN study_sets s ON s.id = st.set_id " +
                             "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL", setId
-                ).getRaw().getInt(1);
-            } catch (SQLException ex) {
-                throw new DaoException(ex);
-            }
-        });
+            ).getRaw().map(Raw::getInt));
     }
-
     @Override
     public Optional<SizedStudySet> findByIdWithSize(Long id) {
         Optional<StudySet> studySet = findById(id);

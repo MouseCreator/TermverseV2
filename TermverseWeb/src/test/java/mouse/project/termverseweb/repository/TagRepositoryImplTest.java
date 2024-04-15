@@ -155,7 +155,6 @@ class TagRepositoryImplTest {
         String specialName = "__SPECIAL_NAME__";
         InsertResult insertResult = insertData(specialName, 1);
         Long ownerId = insertResult.user().getId();
-        Tag special = insertResult.tags().get(0);
 
         List<Tag> tagsByOwnerAndName = tagRepository.getTagsByOwnerAndName(ownerId, specialName);
         MTest.compareUnordered(insertResult.tags(), tagsByOwnerAndName);

@@ -87,11 +87,24 @@ class UserRepositoryImplTest {
 
     @Test
     void findAllIncludeDeleted() {
-
+        List<User> users = insertData("F_A_I_D", 1);
+        User user = users.get(0);
+        Long id = user.getId();
+        userRepository.deleteById(id);
+        List<User> list = userRepository.findAllIncludeDeleted();
+        List<Long> ids = list.stream().map(User::getId).toList();
+        assertTrue(ids.contains(user.getId()));
     }
 
     @Test
     void restoreById() {
+        List<User> users = insertData("DEL", 1);
+        User user = users.get(0);
+        Long id = user.getId();
+        userRepository.deleteById(id);
+        assertTrue(userRepository.findById(id).isEmpty());
+        userRepository.restoreById(id);
+        assertTrue(userRepository.findById(id).isPresent());
     }
 
     @Test

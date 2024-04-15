@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,6 +43,10 @@ class TermRepositoryImplTest {
         insertions.saveAll(termRepository, terms);
         return terms;
     }
+
+    private SoftDeletionTest.BeforeSoftDeletion<Term, Long> soft() {
+        return soft.using(termRepository::deleteById, Term::getId);
+    }
     @Test
     void save() {
         List<Term> terms = insertData("saved", 2);
@@ -63,6 +66,9 @@ class TermRepositoryImplTest {
 
     @Test
     void findAllIncludeDeleted() {
+        List<Term> terms = insertData("find-all", 2);
+        soft().passAll(terms).byIds().validatePresentIn(() -> termRepository.findAllIncludeDeleted());
+        soft().removeAll(terms).byIds().validatePresentIn(() -> termRepository.findAllIncludeDeleted());
     }
 
     @Test

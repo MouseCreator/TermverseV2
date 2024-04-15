@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
+import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.model.Tag;
 import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.mouselib.TestContainer;
@@ -52,6 +53,14 @@ class TagRepositoryImplTest {
     }
     @Test
     void findAll() {
+        InsertResult insertResult = insertData("find-all", 3);
+        List<Tag> tags = insertResult.tags();
+        List<Tag> all = tagRepository.findAll();
+        MTest.containsAll(all, tags);
+        Tag tag = tags.get(0);
+        tagRepository.deleteById(tag.getId());
+        List<Tag> allAfterDelete = tagRepository.findAll();
+        assertFalse(allAfterDelete.contains(tag));
     }
 
     @Test

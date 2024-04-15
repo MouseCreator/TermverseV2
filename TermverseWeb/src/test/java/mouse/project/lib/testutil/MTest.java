@@ -1,7 +1,9 @@
 package mouse.project.lib.testutil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class MTest {
@@ -13,5 +15,14 @@ public class MTest {
         assertNotNull(c2, "Collection 1 is null");
         assertEquals(c1.size(), c2.size(), "Collection sizes do not match");
         assertEquals(new HashSet<>(c1), new HashSet<>(c2), "Collection elements do not match");
+    }
+
+    public static <T> void containsAll(List<T> superCollection, List<T> subs) {
+        if (superCollection.containsAll(subs)) {
+            return;
+        }
+        List<T> modified = new ArrayList<>(subs);
+        modified.removeAll(superCollection);
+        fail("Collection " + superCollection + " is missing " + modified);
     }
 }

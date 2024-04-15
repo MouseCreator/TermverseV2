@@ -27,9 +27,9 @@ public class TagRepositoryImpl implements TagRepository {
     private void addUser(Tag tag) {
         Long id = tag.getId();
         Optional<User> optional = executor.read(e -> e.executeQuery(
-                "SELECT u.* " +
+                "SELECT * " +
                     "FROM users u " +
-                    "INNER JOIN tags t ON u.id = t.user_id " +
+                    "INNER JOIN tags t ON u.id = t.owner " +
                     "WHERE t.id = ?", id
         ).optional(User.class));
         optional.ifPresent(tag::setOwner);
@@ -77,8 +77,8 @@ public class TagRepositoryImpl implements TagRepository {
     public List<Tag> getTagsByOwner(Long ownerId) {
         return executor.read(e -> e.executeQuery(
                 "SELECT t.* FROM tags t " +
-                    "INNER JOIN users u ON t.owner_id = u.id " +
-                    "WHERE t.owner_id = ? " +
+                    "INNER JOIN users u ON t.owner = u.id " +
+                    "WHERE t.owner = ? " +
                     "AND t.deleted_at IS NULL AND u.deleted_at IS NULL", ownerId
         ).adjustedList(Tag.class).apply(this::addUser).get());
     }
@@ -87,7 +87,7 @@ public class TagRepositoryImpl implements TagRepository {
     public List<Tag> getTagsByOwnerAndName(Long ownerId, String name) {
         return executor.read (e -> e.executeQuery(
                 "SELECT t.* FROM tags t " +
-                    "INNER JOIN users u ON t.owner_id = u.id " +
+                    "INNER JOIN users u ON t.owner = u.id " +
                     "WHERE LOWER(t.name) LIKE LOWER(CONCAT('%', ?, '%')) " +
                     "AND u.id = ? " +
                     "AND u.deletedAt IS NULL " +

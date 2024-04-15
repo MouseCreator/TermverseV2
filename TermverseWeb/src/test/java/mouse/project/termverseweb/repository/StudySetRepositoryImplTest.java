@@ -1,12 +1,13 @@
 package mouse.project.termverseweb.repository;
 
+import mouse.project.lib.data.page.Page;
+import mouse.project.lib.data.page.PageDescription;
+import mouse.project.lib.data.page.PageFactory;
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.lib.testutil.MTest;
+import mouse.project.termverseweb.defines.UserStudySetRelation;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
-import mouse.project.termverseweb.model.SetTerm;
-import mouse.project.termverseweb.model.SizedStudySet;
-import mouse.project.termverseweb.model.StudySet;
-import mouse.project.termverseweb.model.Term;
+import mouse.project.termverseweb.model.*;
 import mouse.project.termverseweb.mouselib.TestContainer;
 import mouse.project.termverseweb.utils.DateUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,12 +34,17 @@ class StudySetRepositoryImplTest {
     @InitBeforeEach
     private TermRepository termRepository;
     @InitBeforeEach
+    private UserRepository userRepository;
+    @InitBeforeEach
+    private UserStudySetRepository userStudySetRepository;
+    @InitBeforeEach
     private StudySetTermRepository setTermRepository;
     @InitBeforeEach
     private SoftDeletionTest soft;
-
     @InitBeforeEach
     private Insertions insertions;
+    @InitBeforeEach
+    private PageFactory pageFactory;
 
     @BeforeEach
     void setUp() {
@@ -164,10 +170,53 @@ class StudySetRepositoryImplTest {
 
     @Test
     void findAllByUserId() {
+        String base = "with-user";
+        StudySet studySet = insertData(base);
+        User user = insertUserAndAssignToSet(base, studySet);
+        Long userId = user.getId();
+        List<StudySet> allByUserId = repository.findAllByUserId(userId);
+        MTest.compareUnordered(List.of(studySet), allByUserId);
+
+        repository.deleteById(studySet.getId());
+        assertTrue(repository.findAllByUserId(userId).isEmpty());
+    }
+
+    private User insertUserAndAssignToSet(String base, StudySet studySet) {
+        List<User> users = insertions.generateUsers(base, 1);
+        List<User> savedUsers = insertions.saveAll(userRepository, users);
+        User user = savedUsers.get(0);
+        userStudySetRepository.save(new UserStudySet(user, studySet, UserStudySetRelation.OWNER));
+        return user;
+    }
+    private User insertUserAndAssignToSet(String base, List<StudySet> studySets) {
+        List<User> users = insertions.generateUsers(base, 1);
+        List<User> savedUsers = insertions.saveAll(userRepository, users);
+        User user = savedUsers.get(0);
+        studySets.forEach(s -> userStudySetRepository.save(new UserStudySet(user, s, UserStudySetRelation.OWNER)));
+        return user;
     }
 
     @Test
-    void testFindAllByUserId() {
+    void findAllByUserIdPages() {
+        String base = "pageable";
+        int size = 2;
+        List<StudySet> studySets = insertData(base, size * 2);
+        User user = insertUserAndAssignToSet(base, studySets);
+        Long userId = user.getId();
+
+
+        PageDescription page0Description = pageFactory.pageDescription(0, size);
+        Page<StudySet> page0 = repository.findAllByUserId(userId, page0Description);
+        List<StudySet> page0Elements = studySets.subList(0, 2);
+        MTest.compareUnordered(page0.getElements(), page0Elements);
+
+        PageDescription page1Description = pageFactory.pageDescription(1, size);
+        Page<StudySet> page1 = repository.findAllByUserId(userId, page1Description);
+        List<StudySet> page1Elements = studySets.subList(2, 4);
+        MTest.compareUnordered(page1.getElements(), page1Elements);
+
+        PageDescription page2Description = pageFactory.pageDescription(2, size);
+        assertTrue(repository.findAllByUserId(userId, page2Description).isEmpty());
     }
 
     @Test

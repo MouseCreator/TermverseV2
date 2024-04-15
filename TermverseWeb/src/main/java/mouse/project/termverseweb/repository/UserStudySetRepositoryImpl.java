@@ -33,7 +33,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
         return executor.read(e -> e.executeQuery(
                 "SELECT * FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
-                    "INNER JOIN study_sets s ON s.id = us.set_id " +
+                    "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE s.deleted_at IS NULL AND u.deleted_at IS NULL"
         ).adjustedList(UserStudySetModel.class).map(this::transform).get());
     }
@@ -44,7 +44,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
                 "SELECT us " +
                     "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
-                    "INNER JOIN study_sets s ON s.id = us.set_id " +
+                    "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE u.id = ? AND s.id = ? " +
                     "AND u.deleted_at IS NULL ANd s.deleted_at IS NULL", user, studySetId
         ).adjustedOptional(UserStudySetModel.class).map(this::transform).get());
@@ -69,7 +69,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
     @Override
     public void deleteByUserAndStudySet(Long userId, Long setId) {
         executor.write( e -> e.execute(
-                "DELETE FROM users_study_sets us WHERE us.user_id = ? AND us.set_id = ?", userId, setId
+                "DELETE FROM users_study_sets us WHERE us.user_id = ? AND us.study_set_id = ?", userId, setId
         ));
     }
 
@@ -78,7 +78,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
         Long userId = model.getUser().getId();
         Long setId = model.getStudySet().getId();
         String type = model.getType();
-        executor.write(e -> e.execute("INSERT INTO users_study_sets (user_id, set_id, type) VALUES (?,?,?)",
+        executor.write(e -> e.execute("INSERT INTO users_study_sets (user_id, study_set_id, type) VALUES (?,?,?)",
                 userId, setId, type));
         return model;
     }

@@ -1,6 +1,6 @@
 package mouse.project.termverseweb.lib.test.deletion;
 
-import net.bytebuddy.matcher.StringMatcher;
+import mouse.project.lib.ioc.annotation.Service;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Component
+@Service
 public class Deletion {
     public <ID> IdDeleter<ID> withIdDeletion(Consumer<ID> consumer) {
         return new IdDeleter<>(consumer);

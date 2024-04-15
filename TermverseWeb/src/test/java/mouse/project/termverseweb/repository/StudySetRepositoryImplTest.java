@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
+import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.mouselib.TestContainer;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,6 +23,8 @@ class StudySetRepositoryImplTest {
 
     @InitBeforeEach
     private StudySetRepository repository;
+    @InitBeforeEach
+    private SoftDeletionTest soft;
 
     @InitBeforeEach
     private Insertions insertions;
@@ -39,6 +42,10 @@ class StudySetRepositoryImplTest {
         List<StudySet> sets = insertions.generateStudySets(base, count);
         return insertions.saveAll(repository, sets);
     }
+    private StudySet insertData(String base) {
+        List<StudySet> sets = insertions.generateStudySets(base, 1);
+        return insertions.saveAll(repository, sets).get(0);
+    }
     @Test
     void save() {
         List<StudySet> sets = insertData("Save", 4);
@@ -46,13 +53,17 @@ class StudySetRepositoryImplTest {
     }
     @Test
     void findAll() {
-        List<StudySet> sets = insertData("Study sets", 3);
+        List<StudySet> sets = insertData("Study sets All", 3);
         List<StudySet> all = repository.findAll();
         assertTrue(all.containsAll(sets));
     }
 
     @Test
     void findAllIncludeDeleted() {
+        StudySet set = insertData("FAID");
+        assertTrue(repository.findAllIncludeDeleted().contains(set));
+        soft.using(repository::deleteById, StudySet::getId).remove(set).
+                byIds().validatePresentIn(() -> repository.findAllIncludeDeleted());
     }
 
     @Test

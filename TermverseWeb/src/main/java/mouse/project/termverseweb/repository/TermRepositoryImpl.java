@@ -41,13 +41,13 @@ public class TermRepositoryImpl implements TermRepository {
 
     @Override
     public Optional<Term> findById(Long id) {
-        return executor.read(e -> e.executeQuery("SELECT * FROM Term t WHERE t.id = ? AND t.deleted_at IS NULL", id)
+        return executor.read(e -> e.executeQuery("SELECT * FROM terms t WHERE t.id = ? AND t.deleted_at IS NULL", id)
                 .optional(Term.class));
     }
 
     @Override
     public Optional<Term> findByIdIncludeDeleted(Long id) {
-        return executor.read(e -> e.executeQuery("SELECT * FROM Term t WHERE t.id = ?", id)
+        return executor.read(e -> e.executeQuery("SELECT * FROM terms t WHERE t.id = ?", id)
                 .optional(Term.class));
     }
 

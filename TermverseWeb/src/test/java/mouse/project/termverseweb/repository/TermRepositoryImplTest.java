@@ -3,7 +3,6 @@ package mouse.project.termverseweb.repository;
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
-import mouse.project.termverseweb.model.SetTerm;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.mouselib.TestContainer;
@@ -16,6 +15,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
@@ -78,10 +78,12 @@ class TermRepositoryImplTest {
     @Test
     void findAllByStudySet() {
         String base = "find-study-set";
+
         List<Term> terms = insertData(base, 3);
         List<StudySet> sets = insertions.generateStudySets(base, 1);
         List<StudySet> savedSets = insertions.saveAll(studySetRepository, sets);
         StudySet studySet = savedSets.get(0);
+
         insertions.bindSetTags(setTermRepository, studySet, terms);
         Long setId = studySet.getId();
         List<Term> allByStudySet = termRepository.findAllByStudySet(setId);
@@ -93,6 +95,16 @@ class TermRepositoryImplTest {
 
     @Test
     void findById() {
+        List<Term> terms = insertData("find-id", 1);
+        Term term = terms.get(0);
+        Long id = term.getId();
+
+        Optional<Term> byId = termRepository.findById(id);
+        assertTrue(byId.isPresent());
+        assertEquals(term, byId.get());
+
+        Optional<Term> notExisting = termRepository.findById(Long.MAX_VALUE);
+        assertTrue(notExisting.isEmpty());
     }
 
     @Test

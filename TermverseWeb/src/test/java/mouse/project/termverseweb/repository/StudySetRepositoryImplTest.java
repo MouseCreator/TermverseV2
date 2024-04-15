@@ -4,6 +4,7 @@ import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.model.SetTerm;
+import mouse.project.termverseweb.model.SizedStudySet;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.mouselib.TestContainer;
@@ -171,7 +172,7 @@ class StudySetRepositoryImplTest {
 
     @Test
     void findAllByIdWithTerms() {
-        StudySet studySet = insertData("Find-by-id-deleted");
+        StudySet studySet = insertData("with-terms");
         List<Term> terms = insertTerms(studySet, "Terms1", 3);
         Long id = studySet.getId();
         Optional<StudySet> allByIdWithTerms = repository.findAllByIdWithTerms(id);
@@ -198,7 +199,7 @@ class StudySetRepositoryImplTest {
     @Test
     void getTermCount() {
         int count = 5;
-        StudySet studySet = insertData("Find-by-id-deleted");
+        StudySet studySet = insertData("term-count");
         List<Term> terms = insertTerms(studySet, "Terms2", count);
         Long id = studySet.getId();
         assertEquals(count, terms.size());
@@ -213,5 +214,15 @@ class StudySetRepositoryImplTest {
 
     @Test
     void findByIdWithSize() {
+        int size = 2;
+        StudySet studySet = insertData("with-size");
+        List<Term> terms = insertTerms(studySet, "Terms2", size);
+        assertEquals(size, terms.size());
+
+        Optional<SizedStudySet> byIdWithSize = repository.findByIdWithSize(studySet.getId());
+        assertTrue(byIdWithSize.isPresent());
+        SizedStudySet sizedStudySet = byIdWithSize.get();
+        assertEquals(size, sizedStudySet.size());
+        assertEquals(studySet, sizedStudySet.studySet());
     }
 }

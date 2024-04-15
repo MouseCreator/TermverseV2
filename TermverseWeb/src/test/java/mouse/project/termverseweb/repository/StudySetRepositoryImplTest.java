@@ -172,17 +172,24 @@ class StudySetRepositoryImplTest {
     @Test
     void findAllByIdWithTerms() {
         StudySet studySet = insertData("Find-by-id-deleted");
-        List<Term> terms = insertTerms(studySet, "Terms1");
+        List<Term> terms = insertTerms(studySet, "Terms1", 3);
         Long id = studySet.getId();
         Optional<StudySet> allByIdWithTerms = repository.findAllByIdWithTerms(id);
         assertTrue(allByIdWithTerms.isPresent());
         StudySet studySetFromDB = allByIdWithTerms.get();
         assertNotNull(studySetFromDB.getTerms());
         MTest.compareUnordered(terms, studySetFromDB.getTerms());
+
+        termRepository.deleteById(terms.get(0).getId());
+        List<Term> afterDeletionExp = terms.subList(1, terms.size());
+        Optional<StudySet> setUpdated = repository.findAllByIdWithTerms(id);
+        assertTrue(setUpdated.isPresent());
+        List<Term> afterDeletionAct = setUpdated.get().getTerms();
+        MTest.compareUnordered(afterDeletionExp, afterDeletionAct);
     }
 
-    private List<Term> insertTerms(StudySet studySet, String termsBaseName) {
-        List<Term> terms = insertions.generateTerms(termsBaseName, 3);
+    private List<Term> insertTerms(StudySet studySet, String termsBaseName, int count) {
+        List<Term> terms = insertions.generateTerms(termsBaseName, count);
         List<Term> savedTerms = insertions.saveAll(termRepository, terms);
         savedTerms.forEach(t -> setTermRepository.save(new SetTerm(studySet, t)));
         return savedTerms;
@@ -190,6 +197,18 @@ class StudySetRepositoryImplTest {
 
     @Test
     void getTermCount() {
+        int count = 5;
+        StudySet studySet = insertData("Find-by-id-deleted");
+        List<Term> terms = insertTerms(studySet, "Terms2", count);
+        Long id = studySet.getId();
+        assertEquals(count, terms.size());
+        Integer termCount = repository.getTermCount(id);
+        assertEquals(count, termCount);
+
+        Term term = terms.get(0);
+        termRepository.restoreById(term.getId());
+        Integer afterDeletion = repository.getTermCount(id);
+        assertEquals(count-1, afterDeletion);
     }
 
     @Test

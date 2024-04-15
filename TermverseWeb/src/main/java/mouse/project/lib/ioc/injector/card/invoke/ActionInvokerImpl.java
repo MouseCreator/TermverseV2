@@ -21,7 +21,9 @@ public class ActionInvokerImpl implements ActionInvoker {
         try {
             return method.invoke(invokeOn, params.toArray());
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new CardException("Error invoking method.", e);
+            String message =
+                    "Error invoking method. Cannot invoke " + method + " on object " + invokeOn + " with params " + params;
+            throw new CardException(message, e);
         }
     }
 

@@ -1,6 +1,8 @@
 package mouse.project.termverseweb.models;
 
 import mouse.project.termverseweb.dto.tag.TagCreateDTO;
+import mouse.project.termverseweb.model.Tag;
+import mouse.project.termverseweb.model.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,5 +14,13 @@ public class TagFactory implements Factory{
         createDTO.setOwnerId(owner);
         createDTO.setColorHex("#FF0000");
         return createDTO;
+    }
+
+    public Tag tag(User owner, String name) {
+        Tag tag = new Tag();
+        tag.setName(name);
+        tag.setOwner(owner);
+        tag.setColorHex("#FF00FF");
+        return tag;
     }
 }

@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.mouselib.provider;
 
+import mouse.project.lib.data.exception.ORMException;
 import mouse.project.lib.data.provider.ConnectionProvider;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
@@ -21,6 +22,9 @@ public class TestConnectionProvider implements ConnectionProvider {
     @Override
     public Connection provide() {
         try {
+            if (dataSource == null) {
+                throw new ORMException("Cannot set up data source!");
+            }
             return dataSource.getConnection();
         } catch (SQLException e) {
             throw new RuntimeException(e);

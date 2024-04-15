@@ -50,7 +50,7 @@ public class TagRepositoryImpl implements TagRepository {
     public Tag save(Tag model) {
         executor.write(e ->  e.execute(
                 "INSERT INTO tags (name, color, owner, deleted_at) VALUES (?, ?, ?, ?)",
-                model.getName(), model.getColorHex(), model.getOwner(), null
+                model.getName(), model.getColorHex(), model.getOwner().getId(), null
         ).affectOne().singleKey(Long.class, model::setId));
         return model;
     }

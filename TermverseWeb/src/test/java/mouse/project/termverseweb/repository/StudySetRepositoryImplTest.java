@@ -3,6 +3,7 @@ package mouse.project.termverseweb.repository;
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.model.StudySet;
+import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.mouselib.TestContainer;
 import mouse.project.termverseweb.utils.DateUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +27,8 @@ class StudySetRepositoryImplTest {
 
     @InitBeforeEach
     private StudySetRepository repository;
+    @InitBeforeEach
+    private TermRepository termRepository;
     @InitBeforeEach
     private SoftDeletionTest soft;
 
@@ -132,10 +136,25 @@ class StudySetRepositoryImplTest {
 
     @Test
     void findById() {
+        StudySet studySet = insertData("Find-by-id");
+        Long id = studySet.getId();
+        Optional<StudySet> byId = repository.findById(id);
+        assertTrue(byId.isPresent());
+        assertEquals(studySet, byId.get());
+
+        Optional<StudySet> notExist = repository.findById(Long.MAX_VALUE);
+        assertTrue(notExist.isEmpty());
     }
 
     @Test
     void findByIdIncludeDeleted() {
+        StudySet studySet = insertData("Find-by-id-deleted");
+        Long id = studySet.getId();
+        repository.deleteById(id);
+        Optional<StudySet> byId = repository.findByIdIncludeDeleted(id);
+        assertTrue(byId.isPresent());
+        Optional<StudySet> notExist = repository.findByIdIncludeDeleted(Long.MAX_VALUE);
+        assertTrue(notExist.isEmpty());
     }
 
     @Test
@@ -148,6 +167,20 @@ class StudySetRepositoryImplTest {
 
     @Test
     void findAllByIdWithTerms() {
+        StudySet studySet = insertData("Find-by-id-deleted");
+        List<Term> terms = insertTerms(studySet, "Terms1");
+        Long id = studySet.getId();
+        Optional<StudySet> allByIdWithTerms = repository.findAllByIdWithTerms(id);
+        assertTrue(allByIdWithTerms.isPresent());
+        StudySet studySetFromDB = allByIdWithTerms.get();
+        assertNotNull(studySetFromDB.getTerms());
+
+    }
+
+    private List<Term> insertTerms(StudySet studySet, String termsBaseName) {
+        Long id = studySet.getId();
+        List<Term> terms = insertions.generateTerms(termsBaseName, 3);
+        return terms;
     }
 
     @Test

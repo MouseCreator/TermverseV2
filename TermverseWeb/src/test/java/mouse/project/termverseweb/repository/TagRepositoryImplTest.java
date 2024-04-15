@@ -109,10 +109,28 @@ class TagRepositoryImplTest {
 
     @Test
     void restoreById() {
+        InsertResult insertResult = insertData("restore-deleted", 2);
+        List<Tag> tags = insertResult.tags();
+        soft().removeAll(tags)
+                .byIds().validateAbsentIn(() -> tagRepository.findAll())
+                .restoreWith(tagRepository::restoreById)
+                .byIds().validatePresentIn(() -> tagRepository.findAll());
     }
 
     @Test
     void findByIdIncludeDeleted() {
+        InsertResult insertResult = insertData("id-include-deleted", 1);
+        Tag tag = insertResult.tags().get(0);
+        Long id = tag.getId();
+
+        Optional<Tag> opt1 = tagRepository.findByIdIncludeDeleted(id);
+        assertTrue(opt1.isPresent());
+
+        tagRepository.deleteById(id);
+        Optional<Tag> opt2 = tagRepository.findByIdIncludeDeleted(id);
+        assertTrue(opt2.isPresent());
+
+        assertTrue(tagRepository.findByIdIncludeDeleted(Long.MAX_VALUE).isEmpty());
     }
 
     @Test

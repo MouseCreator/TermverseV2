@@ -241,7 +241,7 @@ class StudySetRepositoryImplTest {
     private List<Term> insertTerms(StudySet studySet, String termsBaseName, int count) {
         List<Term> terms = insertions.generateTerms(termsBaseName, count);
         List<Term> savedTerms = insertions.saveAll(termRepository, terms);
-        insertions.bindSetTags(setTermRepository, studySet, savedTerms);
+        insertions.bindSetTerms(setTermRepository, studySet, savedTerms);
         return savedTerms;
     }
 

@@ -59,7 +59,8 @@ public class Insertions {
         return getNInstances(i -> tagFactory.tag(owner, name+(i+1)), count);
     }
 
-    public void bindSetTags(StudySetTermRepository repository, StudySet studySet, List<Term> savedTerms) {
-        savedTerms.forEach(t -> repository.save(new SetTerm(studySet, t)));
+    public List<SetTerm> bindSetTerms(StudySetTermRepository repository, StudySet studySet, List<Term> savedTerms) {
+        return savedTerms.stream().map(t -> repository.save(new SetTerm(studySet, t))).toList();
     }
+
 }

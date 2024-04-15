@@ -94,7 +94,7 @@ class TermRepositoryImplTest {
         List<StudySet> sets = insertions.generateStudySets(base, 1);
         List<StudySet> savedSets = insertions.saveAll(studySetRepository, sets);
         StudySet studySet = savedSets.get(0);
-        insertions.bindSetTags(setTermRepository, studySet, terms);
+        insertions.bindSetTerms(setTermRepository, studySet, terms);
         return studySet;
     }
 

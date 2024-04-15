@@ -4,10 +4,7 @@ import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.termverseweb.lib.service.model.IdIterable;
 import mouse.project.termverseweb.lib.service.repository.CustomCrudRepository;
-import mouse.project.termverseweb.model.StudySet;
-import mouse.project.termverseweb.model.Tag;
-import mouse.project.termverseweb.model.Term;
-import mouse.project.termverseweb.model.User;
+import mouse.project.termverseweb.model.*;
 import mouse.project.termverseweb.models.*;
 
 import java.util.ArrayList;
@@ -60,5 +57,9 @@ public class Insertions {
     public List<Tag> generateTags(User owner, String name, int count) {
         TagFactory tagFactory = factories.getFactory(TagFactory.class);
         return getNInstances(i -> tagFactory.tag(owner, name+(i+1)), count);
+    }
+
+    public void bindSetTags(StudySetTermRepository repository, StudySet studySet, List<Term> savedTerms) {
+        savedTerms.forEach(t -> repository.save(new SetTerm(studySet, t)));
     }
 }

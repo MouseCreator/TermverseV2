@@ -3,6 +3,8 @@ package mouse.project.termverseweb.repository;
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
+import mouse.project.termverseweb.model.SetTerm;
+import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.mouselib.TestContainer;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,6 +31,8 @@ class TermRepositoryImplTest {
     private Insertions insertions;
     @InitBeforeEach
     private SoftDeletionTest soft;
+    @InitBeforeEach
+    private StudySetTermRepository setTermRepository;
 
     @BeforeAll
     static void beforeAll() {
@@ -66,13 +70,25 @@ class TermRepositoryImplTest {
 
     @Test
     void findAllIncludeDeleted() {
-        List<Term> terms = insertData("find-all", 2);
+        List<Term> terms = insertData("find-all-del", 2);
         soft().passAll(terms).byIds().validatePresentIn(() -> termRepository.findAllIncludeDeleted());
         soft().removeAll(terms).byIds().validatePresentIn(() -> termRepository.findAllIncludeDeleted());
     }
 
     @Test
     void findAllByStudySet() {
+        String base = "find-study-set";
+        List<Term> terms = insertData(base, 3);
+        List<StudySet> sets = insertions.generateStudySets(base, 1);
+        List<StudySet> savedSets = insertions.saveAll(studySetRepository, sets);
+        StudySet studySet = savedSets.get(0);
+        insertions.bindSetTags(setTermRepository, studySet, terms);
+        Long setId = studySet.getId();
+        List<Term> allByStudySet = termRepository.findAllByStudySet(setId);
+
+        MTest.compareUnordered(terms, allByStudySet);
+
+        soft().remove(terms.get(0)).byIds().validateAbsentIn(() -> termRepository.findAllByStudySet(setId));
     }
 
     @Test

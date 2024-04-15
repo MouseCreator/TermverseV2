@@ -10,7 +10,7 @@ public class Raw {
             r.next();
             return r.getInt(1);
         } catch (Exception ex) {
-            throw new DaoException(ex);
+            throw new DaoException("Unable to get integer from result set", ex);
         }
     }
 }

@@ -10,4 +10,8 @@ public class DaoException extends RuntimeException{
     public DaoException(Exception e) {
         super(e);
     }
+
+    public DaoException(String s, Exception ex) {
+        super(s, ex);
+    }
 }

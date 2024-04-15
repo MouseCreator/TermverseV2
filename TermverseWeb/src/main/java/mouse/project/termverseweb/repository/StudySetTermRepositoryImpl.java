@@ -36,13 +36,13 @@ public class StudySetTermRepositoryImpl implements StudySetTermRepository {
     }
 
     @Override
-    public SetTerm save(SetTerm setTag) {
-        Long setId = setTag.getSet().getId();
-        Long termId = setTag.getTerm().getId();
+    public SetTerm save(SetTerm st) {
+        Long setId = st.getSet().getId();
+        Long termId = st.getTerm().getId();
         executor.write(e -> e.execute(
                 "INSERT INTO study_sets_terms (set_id, term_id) VALUES (?, ?)", setId, termId
         )).affectOne();
-        return setTag;
+        return st;
     }
 
     @Override

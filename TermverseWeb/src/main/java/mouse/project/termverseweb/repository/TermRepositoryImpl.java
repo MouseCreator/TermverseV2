@@ -2,7 +2,6 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.data.executor.Executor;
 import mouse.project.termverseweb.model.Term;
-import mouse.project.lib.data.executor.context.ReadExecutor;
 import mouse.project.lib.data.utils.DaoUtils;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Dao;
@@ -37,7 +36,7 @@ public class TermRepositoryImpl implements TermRepository {
                 "SELECT * FROM terms t " +
                         "INNER JOIN study_sets_terms st ON t.id = st.term_id " +
                         "INNER JOIN study_sets s ON s.id = st.set_id " +
-                        "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL").list(Term.class));
+                        "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL", setId).list(Term.class));
     }
 
     @Override
@@ -64,7 +63,7 @@ public class TermRepositoryImpl implements TermRepository {
 
     @Override
     public Term save(Term model) {
-        executor.write(e -> e.execute("INSERT INTO terms (term, definition, hint, picture_url, order, deleted_at)" +
+        executor.write(e -> e.execute("INSERT INTO terms (term, definition, hint, picture_url, term_order, deleted_at)" +
                                 " VALUES (?, ?, ?, ?, ?, ?)",
                 model.getTerm(), model.getDefinition(), model.getHint(), model.getPicture_url(), model.getOrder(), null)
                 .affectOne().singleKey(Long.class, model::setId));

@@ -1,7 +1,9 @@
 package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
+import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
+import mouse.project.termverseweb.model.SetTerm;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.mouselib.TestContainer;
@@ -29,6 +31,8 @@ class StudySetRepositoryImplTest {
     private StudySetRepository repository;
     @InitBeforeEach
     private TermRepository termRepository;
+    @InitBeforeEach
+    private StudySetTermRepository setTermRepository;
     @InitBeforeEach
     private SoftDeletionTest soft;
 
@@ -174,13 +178,14 @@ class StudySetRepositoryImplTest {
         assertTrue(allByIdWithTerms.isPresent());
         StudySet studySetFromDB = allByIdWithTerms.get();
         assertNotNull(studySetFromDB.getTerms());
-
+        MTest.compareUnordered(terms, studySetFromDB.getTerms());
     }
 
     private List<Term> insertTerms(StudySet studySet, String termsBaseName) {
-        Long id = studySet.getId();
         List<Term> terms = insertions.generateTerms(termsBaseName, 3);
-        return terms;
+        List<Term> savedTerms = insertions.saveAll(termRepository, terms);
+        savedTerms.forEach(t -> setTermRepository.save(new SetTerm(studySet, t)));
+        return savedTerms;
     }
 
     @Test

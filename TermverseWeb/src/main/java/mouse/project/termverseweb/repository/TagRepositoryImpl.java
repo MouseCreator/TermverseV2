@@ -86,12 +86,12 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public List<Tag> getTagsByOwnerAndName(Long ownerId, String name) {
         return executor.read (e -> e.executeQuery(
-                "SELECT t.* FROM tags t " +
+                "SELECT * FROM tags t " +
                     "INNER JOIN users u ON t.owner = u.id " +
                     "WHERE LOWER(t.name) LIKE LOWER(CONCAT('%', ?, '%')) " +
                     "AND u.id = ? " +
-                    "AND u.deletedAt IS NULL " +
-                    "AND t.deletedAt IS NULL",
+                    "AND u.deleted_at IS NULL " +
+                    "AND t.deleted_at IS NULL",
         name, ownerId).adjustedList(Tag.class).apply(this::addUser).get());
     }
 }

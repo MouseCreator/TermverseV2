@@ -135,9 +135,32 @@ class TagRepositoryImplTest {
 
     @Test
     void getTagsByOwner() {
+        InsertResult insertResult = insertData("with-owner", 3);
+        User owner = insertResult.user();
+        List<Tag> tags = insertResult.tags();
+
+        List<Tag> tagsByOwner = tagRepository.getTagsByOwner(owner.getId());
+        MTest.compareUnordered(tags, tagsByOwner);
+
+        tagRepository.deleteById(tags.get(0).getId());
+
+        List<Tag> modified = tags.subList(1, tags.size());
+
+        List<Tag> tagsByOwnerAfter = tagRepository.getTagsByOwner(owner.getId());
+        MTest.compareUnordered(modified, tagsByOwnerAfter);
     }
 
     @Test
     void getTagsByOwnerAndName() {
+        String specialName = "__SPECIAL_NAME__";
+        InsertResult insertResult = insertData(specialName, 1);
+        Long ownerId = insertResult.user().getId();
+        Tag special = insertResult.tags().get(0);
+
+        List<Tag> tagsByOwnerAndName = tagRepository.getTagsByOwnerAndName(ownerId, specialName);
+        MTest.compareUnordered(insertResult.tags(), tagsByOwnerAndName);
+
+        List<Tag> other = tagRepository.getTagsByOwnerAndName(ownerId, "Other name");
+        assertTrue(other.isEmpty());
     }
 }

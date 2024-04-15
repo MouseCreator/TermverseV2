@@ -71,7 +71,7 @@ class UserRepositoryImplTest {
 
     @Test
     void deleteById() {
-        List<User> users = insertData("FA", 1);
+        List<User> users = insertData("DEL", 1);
         User user = users.get(0);
         Long id = user.getId();
         assertTrue(userRepository.findById(id).isPresent());
@@ -87,6 +87,7 @@ class UserRepositoryImplTest {
 
     @Test
     void findAllIncludeDeleted() {
+
     }
 
     @Test
@@ -95,9 +96,21 @@ class UserRepositoryImplTest {
 
     @Test
     void findByIdIncludeDeleted() {
+        List<User> users = insertData("FIND_DEL", 1);
+        User user = users.get(0);
+        Long id = user.getId();
+        assertTrue(userRepository.findByIdIncludeDeleted(id).isPresent());
+        userRepository.deleteById(id);
+        assertTrue(userRepository.findByIdIncludeDeleted(id).isPresent());
     }
 
     @Test
     void findAllByNameIgnoreCase() {
+        String specialSubs = "__SPECIAL_NAME__";
+        String lowerCase = specialSubs.toLowerCase();
+        List<User> users = insertData(specialSubs, 2);
+        List<User> allSpecial = userRepository.findAllByNameIgnoreCase(lowerCase);
+        assertEquals(users.size(), allSpecial.size());
+        assertTrue(users.containsAll(allSpecial));
     }
 }

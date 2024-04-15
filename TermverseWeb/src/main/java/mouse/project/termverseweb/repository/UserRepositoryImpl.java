@@ -60,9 +60,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> findAllByNameIgnoreCase(String name) {
         return executor.read(e -> e.executeQuery(
-                    "SELECT u FROM users u " +
+                    "SELECT * FROM users u " +
                         "WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', ?, '%')) " +
-                        "AND u.deletedAt IS NULL")
+                        "AND u.deleted_at IS NULL", name)
                 .list(User.class));
     }
 }

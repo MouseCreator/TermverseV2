@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
+import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.mouselib.TestContainer;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,11 +46,19 @@ class TermRepositoryImplTest {
     }
     @Test
     void save() {
-        List<Term> terms = insertData("saved", 3);
+        List<Term> terms = insertData("saved", 2);
         assertEquals(3, terms.size());
     }
     @Test
     void findAll() {
+        List<Term> terms = insertData("find-all", 3);
+        List<Term> all = termRepository.findAll();
+        MTest.containsAll(all, terms);
+
+        termRepository.deleteById(terms.get(0).getId());
+
+        List<Term> allAfter = termRepository.findAll();
+        assertFalse(allAfter.contains(terms.get(0)));
     }
 
     @Test
@@ -74,8 +84,6 @@ class TermRepositoryImplTest {
     @Test
     void restoreById() {
     }
-
-
 
     @Test
     void removeTermFormStudySetsById() {

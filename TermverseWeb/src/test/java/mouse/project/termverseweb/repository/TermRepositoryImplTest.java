@@ -167,5 +167,9 @@ class TermRepositoryImplTest {
 
     @Test
     void findAllByIds() {
+        List<Term> terms = insertData("ids-search", 3);
+        List<Long> ids = terms.stream().map(Term::getId).toList();
+        List<Term> list = termRepository.findAllByIds(ids);
+        MTest.compareUnordered(list, terms);
     }
 }

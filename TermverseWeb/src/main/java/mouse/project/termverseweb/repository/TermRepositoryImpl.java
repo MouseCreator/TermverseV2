@@ -81,7 +81,7 @@ public class TermRepositoryImpl implements TermRepository {
         String sql = String.format(
                 "SELECT * FROM terms t WHERE t.id IN %s AND t.deleted_at IS NULL", qm
         );
-        return executor.read(e -> e.executeQuery(sql, termIds).list(Term.class));
+        return executor.read(e -> e.executeListed(sql, termIds).list(Term.class));
     }
 
 }

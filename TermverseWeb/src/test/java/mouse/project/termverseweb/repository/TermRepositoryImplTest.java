@@ -80,17 +80,22 @@ class TermRepositoryImplTest {
         String base = "find-study-set";
 
         List<Term> terms = insertData(base, 3);
-        List<StudySet> sets = insertions.generateStudySets(base, 1);
-        List<StudySet> savedSets = insertions.saveAll(studySetRepository, sets);
-        StudySet studySet = savedSets.get(0);
+        StudySet studySet = createStudySet(base, terms);
 
-        insertions.bindSetTags(setTermRepository, studySet, terms);
         Long setId = studySet.getId();
         List<Term> allByStudySet = termRepository.findAllByStudySet(setId);
 
         MTest.compareUnordered(terms, allByStudySet);
 
         soft().remove(terms.get(0)).byIds().validateAbsentIn(() -> termRepository.findAllByStudySet(setId));
+    }
+
+    private StudySet createStudySet(String base, List<Term> terms) {
+        List<StudySet> sets = insertions.generateStudySets(base, 1);
+        List<StudySet> savedSets = insertions.saveAll(studySetRepository, sets);
+        StudySet studySet = savedSets.get(0);
+        insertions.bindSetTags(setTermRepository, studySet, terms);
+        return studySet;
     }
 
     @Test
@@ -123,14 +128,41 @@ class TermRepositoryImplTest {
 
     @Test
     void deleteById() {
+        List<Term> terms = insertData("delete-by-id", 1);
+        Term term = terms.get(0);
+        Long id = term.getId();
+
+        assertTrue(termRepository.findById(id).isPresent());
+        termRepository.deleteById(id);
+        assertTrue(termRepository.findById(id).isEmpty());
     }
 
     @Test
     void restoreById() {
+        List<Term> terms = insertData("delete-by-id", 1);
+        Term term = terms.get(0);
+        Long id = term.getId();
+
+        termRepository.deleteById(id);
+        assertTrue(termRepository.findById(id).isEmpty());
+        termRepository.restoreById(id);
+        assertTrue(termRepository.findById(id).isPresent());
     }
 
     @Test
     void removeTermFormStudySetsById() {
+        String base = "remove-terms-from-set";
+
+        List<Term> terms = insertData(base, 3);
+        StudySet studySet = createStudySet(base, terms);
+
+        Long setId = studySet.getId();
+        List<Term> allOfSet = termRepository.findAllByStudySet(setId);
+        assertFalse(allOfSet.isEmpty());
+
+        terms.forEach(t -> termRepository.removeTermFormStudySetsById(t.getId()));
+        List<Term> after = termRepository.findAllByStudySet(setId);
+        assertTrue(after.isEmpty());
     }
 
     @Test

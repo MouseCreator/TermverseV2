@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @Service
@@ -111,6 +112,14 @@ public class SoftDeletionTest {
             List<ID> ids = models.stream().map(mapper).toList();
             return new AfterSoftDeletionByIds<>(ids, confirmer, mapper, this);
         }
+
+        public AfterSoftDeletion<MODEL, ID> assertTrue(Predicate<MODEL> predicate) {
+            for (MODEL model : models) {
+                boolean test = predicate.test(model);
+                Assertions.assertTrue (test, model + " did not satisfy predicate " + predicate);
+            }
+            return this;
+        }
     }
 
     public static class AfterSoftDeletionByIds<MODEL, ID> {
@@ -154,6 +163,20 @@ public class SoftDeletionTest {
         }
         public AfterSoftDeletion<MODEL, ID> validate(Runnable method) {
             method.run();
+            return parent;
+        }
+
+        public AfterSoftDeletion<MODEL, ID> assertTrue(Predicate<ID> predicate) {
+            for (ID id : ids) {
+                boolean test = predicate.test(id);
+                Assertions.assertTrue (test, id + " did not satisfy predicate " + predicate);
+            }
+            return parent;
+        }
+
+        public AfterSoftDeletion<MODEL, ID> assertTrue(Supplier<Boolean> supplier) {
+            Boolean b = supplier.get();
+            Assertions.assertTrue(b);
             return parent;
         }
         public AfterSoftDeletion<MODEL, ID> validate(Consumer<ID> consumer) {

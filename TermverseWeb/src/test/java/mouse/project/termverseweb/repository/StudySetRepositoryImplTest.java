@@ -1,11 +1,8 @@
 package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
-import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.model.StudySet;
-import mouse.project.termverseweb.models.Factories;
 import mouse.project.termverseweb.mouselib.TestContainer;
 import mouse.project.termverseweb.utils.DateUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +15,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,7 +64,7 @@ class StudySetRepositoryImplTest {
     void findAllIncludeDeleted() {
         StudySet set = insertData("FAID");
         assertTrue(repository.findAllIncludeDeleted().contains(set));
-        soft.using(repository::deleteById, StudySet::getId).remove(set).
+        soft().remove(set).
                 byIds().validatePresentIn(() -> repository.findAllIncludeDeleted());
     }
 
@@ -91,6 +87,7 @@ class StudySetRepositoryImplTest {
         StudySet set2 = sets.get(1);
         set2.setCreatedAt(DateUtils.fromString("2010-01-12 10:00:00"));
         insertions.saveAll(repository, sets);
+
         LocalDateTime before = DateUtils.fromString("2010-01-08 10:00:00");
         LocalDateTime between = DateUtils.fromString("2010-01-11 10:00:00");
         LocalDateTime after = DateUtils.fromString("2010-01-12 10:00:00");
@@ -108,6 +105,16 @@ class StudySetRepositoryImplTest {
 
     @Test
     void deleteById() {
+        StudySet studySet = insertData("Delete-by-id");
+        Long id = studySet.getId();
+
+        soft().remove(studySet)
+                .byIds().assertTrue(()->repository.findById(id).isEmpty())
+                .byIds().assertTrue(()->repository.findByIdIncludeDeleted(id).isPresent());
+    }
+
+    private SoftDeletionTest.BeforeSoftDeletion<StudySet, Long> soft() {
+        return soft.using(repository::deleteById, StudySet::getId);
     }
 
     @Test

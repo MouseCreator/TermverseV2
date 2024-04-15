@@ -14,6 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
@@ -57,6 +58,7 @@ class TagRepositoryImplTest {
         List<Tag> tags = insertResult.tags();
         List<Tag> all = tagRepository.findAll();
         MTest.containsAll(all, tags);
+
         Tag tag = tags.get(0);
         tagRepository.deleteById(tag.getId());
         List<Tag> allAfterDelete = tagRepository.findAll();
@@ -65,6 +67,19 @@ class TagRepositoryImplTest {
 
     @Test
     void findById() {
+        InsertResult insertResult = insertData("find-id", 1);
+        Tag tag = insertResult.tags().get(0);
+        Long id = tag.getId();
+        Optional<Tag> tagFromDB = tagRepository.findById(id);
+        assertTrue(tagFromDB.isPresent());
+        assertEquals(tag, tagFromDB.get());
+
+        tagRepository.deleteById(id);
+        Optional<Tag> tagAfterDeleted = tagRepository.findById(id);
+        assertTrue(tagAfterDeleted.isEmpty());
+
+        Optional<Tag> notExisting = tagRepository.findById(Long.MAX_VALUE);
+        assertTrue(notExisting.isEmpty());
     }
 
     @Test

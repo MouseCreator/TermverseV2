@@ -74,7 +74,7 @@ public class ExecutorResultImpl implements ReadResult {
 
     @Override
     public <T> AdjustedOptional<T> adjustedOptional(Class<T> model) {
-        return new AdjustedOptionalImpl<>(model(model));
+        return new AdjustedOptionalImpl<>(optional(model).orElse(null));
     }
 
     @Override

@@ -37,7 +37,7 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public Optional<Tag> findById(Long id) {
-        return executor.read(e -> e.executeQuery("SELECT * FROM tags t WHERE t.id = ? AND t.deletedAt IS NULL", id)
+        return executor.read(e -> e.executeQuery("SELECT * FROM tags t WHERE t.id = ? AND t.deleted_at IS NULL", id)
                 .adjustedOptional(Tag.class).apply(this::addUser).get());
     }
 

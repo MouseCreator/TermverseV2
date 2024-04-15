@@ -109,6 +109,16 @@ class TermRepositoryImplTest {
 
     @Test
     void findByIdIncludeDeleted() {
+        List<Term> terms = insertData("find-id-del", 1);
+        Term term = terms.get(0);
+        Long id = term.getId();
+
+        Optional<Term> byId = termRepository.findByIdIncludeDeleted(id);
+        assertTrue(byId.isPresent());
+        assertEquals(term, byId.get());
+
+        soft().remove(term)
+                .assertTrue(() -> termRepository.findByIdIncludeDeleted(id).isPresent());
     }
 
     @Test

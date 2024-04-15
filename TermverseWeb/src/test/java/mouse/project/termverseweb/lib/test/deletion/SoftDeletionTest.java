@@ -121,6 +121,11 @@ public class SoftDeletionTest {
             }
             return this;
         }
+        public AfterSoftDeletion<MODEL, ID> assertTrue(Supplier<Boolean> supplier) {
+            Boolean b = supplier.get();
+            Assertions.assertTrue(b);
+            return this;
+        }
     }
 
     public static class AfterSoftDeletionByIds<MODEL, ID> {
@@ -180,6 +185,7 @@ public class SoftDeletionTest {
             Assertions.assertTrue(b);
             return parent;
         }
+
         public AfterSoftDeletion<MODEL, ID> validate(Consumer<ID> consumer) {
             for (ID id : ids) {
                 consumer.accept(id);

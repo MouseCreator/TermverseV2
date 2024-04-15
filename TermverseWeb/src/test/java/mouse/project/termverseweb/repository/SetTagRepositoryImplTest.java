@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SetTagRepositoryImplTest {
     @InitBeforeEach
     private SetTagRepository setTagRepository;
+
     @BeforeEach
     void setUp() {
         TestContainer.setUp(this);

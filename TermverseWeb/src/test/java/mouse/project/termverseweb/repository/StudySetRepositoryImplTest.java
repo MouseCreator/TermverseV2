@@ -3,6 +3,7 @@ package mouse.project.termverseweb.repository;
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.mouselib.TestContainer;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,10 @@ class StudySetRepositoryImplTest {
     void setUp() {
         TestContainer.setUp(this);
     }
+    @BeforeAll
+    static void beforeAll() {
+        TestContainer.initializeData();
+    }
 
     private List<StudySet> insertData(String base, int count) {
         List<StudySet> sets = insertions.generateStudySets(base, count);
@@ -41,6 +46,9 @@ class StudySetRepositoryImplTest {
     }
     @Test
     void findAll() {
+        List<StudySet> sets = insertData("Study sets", 3);
+        List<StudySet> all = repository.findAll();
+        assertTrue(all.containsAll(sets));
     }
 
     @Test

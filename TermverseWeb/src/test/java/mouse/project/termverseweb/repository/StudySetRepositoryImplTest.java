@@ -119,6 +119,13 @@ class StudySetRepositoryImplTest {
 
     @Test
     void restoreById() {
+        StudySet studySet = insertData("Restore-by-id");
+        Long id = studySet.getId();
+
+        soft().remove(studySet)
+                .byIds().assertTrue(()->repository.findById(id).isEmpty())
+                .restoreWith(repository::restoreById)
+                .byIds().assertTrue(()->repository.findById(id).isPresent());
     }
 
 

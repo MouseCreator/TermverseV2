@@ -99,8 +99,9 @@ public class SoftDeletionTest {
             confirmer.confirmThatAll(modelsToTest).isExcludedFrom(models);
             return this;
         }
-        public void restoreWith(Consumer<ID> restoreFunction) {
+        public AfterSoftDeletion<MODEL, ID> restoreWith(Consumer<ID> restoreFunction) {
             models.stream().map(mapper).forEach(restoreFunction);
+            return this;
         }
 
         public AfterSoftDeletion<MODEL, ID> validateThrows(Class<? extends Throwable> ex, Executable o) {

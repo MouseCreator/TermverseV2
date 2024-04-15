@@ -61,7 +61,7 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     @Override
     public List<StudySet> findAllByCreatedDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         return executor.read(e -> e.executeQuery(
-                "SELECT s " +
+                "SELECT * " +
                     "FROM study_sets s " +
                     "WHERE ((s.created_at BETWEEN ? AND ?) " +
                     "AND s.deleted_at IS NULL)", startDate, endDate

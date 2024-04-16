@@ -256,7 +256,7 @@ class StudySetRepositoryImplTest {
         assertEquals(count, termCount);
 
         Term term = terms.get(0);
-        termRepository.restoreById(term.getId());
+        termRepository.deleteById(term.getId());
         Integer afterDeletion = repository.getTermCount(id);
         assertEquals(count-1, afterDeletion);
     }

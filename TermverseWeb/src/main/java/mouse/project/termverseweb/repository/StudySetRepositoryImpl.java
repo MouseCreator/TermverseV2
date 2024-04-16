@@ -1,6 +1,5 @@
 package mouse.project.termverseweb.repository;
 
-import mouse.project.lib.data.exception.DaoException;
 import mouse.project.lib.data.executor.Executor;
 import mouse.project.lib.data.executor.result.Raw;
 import mouse.project.termverseweb.model.SizedStudySet;
@@ -15,7 +14,6 @@ import mouse.project.lib.ioc.annotation.Dao;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -153,7 +151,7 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     public Integer getTermCount(Long setId) {
         return executor.read(e ->
             e.executeQuery(
-                    "SELECT COUNT(*) " +
+                    "SELECT COUNT(DISTINCT t.id) " +
                             "FROM terms t " +
                             "INNER JOIN study_sets_terms st ON t.id = st.term_id " +
                             "INNER JOIN study_sets s ON s.id = st.set_id " +

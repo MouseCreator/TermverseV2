@@ -93,10 +93,10 @@ public class StudySetTermRepositoryImpl implements StudySetTermRepository {
     @Override
     public int getTermCount(Long setId) {
         return executor.read(e -> e.executeQuery(
-                "SELECT * FROM terms t " +
+                "SELECT COUNT (DISTINCT t.id) FROM terms t " +
                         "INNER JOIN study_sets_terms st " +
                         "INNER JOIN study_sets s " +
-                        "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL"
+                        "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL", setId
         ).getRaw().map(Raw::getInt));
     }
 

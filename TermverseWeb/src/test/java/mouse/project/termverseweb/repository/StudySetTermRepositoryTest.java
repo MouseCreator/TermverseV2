@@ -89,6 +89,11 @@ class StudySetTermRepositoryTest {
 
     @Test
     void getTermCount() {
+        int expected = 3;
+        List<SetTerm> inputList = insertData("from-set", expected);
+        Long setId = inputList.get(0).getSet().getId();
+        int actual = repository.getTermCount(setId);
+        assertEquals(expected, actual);
     }
 
     @Test

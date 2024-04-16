@@ -26,7 +26,7 @@ public interface StudySetTermRepository extends Repository<SetTerm, Long>, Gener
             "AND st.term.deletedAt IS NULL AND st.set.deletedAt IS NULL")
     List<Term> getTermsFromStudySet(@Param("setId") Long setId);
 
-    @Query("SELECT COUNT (st.term) " +
+    @Query("SELECT COUNT (DISTINCT st.term) " +
             "FROM SetTerm st " +
             "WHERE st.set = :setId " +
             "AND st.term.deletedAt IS NULL AND st.set.deletedAt IS NULL")

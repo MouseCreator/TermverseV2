@@ -97,7 +97,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
     @Override
     public List<UserStudySet> findByUser(Long userId) {
         return executor.read(e -> e.executeQuery(
-                "SELECT us " +
+                "SELECT * " +
                     "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
                     "WHERE u.id = ? " +

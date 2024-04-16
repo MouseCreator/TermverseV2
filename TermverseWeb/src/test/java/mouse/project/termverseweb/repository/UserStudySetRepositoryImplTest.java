@@ -112,7 +112,7 @@ class UserStudySetRepositoryImplTest {
 
     @Test
     void deleteByUserAndStudySet() {
-        List<UserStudySet> userStudySets = insertData("find-all", 4);
+        List<UserStudySet> userStudySets = insertData("delete", 2);
         UserStudySet target = userStudySets.get(0);
         User user = target.getUser();
         Long userId = user.getId();
@@ -128,9 +128,25 @@ class UserStudySetRepositoryImplTest {
 
     @Test
     void findByUserAndType() {
+        int size = 3;
+        List<UserStudySet> userStudySets = insertData("type-search", size);
+        UserStudySet owned = userStudySets.get(0);
+        User user = owned.getUser();
+        Long userId = user.getId();
+        List<UserStudySet> ownedSets = repository.findByUserAndType(userId, UserStudySetRelation.OWNER);
+        MTest.compareUnordered(List.of(owned), ownedSets);
+
+        List<UserStudySet> viewedSets = repository.findByUserAndType(userId, UserStudySetRelation.VIEWER);
+        MTest.compareUnordered(userStudySets.subList(1, size), viewedSets);
     }
 
     @Test
     void findByUser() {
+        List<UserStudySet> userStudySets = insertData("delete", 2);
+        UserStudySet target = userStudySets.get(0);
+        User user = target.getUser();
+        Long userId = user.getId();
+        List<UserStudySet> byUser = repository.findByUser(userId);
+        MTest.compareUnordered(userStudySets, byUser);
     }
 }

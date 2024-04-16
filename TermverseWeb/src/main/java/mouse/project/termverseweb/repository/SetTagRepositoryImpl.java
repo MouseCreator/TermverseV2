@@ -83,7 +83,7 @@ public class SetTagRepositoryImpl implements SetTagRepository {
             "WHERE u.id = ? AND " +
             "y.deleted_at IS NULL AND u.deleted_at IS NULL AND s.deleted_at IS NULL " +
             "AND NOT EXISTS ( " +
-                "SELECT t " +
+                "SELECT t.* " +
                 "FROM tags t " +
                 "WHERE t.id IN %s AND t.id NOT IN (" +
                     "SELECT r.tag_id " +

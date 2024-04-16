@@ -82,9 +82,26 @@ class SetTagRepositoryImplTest {
 
     @Test
     void getStudySetsByUserAndTags() {
+        List<SetTag> setTags = insertData("get-all", 4);
+        Long userId = setTags.get(0).getUser().getId();
+        StudySet set = setTags.get(0).getStudySet();
+        Long tagId1 = setTags.get(0).getTag().getId();
+        Long tagId2 = setTags.get(1).getTag().getId();
+
+        List<StudySet> sets = repository.getStudySetsByUserAndTags(userId, List.of(tagId1, tagId2));
+        assertFalse(sets.isEmpty());
+        assertEquals(set, sets.get(0));
     }
 
     @Test
     void delete() {
+        SetTag setTag = insertData("get-all", 1).get(0);
+        Long userId = setTag.getUser().getId();
+        Long setId = setTag.getStudySet().getId();
+        Long tagId = setTag.getTag().getId();
+
+        assertTrue(repository.getSetTagById(userId, setId, tagId).isPresent());
+        repository.delete(userId, setId, tagId);
+        assertTrue(repository.getSetTagById(userId, setId, tagId).isEmpty());
     }
 }

@@ -58,7 +58,7 @@ class UserTermRepositoryImplTest {
     void findAll() {
         List<UserTerm> userTerms = insertData("find-all", 2);
         List<UserTerm> all = repository.findAll();
-        assertEquals(all.size(), MTest.distinct(all).size());
+        MTest.noDuplicates(all);
         MTest.containsAll(all, userTerms);
     }
 

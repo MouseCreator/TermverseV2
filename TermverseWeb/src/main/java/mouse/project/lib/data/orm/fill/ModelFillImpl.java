@@ -70,7 +70,7 @@ public class ModelFillImpl implements ModelFill {
                 fillUtil.assign(instance, object, field);
             } catch (SQLException e) {
                 throw new ORMException("Cannot get column " + desc.columnName()
-                        + " of class " + desc.requiredClass(), e);
+                        + " of type " + desc.requiredClass(), e);
             }
         }
         return instance;

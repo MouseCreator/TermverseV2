@@ -1,7 +1,5 @@
 package mouse.project.lib.testutil;
 
-import mouse.project.termverseweb.model.UserTerm;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,5 +29,9 @@ public class MTest {
 
     public static <T> List<T> distinct(List<T> all) {
         return all.stream().distinct().toList();
+    }
+
+    public static <T> void noDuplicates(List<T> all) {
+        assertEquals(all.size(), distinct(all).size(), "Collection has duplicates");
     }
 }

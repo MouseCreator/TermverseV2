@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
+import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.defines.UserStudySetRelation;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.User;
@@ -71,7 +72,10 @@ class UserStudySetRepositoryImplTest {
     }
     @Test
     void findAll() {
-
+        List<UserStudySet> userStudySets = insertData("find-all", 4);
+        List<UserStudySet> all = repository.findAll();
+        MTest.containsAll(all, userStudySets);
+        MTest.noDuplicates(all);
     }
 
     @Test

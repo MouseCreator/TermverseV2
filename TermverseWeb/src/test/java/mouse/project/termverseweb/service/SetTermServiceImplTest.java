@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
@@ -73,6 +74,14 @@ class SetTermServiceImplTest {
         List<SetTerm> saved = createAndSaveInstances("saved", size);
         assertEquals(size, saved.size());
     }
+
+    @Test
+    void saveInvalidData() {
+        TermResponseDTO term = createAndSaveTerm("term1", 1);
+        StudySetResponseDTO set = createAndSaveSet("set1");
+        assertThrows(EntityNotFoundException.class, () -> service.save(set.getId(), Long.MAX_VALUE));
+        assertThrows(EntityNotFoundException.class, () -> service.save(Long.MAX_VALUE, term.getId()));
+    }
     @Test
     void getAll() {
         List<SetTerm> instances = createAndSaveInstances("get-all", 4);
@@ -95,9 +104,19 @@ class SetTermServiceImplTest {
     }
     @Test
     void delete() {
+        SetTerm instance = createAndSaveInstance("deleted");
+        Long setId = instance.getSet().getId();
+        Long termId = instance.getTerm().getId();
+        service.delete(setId, termId);
+        assertTrue(service.get(setId, termId).isEmpty());
     }
     @Test
     void getTermCount() {
+        int count = 3;
+        List<SetTerm> instances = createAndSaveInstances("count", count);
+        Long setId = instances.get(0).getSet().getId();
+        int termCount = service.getTermCount(setId);
+        assertEquals(count, termCount);
     }
 
 

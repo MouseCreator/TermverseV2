@@ -98,5 +98,12 @@ class StudySetTermRepositoryTest {
 
     @Test
     void delete() {
+        List<SetTerm> inputList = insertData("from-set", 2);
+        SetTerm setTerm = inputList.get(0);
+        Long termId = setTerm.getTerm().getId();
+        Long setId = setTerm.getSet().getId();
+        assertTrue(repository.findById(termId, setId).isPresent());
+        repository.delete(termId, setId);
+        assertTrue(repository.findById(termId, setId).isEmpty());
     }
 }

@@ -14,4 +14,5 @@ public interface TermService {
     void removeById(Long id);
     List<TermResponseDTO> getAllWithDeleted();
     void restoreById(Long term);
+    List<TermResponseDTO> getByStudySet(Long setId);
 }

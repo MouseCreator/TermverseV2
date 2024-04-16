@@ -62,4 +62,9 @@ public class TermServiceImpl implements TermService {
     public void restoreById(Long id) {
         services.soft(repository).restoreById(id);
     }
+
+    @Override
+    public List<TermResponseDTO> getByStudySet(Long setId) {
+        return services.use(repository).multi(r -> r.findAllByStudySet(setId)).to(mapper::toResponse);
+    }
 }

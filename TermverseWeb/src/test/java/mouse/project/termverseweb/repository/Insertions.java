@@ -63,4 +63,7 @@ public class Insertions {
         return savedTerms.stream().map(t -> repository.save(new SetTerm(studySet, t))).toList();
     }
 
+    public List<SetTag> bindTags(SetTagRepository repository, User user, StudySet studySet, List<Tag> savedTags) {
+        return savedTags.stream().map(t -> repository.save(new SetTag(user, studySet, t))).toList();
+    }
 }

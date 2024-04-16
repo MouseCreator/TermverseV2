@@ -98,7 +98,7 @@ class StudySetTermRepositoryTest {
 
     @Test
     void delete() {
-        List<SetTerm> inputList = insertData("from-set", 2);
+        List<SetTerm> inputList = insertData("deleted", 2);
         SetTerm setTerm = inputList.get(0);
         Long termId = setTerm.getTerm().getId();
         Long setId = setTerm.getSet().getId();

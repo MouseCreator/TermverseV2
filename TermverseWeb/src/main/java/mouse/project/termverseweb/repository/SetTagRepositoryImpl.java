@@ -48,10 +48,10 @@ public class SetTagRepositoryImpl implements SetTagRepository {
     @Override
     public SetTag save(SetTag setTag) {
         executor.write(e -> e.execute(
-                "INSERT INTO set_tags (tag_id, set_id, tag_id) VALUES (?, ?, ?)",
-                    setTag.getTag(),
-                    setTag.getStudySet(),
-                    setTag.getUser()))
+                "INSERT INTO set_tags (tag_id, set_id, user_id) VALUES (?, ?, ?)",
+                    setTag.getTag().getId(),
+                    setTag.getStudySet().getId(),
+                    setTag.getUser().getId()))
                 .affectOne();
         return setTag;
     }
@@ -60,7 +60,7 @@ public class SetTagRepositoryImpl implements SetTagRepository {
     public Optional<SetTag> getSetTagById(Long userId, Long setId, Long tagId) {
         return executor.read(e -> e.executeQuery(
                 "SELECT * FROM set_tags st " +
-                    "INNER JOIN sets s ON s.id = st.set_id " +
+                    "INNER JOIN study_sets s ON s.id = st.set_id " +
                     "INNER JOIN tags t ON t.id = st.tag_id " +
                     "INNER JOIN users u ON u.id = st.user_id " +
                     "WHERE s.id = ? AND t.id = ? AND u.id = ? AND " +

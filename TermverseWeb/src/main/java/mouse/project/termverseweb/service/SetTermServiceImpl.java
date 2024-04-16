@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
@@ -38,6 +39,7 @@ public class SetTermServiceImpl implements SetTermService {
     }
 
     @Override
+    @Transactional
     public SetTerm save(Long setId, Long termId) {
         Optional<StudySet> setOptional = studySetRepository.findById(setId);
         if (setOptional.isEmpty()) {

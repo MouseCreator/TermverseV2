@@ -7,13 +7,9 @@ import mouse.project.termverseweb.dto.term.TermCreateDTO;
 import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermUpdateDTO;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
-import mouse.project.termverseweb.model.SetTerm;
-import mouse.project.termverseweb.model.StudySet;
-import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.models.Factories;
 import mouse.project.termverseweb.models.StudySetFactory;
 import mouse.project.termverseweb.models.TermFactory;
-import mouse.project.termverseweb.repository.StudySetTermRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +28,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class TermServiceImplTest {
     private final TermService service;
     private final StudySetService studySetService;
-    private final StudySetTermRepository setTermRepository;
+    private final SetTermService setTermService;
     private final Factories factories;
     private final SoftDeletionTest soft;
     @Autowired
     public TermServiceImplTest(TermService termService,
-                               StudySetService studySetService, StudySetTermRepository setTermRepository,
+                               StudySetService studySetService, SetTermService setTermService,
                                Factories factories,
                                SoftDeletionTest soft) {
         this.service = termService;
         this.studySetService = studySetService;
-        this.setTermRepository = setTermRepository;
+        this.setTermService = setTermService;
         this.factories = factories;
         this.soft = soft;
     }
@@ -81,10 +77,7 @@ class TermServiceImplTest {
         StudySetResponseDTO saved = studySetService.save(studySetCreateDTO);
         Long setId = saved.getId();
         terms.forEach(t -> {
-            Term term = new Term(t.getId());
-            StudySet studySet = new StudySet(setId);
-            SetTerm setTerm = new SetTerm(studySet, term);
-            setTermRepository.save(setTerm);
+            setTermService.save(setId, t.getId());
         });
         return saved;
     }

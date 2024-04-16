@@ -41,7 +41,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
     @Override
     public Optional<UserStudySet> findByUserAndStudySet(Long user, Long studySetId) {
         return executor.read(e -> e.executeQuery(
-                "SELECT us " +
+                "SELECT * " +
                     "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
                     "INNER JOIN study_sets s ON s.id = us.study_set_id " +
@@ -86,11 +86,11 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
     @Override
     public List<UserStudySet> findByUserAndType(Long userId, String type) {
         return executor.read(e -> e.executeQuery(
-                "SELECT us " +
+                "SELECT * " +
                     "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
                     "WHERE u.id = ? AND us.type = ? " +
-                    "AND u.deletedAt IS NULL", userId, type
+                    "AND u.deleted_at IS NULL", userId, type
         ).adjustedList(UserStudySetModel.class).map(this::transform).get());
     }
 
@@ -101,7 +101,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
                     "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
                     "WHERE u.id = ? " +
-                    "AND u.deletedAt IS NULL", userId
+                    "AND u.deleted_at IS NULL", userId
         ).adjustedList(UserStudySetModel.class).map(this::transform).get());
     }
 }

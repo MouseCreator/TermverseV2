@@ -18,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
@@ -64,26 +65,65 @@ class UserStudySetRepositoryImplTest {
         return relations;
     }
 
+    private static void validateRelationTypes(int size, List<UserStudySet> userStudySets) {
+        for (int i = 0; i < size; i++) {
+            if (i == 0) {
+                assertEquals(UserStudySetRelation.OWNER, userStudySets.get(i).getType());
+            } else {
+                assertEquals(UserStudySetRelation.VIEWER, userStudySets.get(i).getType());
+            }
+        }
+    }
+
     @Test
     void save() {
         int size = 3;
         List<UserStudySet> userStudySets = insertData("saved", size);
         assertEquals(size, userStudySets.size());
+
+        validateRelationTypes(size, userStudySets);
     }
+
+
+
     @Test
     void findAll() {
         List<UserStudySet> userStudySets = insertData("find-all", 4);
         List<UserStudySet> all = repository.findAll();
         MTest.containsAll(all, userStudySets);
         MTest.noDuplicates(all);
+
     }
 
     @Test
     void findByUserAndStudySet() {
+        List<UserStudySet> userStudySets = insertData("find-all", 4);
+        UserStudySet target = userStudySets.get(0);
+        User user = target.getUser();
+        Long userId = user.getId();
+
+        StudySet studySet = target.getStudySet();
+        Long setId = studySet.getId();
+
+        Optional<UserStudySet> actual = repository.findByUserAndStudySet(userId, setId);
+        assertTrue(actual.isPresent());
+        assertEquals(target, actual.get());
     }
 
     @Test
     void deleteByUserAndStudySet() {
+        List<UserStudySet> userStudySets = insertData("find-all", 4);
+        UserStudySet target = userStudySets.get(0);
+        User user = target.getUser();
+        Long userId = user.getId();
+
+        StudySet studySet = target.getStudySet();
+        Long setId = studySet.getId();
+
+        repository.deleteByUserAndStudySet(userId, setId);
+
+        assertTrue(repository.findByUserAndStudySet(userId, setId).isEmpty());
+        assertFalse(repository.findAll().contains(target));
     }
 
     @Test

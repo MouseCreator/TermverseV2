@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import mouse.project.termverseweb.dto.term.TermCreateDTO;
 import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermUpdateDTO;
@@ -105,10 +106,17 @@ class TermServiceImplTest {
         TermResponseDTO byId = service.getById(id);
         assertEquals(update, byId);
         assertNotEquals(only, byId);
+
+        TermUpdateDTO notExisting = new TermUpdateDTO();
+        notExisting.setId(Long.MAX_VALUE);
+        assertThrows(EntityNotFoundException.class, () -> service.update(notExisting));
     }
 
     @Test
     void removeById() {
+        TermResponseDTO toRemove = createAndSave("to-remove", 1).get(0);
+        service.removeById(toRemove.getId());
+        assertThrows(EntityNotFoundException.class, () -> service.getById(toRemove.getId()));
     }
 
     @Test

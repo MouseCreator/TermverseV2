@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.controller;
 
+import lombok.RequiredArgsConstructor;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.Get;
@@ -18,13 +19,9 @@ import java.util.List;
 @RequestMapping(value = "/sets")
 @RequestPrefix("/sets")
 @Controller
+@RequiredArgsConstructor
 public class StudySetController {
     private final StudySetService studySetService;
-    @Autowired
-    @Auto
-    public StudySetController(StudySetService studySetService) {
-        this.studySetService = studySetService;
-    }
 
     @GetMapping
     @URL

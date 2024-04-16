@@ -35,7 +35,7 @@ public class ScanUtils {
         Constructor<T> result;
         Class<?>[] parameterTypes = constructor.getParameterTypes();
         try {
-            result = clazz.getConstructor(parameterTypes);
+            result = clazz.getDeclaredConstructor(parameterTypes);
         } catch (NoSuchMethodException e) {
             throw new CardException(e);
         }

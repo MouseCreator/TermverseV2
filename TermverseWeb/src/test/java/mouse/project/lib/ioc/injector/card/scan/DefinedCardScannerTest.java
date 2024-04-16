@@ -1,12 +1,10 @@
 package mouse.project.lib.ioc.injector.card.scan;
 
+import lombok.RequiredArgsConstructor;
 import mouse.project.lib.exception.CardException;
 import mouse.project.lib.exception.TypeException;
 import mouse.project.lib.ioc.annotation.Auto;
-import mouse.project.lib.ioc.injector.card.definition.CardDefinition;
-import mouse.project.lib.ioc.injector.card.definition.ConstructorDefinition;
-import mouse.project.lib.ioc.injector.card.definition.DefinedCardImpl;
-import mouse.project.lib.ioc.injector.card.definition.SetterDefinition;
+import mouse.project.lib.ioc.injector.card.definition.*;
 import mouse.project.lib.ioc.injector.sources.annotation.Construct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -130,11 +128,26 @@ class DefinedCardScannerTest {
         public WithoutDefaultConstructor(Long id) {
 
         }
+
+        public WithoutDefaultConstructor() {
+
+        }
     }
 
     @Test
     void testWithoutDefaultConstructor() {
         assertThrows(CardException.class, () -> scan.scan(WithoutDefaultConstructor.class));
+    }
+    @RequiredArgsConstructor
+    private static class WithRequired {
+        private final int id;
+    }
+
+    @Test
+    void testRequired() {
+        DefinedCard<WithRequired> scan1 = scan.scan(WithRequired.class);
+        Constructor<WithRequired> constructor = scan1.getConstructor().getConstructor();
+        assertEquals(1, constructor.getParameters().length);
     }
 
     private static abstract class Parent {

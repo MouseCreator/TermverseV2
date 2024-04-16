@@ -33,7 +33,8 @@ public class PropertyProcessorImpl implements PropertyProcessor {
     }
 
     private String fromEnv(String value) {
-        String envVar = System.getenv(value);
+        String ev = value.substring(2, value.length()-1);
+        String envVar = System.getenv(ev);
         return Optional.ofNullable(envVar).orElse(value);
     }
 

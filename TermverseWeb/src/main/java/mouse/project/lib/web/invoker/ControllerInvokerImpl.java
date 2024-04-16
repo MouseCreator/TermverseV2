@@ -32,4 +32,11 @@ public class ControllerInvokerImpl implements ControllerInvoker {
         return methodArguments.getArguments(requestURL);
     }
 
+    @Override
+    public String toString() {
+        return "ControllerInvokerImpl{" +
+                "controller=" + controller +
+                ", method=" + method +
+                '}';
+    }
 }

@@ -5,6 +5,7 @@ import mouse.project.lib.ioc.annotation.Prototype;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.context.WebContext;
 import mouse.project.lib.web.exception.RequestProcessException;
+import mouse.project.lib.web.mapper.URLTransform;
 import mouse.project.lib.web.parse.JacksonBodyParser;
 import mouse.project.lib.web.register.RequestMethod;
 import mouse.project.lib.web.request.RequestBody;
@@ -72,19 +73,10 @@ public class ReqRespContextImpl implements ReqRespContext {
         } catch (IOException e) {
             throw new RequestProcessException(e);
         }
-        String strUrl = getFullURL(req);
+        String strUrl = URLTransform.getFullURL(req);
         FullURL fullURL = urlService.create(strUrl);
         return new RequestURLImpl(fullURL, method, requestBody);
     }
 
-    private static String getFullURL(HttpServletRequest request) {
-        StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
-        String queryString = request.getQueryString();
 
-        if (queryString == null) {
-            return requestURL.toString();
-        } else {
-            return requestURL.append('?').append(queryString).toString();
-        }
-    }
 }

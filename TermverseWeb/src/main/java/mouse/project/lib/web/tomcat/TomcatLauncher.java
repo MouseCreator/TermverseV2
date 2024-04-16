@@ -26,7 +26,7 @@ public class TomcatLauncher {
 
         Context context = tomcat.addContext("", null);
         Tomcat.addServlet(context, "WebMapper", new WebMapper(configClass));
-        context.addServletMappingDecoded("/", "WebMapper");
+        context.addServletMappingDecoded("/*", "WebMapper");
         logger.debug("Configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
 
         tomcat.start();

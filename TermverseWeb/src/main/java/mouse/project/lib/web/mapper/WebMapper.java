@@ -11,9 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serial;
 
 public class WebMapper extends HttpServlet {
-
+    @Serial
+    private static final long serialVersionUID = -8925159744550576756L;
     private final Class<?> configClass;
 
     public WebMapper(Class<?> configClass) {
@@ -59,7 +61,7 @@ public class WebMapper extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, RequestMethod method, HttpServletResponse resp) throws IOException {
-        logger.debug("Receive request: " + req);
+        logger.debug("Receive request: " + URLTransform.getFullURL(req));
         Ioc.getConfiguredInjector(configClass)
                 .get(ReqRespContext.class)
                 .useAndExecute(method, req, resp, configClass);

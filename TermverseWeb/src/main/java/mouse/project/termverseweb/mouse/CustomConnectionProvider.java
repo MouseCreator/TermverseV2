@@ -29,7 +29,7 @@ public class CustomConnectionProvider implements ConnectionProvider {
 
     @After
     public void onSetup() {
-        PropertyMap propertyMap = propertiesFileReader.readFile("mouse.properties");
+        PropertyMap propertyMap = propertiesFileReader.readFile("src/main/resources/mouse.properties");
 
         String url = propertyMap.getPropertyValue("database.url");
         String user = propertyMap.getPropertyValue("database.user");

@@ -21,7 +21,8 @@ public class PackageLoader {
             throw new IllegalArgumentException("Package name cannot be null or empty");
         }
 
-        Reflections reflections = new Reflections(packageName, Scanners.SubTypes);
-        return reflections.getSubTypesOf(Object.class);
+        Reflections reflections = new Reflections(packageName, Scanners.SubTypes.filterResultsBy(s -> true));
+        Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
+        return classes;
     }
 }

@@ -2,6 +2,7 @@ package mouse.project.termverseweb.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
@@ -12,17 +13,26 @@ import mouse.project.termverseweb.mapper.StudySetMapper;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.repository.StudySetRepository;
 import mouse.project.termverseweb.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class StudySetServiceImpl implements StudySetService {
     private final StudySetRepository repository;
     private final StudySetMapper studySetMapper;
     private final ServiceProviderContainer services;
+    @Auto
+    @Autowired
+    public StudySetServiceImpl(StudySetRepository repository, StudySetMapper studySetMapper, ServiceProviderContainer services) {
+        this.repository = repository;
+        this.studySetMapper = studySetMapper;
+        this.services = services;
+    }
+
     @Override
     public List<StudySetResponseDTO> findAll() {
         List<StudySetResponseDTO> to = services.crud(repository)

@@ -10,7 +10,8 @@ import mouse.project.lib.modules.MouseModules;
                 MouseModules.WEB_MODULE,
                 MouseModules.FILES_MODULE
         },
-        name = "main-app"
+        name = "main-app",
+        includePackages = "mouse.project.termverseweb.mapper.impl"
 )
 public class MouseProjConfig {
 }

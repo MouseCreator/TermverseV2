@@ -8,4 +8,7 @@ public class Container {
     public static Inj get() {
         return Ioc.getConfiguredInjector(MouseProjConfig.class);
     }
+    public static Class<?> base() {
+        return MouseProjConfig.class;
+    }
 }

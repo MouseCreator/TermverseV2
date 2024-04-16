@@ -70,7 +70,21 @@ public class DefinedCardScanner implements CardScanner {
                 card.setPrimaryConstructor(constructor);
                 return;
             }
+            Optional<Constructor<T>> singleConstructor = getSingleConstructor(toScan);
+            if (singleConstructor.isPresent()) {
+                ConstructorDefinition<T> constructor = definitionHelper.getConstructor(singleConstructor.get());
+                card.setPrimaryConstructor(constructor);
+                return;
+            }
             throw new CardException("Neither @Auto, nor no-args constructor found for class: " + toScan);
+        }
+
+        private <T> Optional<Constructor<T>> getSingleConstructor(Class<T> clazz) {
+            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+            if (constructors.length == 1) {
+                return Optional.of(scanUtils().toConstructor(clazz, constructors[0]));
+            }
+            return Optional.empty();
         }
 
         private <T> Optional<Constructor<T>> getAnnotatedConstructor(Class<T> clazz) {

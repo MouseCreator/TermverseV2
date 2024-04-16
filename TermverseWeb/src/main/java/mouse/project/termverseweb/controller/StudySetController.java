@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.controller;
 
 import mouse.project.lib.ioc.annotation.Auto;
+import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.Get;
 import mouse.project.lib.web.annotation.RequestPrefix;
 import mouse.project.lib.web.annotation.URL;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/sets")
 @RequestPrefix("/sets")
+@Controller
 public class StudySetController {
     private final StudySetService studySetService;
     @Autowired

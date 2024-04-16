@@ -43,13 +43,13 @@ public class ConfigurationScanner {
 
     private void includePackage(String str, InjectorBase injectorBase) {
         Set<Class<?>> classes = addAllOf(str);
-        addClassesToIoc(injectorBase, classes);
+        addClassesExternal(injectorBase, classes);
     }
 
     private Set<Class<?>> addAllOf(String packageName) {
         PackageLoader loader = new PackageLoader();
-        Set<Class<?>> annotatedClasses = loader.getAllClasses(packageName);
-        return new HashSet<>(annotatedClasses);
+        Set<Class<?>> classes = loader.getAllClasses(packageName);
+        return new HashSet<>(classes);
     }
 
     private void processModules(InjectorBase base, Configuration config) {
@@ -90,7 +90,15 @@ public class ConfigurationScanner {
         Set<Class<?>> classes = scanPackage(basePackage);
         addClassesToIoc(injectorBase, classes);
     }
-
+    private void addClassesExternal(InjectorBase injectorBase, Collection<Class<?>> classes) {
+        for (Class<?> clazz : classes) {
+            if (hasUseRestriction(clazz)) {
+                addRestricted(clazz, injectorBase);
+            } else {
+                addToInjectorBase(injectorBase, clazz);
+            }
+        }
+    }
     private void addClassesToIoc(InjectorBase injectorBase, Collection<Class<?>> classes) {
         for (Class<?> clazz : classes) {
             annotationManager.validateService(clazz);

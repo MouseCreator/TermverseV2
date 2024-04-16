@@ -11,6 +11,8 @@ import mouse.project.lib.web.tool.FullURL;
 import mouse.project.lib.web.tool.URLPath;
 import mouse.project.lib.web.tool.URLPathNode;
 import mouse.project.lib.web.tool.URLService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,8 @@ public class DispatcherMapImpl implements DispatcherMap {
 
     private final URLService urlService;
     private final Map<RequestMethod, MapNode> roots;
+
+    private static final Logger logger = LogManager.getLogger(DispatcherMapImpl.class);
     @Auto
     public DispatcherMapImpl(URLService urlService) {
         this.urlService = urlService;
@@ -46,6 +50,7 @@ public class DispatcherMapImpl implements DispatcherMap {
             current = current.moveTo(content);
         }
         current.set(invoker, urlService.write(fullURL));
+        logger.debug("Set " + method.name() + " " + urlService.write(fullURL) + " to " + invoker);
     }
     @Override
     public ControllerInvoker getInvoker(String url, RequestMethod method) {

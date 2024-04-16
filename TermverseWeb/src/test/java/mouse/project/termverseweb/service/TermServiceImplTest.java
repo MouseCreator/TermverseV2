@@ -1,12 +1,19 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
+import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.dto.term.TermCreateDTO;
 import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermUpdateDTO;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
+import mouse.project.termverseweb.model.SetTerm;
+import mouse.project.termverseweb.model.StudySet;
+import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.models.Factories;
+import mouse.project.termverseweb.models.StudySetFactory;
 import mouse.project.termverseweb.models.TermFactory;
+import mouse.project.termverseweb.repository.StudySetTermRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +32,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class TermServiceImplTest {
     private final TermService service;
     private final StudySetService studySetService;
+    private final StudySetTermRepository setTermRepository;
     private final Factories factories;
     private final SoftDeletionTest soft;
     @Autowired
     public TermServiceImplTest(TermService termService,
-                               StudySetService studySetService,
-                              Factories factories,
-                              SoftDeletionTest soft) {
+                               StudySetService studySetService, StudySetTermRepository setTermRepository,
+                               Factories factories,
+                               SoftDeletionTest soft) {
         this.service = termService;
         this.studySetService = studySetService;
+        this.setTermRepository = setTermRepository;
         this.factories = factories;
         this.soft = soft;
     }
@@ -66,6 +75,18 @@ class TermServiceImplTest {
 
     private List<TermResponseDTO> saveTerms(List<TermCreateDTO> terms) {
         return terms.stream().map(service::save).toList();
+    }
+    private StudySetResponseDTO createStudySetAndBind(String setName, List<TermResponseDTO> terms) {
+        StudySetCreateDTO studySetCreateDTO = factories.getFactory(StudySetFactory.class).studySetCreateDTO(setName);
+        StudySetResponseDTO saved = studySetService.save(studySetCreateDTO);
+        Long setId = saved.getId();
+        terms.forEach(t -> {
+            Term term = new Term(t.getId());
+            StudySet studySet = new StudySet(setId);
+            SetTerm setTerm = new SetTerm(studySet, term);
+            setTermRepository.save(setTerm);
+        });
+        return saved;
     }
     @Test
     void save() {
@@ -137,5 +158,13 @@ class TermServiceImplTest {
 
     @Test
     void getByStudySet() {
+        List<TermResponseDTO> addedTerms = createAndSave("w-set", 3);
+        StudySetResponseDTO holder = createStudySetAndBind("holder", addedTerms);
+        Long setId = holder.getId();
+        List<TermResponseDTO> byStudySet = service.getByStudySet(setId);
+        assertEquals(addedTerms, byStudySet);
+
+        List<TermResponseDTO> subs = addedTerms.subList(0, 1);
+        soft().removeAll(subs).validateAbsentIn(() -> service.getByStudySet(setId));
     }
 }

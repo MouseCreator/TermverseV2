@@ -53,8 +53,9 @@ class TermRepositoryImplTest {
     }
     @Test
     void save() {
-        List<Term> terms = insertData("saved", 2);
-        assertEquals(3, terms.size());
+        int size = 2;
+        List<Term> terms = insertData("saved", size);
+        assertEquals(size, terms.size());
     }
     @Test
     void findAll() {

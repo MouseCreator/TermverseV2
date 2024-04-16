@@ -49,8 +49,8 @@ public class StudySetTermRepositoryImpl implements StudySetTermRepository {
     public Optional<SetTerm> findById(Long termId, Long setId) {
         return executor.read(e -> e.executeQuery(
                 "SELECT * FROM study_sets_terms st " +
-                    "INNER JOIN study_sets s "  +
-                    "INNER JOIN terms t "  +
+                    "INNER JOIN study_sets s ON st.set_id = s.id "  +
+                    "INNER JOIN terms t ON st.term_id = t.id "  +
                     "WHERE st.term_id = ? AND st.set_id = ? " +
                     "AND t.deleted_at IS NULL AND s.deleted_at IS NULL", termId, setId)
                 .optional(SetTermModel.class).map(this::mapper));
@@ -74,18 +74,19 @@ public class StudySetTermRepositoryImpl implements StudySetTermRepository {
     public List<SetTerm> findAll() {
         return executor.read(e -> e.executeQuery(
                             "SELECT * FROM study_sets_terms st " +
-                                "INNER JOIN study_sets s "  +
-                                "INNER JOIN terms t "  +
+                                "INNER JOIN study_sets s ON st.set_id = s.id "  +
+                                "INNER JOIN terms t ON st.term_id = t.id "  +
                                 "WHERE t.deleted_at IS NULL AND s.deleted_at IS NULL")
-                .adjustedList(SetTermModel.class).map(this::mapper).get());
+                .adjustedList(SetTermModel.class)
+                .map(this::mapper).get());
     }
 
     @Override
     public List<Term> getTermsFromStudySet(Long setId) {
         return executor.read(e -> e.executeQuery(
-                    "SELECT DISTINCT t.* FROM terms t " +
-                        "INNER JOIN study_sets_terms st " +
-                        "INNER JOIN study_sets s " +
+                    "SELECT t.* FROM terms t " +
+                        "INNER JOIN study_sets_terms st ON st.term_id = t.id " +
+                        "INNER JOIN study_sets s ON st.set_id = s.id "  +
                         "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL", setId
         ).list(Term.class));
     }
@@ -93,9 +94,9 @@ public class StudySetTermRepositoryImpl implements StudySetTermRepository {
     @Override
     public int getTermCount(Long setId) {
         return executor.read(e -> e.executeQuery(
-                "SELECT COUNT (DISTINCT t.id) FROM terms t " +
-                        "INNER JOIN study_sets_terms st " +
-                        "INNER JOIN study_sets s " +
+                "SELECT COUNT (t.id) FROM terms t " +
+                        "INNER JOIN study_sets_terms st ON st.term_id = t.id " +
+                        "INNER JOIN study_sets s ON s.id = st.set_id " +
                         "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL", setId
         ).getRaw().map(Raw::getInt));
     }

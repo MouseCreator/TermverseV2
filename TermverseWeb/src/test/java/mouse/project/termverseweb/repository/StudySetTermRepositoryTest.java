@@ -73,7 +73,7 @@ class StudySetTermRepositoryTest {
 
     @Test
     void findAll() {
-        List<SetTerm> search = insertData("search-all", 1);
+        List<SetTerm> search = insertData("search-all", 4);
         List<SetTerm> all = repository.findAll();
         MTest.containsAll(all, search);
     }

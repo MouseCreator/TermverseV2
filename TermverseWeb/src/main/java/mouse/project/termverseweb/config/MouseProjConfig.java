@@ -5,7 +5,11 @@ import mouse.project.lib.modules.MouseModules;
 
 @Configuration(
         basePackage = "mouse.project.termverseweb",
-        includeModules = {MouseModules.DATA_MODULE, MouseModules.WEB_MODULE},
+        includeModules = {
+                MouseModules.DATA_MODULE,
+                MouseModules.WEB_MODULE,
+                MouseModules.FILES_MODULE
+        },
         name = "main-app"
 )
 public class MouseProjConfig {

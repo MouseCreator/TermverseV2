@@ -2,6 +2,7 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
+import mouse.project.termverseweb.defines.Progress;
 import mouse.project.termverseweb.lib.service.model.IdIterable;
 import mouse.project.termverseweb.lib.service.repository.CustomCrudRepository;
 import mouse.project.termverseweb.model.*;
@@ -65,5 +66,9 @@ public class Insertions {
 
     public List<SetTag> bindTags(SetTagRepository repository, User user, StudySet studySet, List<Tag> savedTags) {
         return savedTags.stream().map(t -> repository.save(new SetTag(user, studySet, t))).toList();
+    }
+
+    public List<UserTerm> bindProgress(UserTermRepository repository, User user, List<Term> savedTerms) {
+        return savedTerms.stream().map(t -> repository.save(new UserTerm(user, t, Progress.UNFAMILIAR))).toList();
     }
 }

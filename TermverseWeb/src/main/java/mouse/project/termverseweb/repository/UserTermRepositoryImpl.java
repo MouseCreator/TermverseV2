@@ -36,10 +36,10 @@ public class UserTermRepositoryImpl implements UserTermRepository {
     @Override
     public List<UserTerm> findAll() {
         return executor.read(e -> e.executeQuery(
-                "SELECT ut FROM users_terms ut " +
-                    "INNER JOIN users u ON ut.user_id = u.id" +
-                    "INNER JOIN terms t ON ut.term_id = t.id" +
-                    "WHERE u.deletedAt IS NULL AND t.deletedAt IS NULL"
+                "SELECT * FROM users_terms ut " +
+                    "INNER JOIN users u ON ut.user_id = u.id " +
+                    "INNER JOIN terms t ON ut.term_id = t.id " +
+                    "WHERE u.deleted_at IS NULL AND t.deleted_at IS NULL"
         ).adjustedList(UserTermModel.class).map(this::fromModel).get());
     }
 
@@ -86,14 +86,16 @@ public class UserTermRepositoryImpl implements UserTermRepository {
     public List<UserTerm> findByUserAndTerms(Long userId, List<Long> termIds) {
         String qm = daoUtils.qMarksList(termIds);
         String sql = String.format(
-                "SELECT ut " +
+                "SELECT * " +
                 "FROM users_terms ut " +
-                "INNER JOIN users u ON ut.user_id = u.id" +
-                "INNER JOIN terms t ON ut.term_id = t.id" +
+                "INNER JOIN users u ON ut.user_id = u.id " +
+                "INNER JOIN terms t ON ut.term_id = t.id " +
                 "WHERE u.id = ? AND t.id IN %s AND " +
-                "u.deletedAt IS NULL AND t.deletedAt IS NULL", qm
+                "u.deleted_at IS NULL AND t.deleted_at IS NULL", qm
         );
-        List<Long> args = new ArrayList<>(termIds);
+        List<Long> args = new ArrayList<>();
+        args.add(userId);
+        args.addAll(termIds);
         return executor.read(e -> e.executeListed (sql, args)
                 .adjustedList(UserTermModel.class)
                 .map(this::fromModel)

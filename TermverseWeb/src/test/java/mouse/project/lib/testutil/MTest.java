@@ -1,5 +1,8 @@
 package mouse.project.lib.testutil;
 
+import mouse.project.termverseweb.model.UserTerm;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,5 +27,9 @@ public class MTest {
         List<T> modified = new ArrayList<>(subs);
         modified.removeAll(superCollection);
         fail("Collection " + superCollection + " is missing " + modified);
+    }
+
+    public static <T> List<T> distinct(List<T> all) {
+        return all.stream().distinct().toList();
     }
 }

@@ -8,12 +8,12 @@ import mouse.project.lib.ioc.annotation.Service;
 import java.util.List;
 
 @Service
-public class ReadPropertiesFileImpl implements ReadPropertiesFile {
+public class PropertiesFileReaderImpl implements PropertiesFileReader {
 
     private final FileManager fileManager;
     private final PropertyProcessor processor;
     @Auto
-    public ReadPropertiesFileImpl(FileManager fileManager, PropertyProcessor processor) {
+    public PropertiesFileReaderImpl(FileManager fileManager, PropertyProcessor processor) {
         this.fileManager = fileManager;
         this.processor = processor;
     }

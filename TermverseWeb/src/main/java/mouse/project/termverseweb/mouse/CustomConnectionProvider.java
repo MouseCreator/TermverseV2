@@ -2,7 +2,7 @@ package mouse.project.termverseweb.mouse;
 
 import mouse.project.lib.data.provider.ConnectionProvider;
 import mouse.project.lib.files.PropertyMap;
-import mouse.project.lib.files.ReadPropertiesFile;
+import mouse.project.lib.files.PropertiesFileReader;
 import mouse.project.lib.ioc.annotation.After;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
@@ -16,12 +16,12 @@ import java.sql.SQLException;
 @UseRestriction(usedBy = "main-app")
 public class CustomConnectionProvider implements ConnectionProvider {
 
-    private final ReadPropertiesFile readPropertiesFile;
+    private final PropertiesFileReader propertiesFileReader;
 
     private DBCredentials credentials;
     @Auto
-    public CustomConnectionProvider(ReadPropertiesFile readPropertiesFile) {
-        this.readPropertiesFile = readPropertiesFile;
+    public CustomConnectionProvider(PropertiesFileReader propertiesFileReader) {
+        this.propertiesFileReader = propertiesFileReader;
     }
 
     private record DBCredentials(String url, String user, String password) {
@@ -29,7 +29,7 @@ public class CustomConnectionProvider implements ConnectionProvider {
 
     @After
     public void onSetup() {
-        PropertyMap propertyMap = readPropertiesFile.readFile("mouse.properties");
+        PropertyMap propertyMap = propertiesFileReader.readFile("mouse.properties");
 
         String url = propertyMap.getPropertyValue("database.url");
         String user = propertyMap.getPropertyValue("database.user");

@@ -1,5 +1,5 @@
 package mouse.project.lib.files;
 
-public interface ReadPropertiesFile {
+public interface PropertiesFileReader {
     PropertyMap readFile(String file);
 }

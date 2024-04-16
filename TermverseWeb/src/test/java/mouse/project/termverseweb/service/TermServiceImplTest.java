@@ -36,6 +36,10 @@ class TermServiceImplTest {
         this.soft = soft;
     }
 
+    private SoftDeletionTest.BeforeSoftDeletion<TermResponseDTO, Long> soft() {
+        return soft.using(service::removeById, TermResponseDTO::getId);
+    }
+
     private List<TermCreateDTO> createTerms(String base, int count) {
         TermFactory termFactory = factories.getFactory(TermFactory.class);
         List<TermCreateDTO> list = new ArrayList<>();
@@ -51,6 +55,11 @@ class TermServiceImplTest {
         TermCreateDTO termCreateDTO = termFactory.termCreateDTO(term, 1);
         termCreateDTO.setDefinition(definition);
         return termCreateDTO;
+    }
+
+    private List<TermResponseDTO> createAndSave(String base, int count) {
+        List<TermCreateDTO> terms = createTerms(base, count);
+        return saveTerms(terms);
     }
 
     private List<TermResponseDTO> saveTerms(List<TermCreateDTO> terms) {
@@ -69,6 +78,12 @@ class TermServiceImplTest {
     }
     @Test
     void getAll() {
+        List<TermResponseDTO> inserted = createAndSave("get-all", 3);
+
+        soft().passAll(inserted)
+                        .validatePresentIn(service::getAll);
+        soft().removeAll(inserted)
+                .validateAbsentIn(service::getAll);
     }
 
     @Test

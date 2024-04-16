@@ -30,7 +30,7 @@ public interface TermRepository extends Repository<Term, Long>,
     void deleteById(@Param("id") Long id);
     @Transactional
     @Modifying
-    @Query("UPDATE StudySet t SET t.deletedAt = NULL WHERE t.id = :id")
+    @Query("UPDATE Term t SET t.deletedAt = NULL WHERE t.id = :id")
     void restoreById(@Param("id") Long id);
     @Transactional
     @Modifying

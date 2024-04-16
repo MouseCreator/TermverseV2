@@ -121,10 +121,18 @@ class TermServiceImplTest {
 
     @Test
     void getAllWithDeleted() {
+        TermResponseDTO toRemove = createAndSave("to-remove", 1).get(0);
+        service.removeById(toRemove.getId());
+        assertTrue(service.getAllWithDeleted().contains(toRemove));
     }
 
     @Test
     void restoreById() {
+        TermResponseDTO toRemove = createAndSave("to-remove", 1).get(0);
+        service.removeById(toRemove.getId());
+        assertThrows(EntityNotFoundException.class, () -> service.getById(toRemove.getId()));
+        service.restoreById(toRemove.getId());
+        assertEquals(toRemove, service.getById(toRemove.getId()));
     }
 
     @Test

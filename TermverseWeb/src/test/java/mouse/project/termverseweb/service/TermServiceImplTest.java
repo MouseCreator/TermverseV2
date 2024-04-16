@@ -2,6 +2,7 @@ package mouse.project.termverseweb.service;
 
 import mouse.project.termverseweb.dto.term.TermCreateDTO;
 import mouse.project.termverseweb.dto.term.TermResponseDTO;
+import mouse.project.termverseweb.dto.term.TermUpdateDTO;
 import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.models.Factories;
 import mouse.project.termverseweb.models.TermFactory;
@@ -88,10 +89,22 @@ class TermServiceImplTest {
 
     @Test
     void getById() {
+        List<TermResponseDTO> inserted = createAndSave("get-all", 1);
+        TermResponseDTO expected = inserted.get(0);
+        TermResponseDTO actual = service.getById(expected.getId());
+        assertEquals(expected, actual);
     }
 
     @Test
     void update() {
+        List<TermResponseDTO> inserted = createAndSave("get-all", 1);
+        TermResponseDTO only = inserted.get(0);
+        Long id = only.getId();
+        TermUpdateDTO updateDTO = factories.getFactory(TermFactory.class).termUpdateDTO(only, "new-term");
+        TermResponseDTO update = service.update(updateDTO);
+        TermResponseDTO byId = service.getById(id);
+        assertEquals(update, byId);
+        assertNotEquals(only, byId);
     }
 
     @Test

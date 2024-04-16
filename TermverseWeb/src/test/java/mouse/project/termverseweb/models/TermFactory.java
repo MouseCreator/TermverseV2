@@ -1,6 +1,8 @@
 package mouse.project.termverseweb.models;
 
 import mouse.project.termverseweb.dto.term.TermCreateDTO;
+import mouse.project.termverseweb.dto.term.TermResponseDTO;
+import mouse.project.termverseweb.dto.term.TermUpdateDTO;
 import mouse.project.termverseweb.model.Term;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +24,16 @@ public class TermFactory implements Factory{
         term.setDefinition(termStr + " definition");
         term.setOrder(order);
         return term;
+    }
+
+    public TermUpdateDTO termUpdateDTO(TermResponseDTO source, String newTerm) {
+        TermUpdateDTO termUpdateDTO = new TermUpdateDTO();
+        termUpdateDTO.setId(source.getId());
+        termUpdateDTO.setTerm(newTerm);
+        termUpdateDTO.setDefinition(source.getDefinition());
+        termUpdateDTO.setHint(source.getHint());
+        termUpdateDTO.setPicture_url(source.getPicture_url());
+        termUpdateDTO.setOrder(source.getOrder());
+        return termUpdateDTO;
     }
 }

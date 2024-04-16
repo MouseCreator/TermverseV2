@@ -49,8 +49,10 @@ public class StudySetTermRepositoryImpl implements StudySetTermRepository {
     public Optional<SetTerm> findById(Long termId, Long setId) {
         return executor.read(e -> e.executeQuery(
                 "SELECT * FROM study_sets_terms st " +
+                    "INNER JOIN study_sets s "  +
+                    "INNER JOIN terms t "  +
                     "WHERE st.term_id = ? AND st.set_id = ? " +
-                    "AND st.term.deletedAt IS NULL AND st.set.deletedAt IS NULL", termId, setId)
+                    "AND t.deleted_at IS NULL AND s.deleted_at IS NULL", termId, setId)
                 .optional(SetTermModel.class).map(this::mapper));
     }
 
@@ -72,7 +74,9 @@ public class StudySetTermRepositoryImpl implements StudySetTermRepository {
     public List<SetTerm> findAll() {
         return executor.read(e -> e.executeQuery(
                             "SELECT * FROM study_sets_terms st " +
-                                "WHERE st.term.deletedAt IS NULL AND st.set.deletedAt IS NULL")
+                                "INNER JOIN study_sets s "  +
+                                "INNER JOIN terms t "  +
+                                "WHERE t.deleted_at IS NULL AND s.deleted_at IS NULL")
                 .adjustedList(SetTermModel.class).map(this::mapper).get());
     }
 

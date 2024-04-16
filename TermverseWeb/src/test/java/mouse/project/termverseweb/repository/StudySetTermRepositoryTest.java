@@ -14,6 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
@@ -56,6 +57,15 @@ class StudySetTermRepositoryTest {
 
     @Test
     void findById() {
+        List<SetTerm> search = insertData("search", 1);
+        SetTerm setTerm = search.get(0);
+        Long setId = setTerm.getSet().getId();
+        Long termId = setTerm.getTerm().getId();
+
+        Optional<SetTerm> byIdOptional = repository.findById(termId, setId);
+        assertTrue(byIdOptional.isPresent());
+
+        assertEquals(setTerm, byIdOptional.get());
     }
 
     @Test

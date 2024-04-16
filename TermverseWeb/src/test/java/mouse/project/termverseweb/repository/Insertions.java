@@ -71,4 +71,18 @@ public class Insertions {
     public List<UserTerm> bindProgress(UserTermRepository repository, User user, List<Term> savedTerms) {
         return savedTerms.stream().map(t -> repository.save(new UserTerm(user, t, Progress.UNFAMILIAR))).toList();
     }
+
+    public List<UserStudySet> bindUserSets(UserStudySetRepository repository,
+                                           User user,
+                                           List<StudySet> savedSets,
+                                           List<String> relations) {
+        List<UserStudySet> list = new ArrayList<>();
+        for (int i = 0; i < savedSets.size(); i++) {
+            StudySet s = savedSets.get(i);
+            String r = relations.get(i);
+            UserStudySet save = repository.save(new UserStudySet(user, s, r));
+            list.add(save);
+        }
+        return list;
+    }
 }

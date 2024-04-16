@@ -33,7 +33,7 @@ public class TermRepositoryImpl implements TermRepository {
     @Override
     public List<Term> findAllByStudySet(Long setId) {
         return executor.read(e -> e.executeQuery(
-                "SELECT * FROM terms t " +
+                "SELECT DISTINCT t.* FROM terms t " +
                         "INNER JOIN study_sets_terms st ON t.id = st.term_id " +
                         "INNER JOIN study_sets s ON s.id = st.set_id " +
                         "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL", setId).list(Term.class));

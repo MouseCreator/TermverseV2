@@ -83,10 +83,10 @@ public class StudySetTermRepositoryImpl implements StudySetTermRepository {
     @Override
     public List<Term> getTermsFromStudySet(Long setId) {
         return executor.read(e -> e.executeQuery(
-                    "SELECT * FROM terms t " +
+                    "SELECT DISTINCT t.* FROM terms t " +
                         "INNER JOIN study_sets_terms st " +
                         "INNER JOIN study_sets s " +
-                        "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL"
+                        "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL", setId
         ).list(Term.class));
     }
 

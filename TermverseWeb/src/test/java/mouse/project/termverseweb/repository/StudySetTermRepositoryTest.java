@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
+import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.model.SetTerm;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.Term;
@@ -45,7 +46,6 @@ class StudySetTermRepositoryTest {
         StudySet studySet = savedSets.get(0);
         List<Term> terms = insertions.generateTerms(base, count);
         List<Term> savedTerms = insertions.saveAll(termRepository, terms);
-
         return insertions.bindSetTerms(repository, studySet, savedTerms);
     }
 
@@ -66,14 +66,25 @@ class StudySetTermRepositoryTest {
         assertTrue(byIdOptional.isPresent());
 
         assertEquals(setTerm, byIdOptional.get());
+
+        assertTrue(repository.findById(termId, Long.MAX_VALUE).isEmpty());
+        assertTrue(repository.findById(Long.MAX_VALUE, setId).isEmpty());
     }
 
     @Test
     void findAll() {
+        List<SetTerm> search = insertData("search-all", 1);
+        List<SetTerm> all = repository.findAll();
+        MTest.containsAll(all, search);
     }
 
     @Test
     void getTermsFromStudySet() {
+        List<SetTerm> inputList = insertData("from-set", 3);
+        Long setId = inputList.get(0).getSet().getId();
+        List<Term> terms = inputList.stream().map(SetTerm::getTerm).toList();
+        List<Term> termsFromStudySet = repository.getTermsFromStudySet(setId);
+        MTest.compareUnordered(terms, termsFromStudySet);
     }
 
     @Test

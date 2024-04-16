@@ -40,7 +40,7 @@ public interface TermRepository extends Repository<Term, Long>,
     void removeTermFormStudySetsById(Long termId);
     @Query("SELECT t FROM Term t WHERE t.id IN :ids AND t.deletedAt IS NULL")
     List<Term> findAllByIds(@Param("ids") List<Long> termIds);
-    @Query(value = "SELECT * FROM terms t " +
+    @Query(value = "SELECT DISTINCT t.* FROM terms t " +
             "INNER JOIN study_sets_terms st ON t.id = st.term_id " +
             "INNER JOIN study_sets s ON s.id = st.set_id " +
             "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL", nativeQuery = true)

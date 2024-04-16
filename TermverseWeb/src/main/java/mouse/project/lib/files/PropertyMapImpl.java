@@ -15,11 +15,11 @@ public class PropertyMapImpl implements PropertyMap, MapFiller {
 
     @Override
     public String getPropertyValue(String key) {
-        String s = map.get(key);
-        if (s == null) {
+        String value = map.get(key);
+        if (value == null) {
             throw new NoSuchPropertyException("No property by key: " + key);
         }
-        return key;
+        return value;
     }
 
     @Override

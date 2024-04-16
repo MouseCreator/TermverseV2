@@ -2,13 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 export function Header() {
     return (
-        <header className="flex flex-col items-center">
+        <header className="flex flex-col items-center mb-8 w-full">
             <HeaderLogo />
             <HeaderLinks />
+            <HeaderLine />
         </header>
     );
 }
 
+function HeaderLine() {
+    return <hr className="border-gray-300 border w-full my-2" />
+}
 function HeaderLogo() {
     return (
         <div className="container mx-auto mb-4">

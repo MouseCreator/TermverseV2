@@ -32,17 +32,17 @@ function HeaderLinks() {
                     </Link>
                 </li>
                 <li>
-                    <Link href="/">
+                    <Link href="/users">
                         <div className="block px-4 py-2 rounded-md hover:bg-purple-500 hover:text-white">Users</div>
                     </Link>
                 </li>
                 <li>
-                    <Link href="/">
+                    <Link href="/sets">
                         <div className="block px-4 py-2 rounded-md hover:bg-purple-500 hover:text-white">Study Sets</div>
                     </Link>
                 </li>
                 <li>
-                    <Link href="/">
+                    <Link href="/profile">
                         <div className="block px-4 py-2 rounded-md hover:bg-purple-500 hover:text-white">Profile</div>
                     </Link>
                 </li>

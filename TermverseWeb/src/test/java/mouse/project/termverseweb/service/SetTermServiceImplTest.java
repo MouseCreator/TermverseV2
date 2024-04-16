@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.service;
 
+import mouse.project.lib.testutil.MTest;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
 import mouse.project.termverseweb.dto.term.TermCreateDTO;
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
@@ -71,20 +73,32 @@ class SetTermServiceImplTest {
         List<SetTerm> saved = createAndSaveInstances("saved", size);
         assertEquals(size, saved.size());
     }
-
     @Test
-    void delete() {
+    void getAll() {
+        List<SetTerm> instances = createAndSaveInstances("get-all", 4);
+        List<SetTerm> all = service.getAll();
+        MTest.containsAll(all, instances);
+        MTest.noDuplicates(all);
     }
 
     @Test
     void get() {
-    }
+        SetTerm instance = createAndSaveInstance("get-id");
+        Long setId = instance.getSet().getId();
+        Long termId = instance.getTerm().getId();
+        Optional<SetTerm> setTerm = service.get(setId, termId);
+        assertTrue(setTerm.isPresent());
+        assertEquals(instance, setTerm.get());
 
+        assertTrue(service.get(setId, Long.MAX_VALUE).isEmpty());
+        assertTrue(service.get(Long.MAX_VALUE, termId).isEmpty());
+    }
+    @Test
+    void delete() {
+    }
     @Test
     void getTermCount() {
     }
 
-    @Test
-    void getAll() {
-    }
+
 }

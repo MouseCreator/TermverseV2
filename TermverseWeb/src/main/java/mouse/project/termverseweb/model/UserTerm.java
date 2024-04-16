@@ -26,4 +26,10 @@ public class UserTerm {
     private Term term;
     @Nonnull
     private String progress;
+
+    public UserTerm(@Nonnull User user,@Nonnull Term term,@Nonnull String progress) {
+        this.user = user;
+        this.term = term;
+        this.progress = progress;
+    }
 }

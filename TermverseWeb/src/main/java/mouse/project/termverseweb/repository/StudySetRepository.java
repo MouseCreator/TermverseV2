@@ -1,10 +1,15 @@
 package mouse.project.termverseweb.repository;
 
 import jakarta.transaction.Transactional;
+import mouse.project.lib.data.page.PageDescription;
+import mouse.project.lib.data.page.PageImpl;
+
 import mouse.project.termverseweb.lib.service.repository.SoftDeleteCrudRepository;
 import mouse.project.termverseweb.model.SizedStudySet;
 import mouse.project.termverseweb.model.StudySet;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Repository
+@Primary
 public interface StudySetRepository extends Repository<StudySet, Long>, SoftDeleteCrudRepository<StudySet, Long> {
     @Query("SELECT s FROM StudySet s WHERE s.deletedAt IS NULL")
     List<StudySet> findAll();
@@ -55,6 +61,11 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "AND s.deletedAt IS NULL AND u.deletedAt IS NULL")
     Page<StudySet> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
+    default mouse.project.lib.data.page.Page<StudySet> findAllByUserId(Long userId, PageDescription pageDescription) {
+        Page<StudySet> p = findAllByUserId(userId, PageRequest.of(pageDescription.number(), pageDescription.size()));
+        List<StudySet> studySets = p.stream().toList();
+        return new PageImpl<>(studySets, pageDescription);
+    }
     @Query("SELECT s FROM StudySet s " +
             "LEFT JOIN FETCH s.terms t " +
             "WHERE s.id = :id " +

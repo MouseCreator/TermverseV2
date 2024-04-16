@@ -1,4 +1,4 @@
-package mouse.project.termverseweb.service;
+package mouse.project.termverseweb.service.optimized;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
@@ -14,6 +14,8 @@ import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.models.*;
+import mouse.project.termverseweb.service.StudySetService;
+import mouse.project.termverseweb.service.UserService;
 import mouse.project.termverseweb.service.optimized.OptimizedTermService;
 import org.springframework.context.ApplicationContext;
 import org.junit.jupiter.api.Test;
@@ -35,7 +37,6 @@ class OptimizedTermServiceImplTest {
     private final ApplicationContext context;
     private final OptimizedTermService optimizedTermService;
     private final Factories factories;
-
     private static final int TERMS_CREATED = 5;
     @Autowired
     public OptimizedTermServiceImplTest(ApplicationContext applicationContext,

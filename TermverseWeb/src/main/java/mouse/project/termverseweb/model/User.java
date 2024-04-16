@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import mouse.project.lib.data.orm.annotation.Model;
+import mouse.project.lib.data.orm.annotation.NamedColumn;
 import mouse.project.termverseweb.lib.service.model.LongIterable;
 
 import java.time.LocalDateTime;
@@ -17,15 +19,20 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
+@Model
 public class User implements LongIterable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Nonnull
+    @NamedColumn
     private Long id;
     @Nonnull
+    @NamedColumn
     private String name;
+    @NamedColumn
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt = null;
+    @NamedColumn("profile_picture_url")
     private String profilePictureUrl;
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

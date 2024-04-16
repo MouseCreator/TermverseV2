@@ -3,7 +3,6 @@ package mouse.project.termverseweb.service;
 import mouse.project.termverseweb.dto.settag.SetTagCreateDTO;
 import mouse.project.termverseweb.dto.settag.SetTagResponseDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 

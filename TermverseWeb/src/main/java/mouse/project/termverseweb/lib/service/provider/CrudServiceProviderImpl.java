@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.lib.service.provider;
 
 import jakarta.persistence.EntityNotFoundException;
+import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.termverseweb.lib.service.GenericServiceHelper;
 import mouse.project.termverseweb.lib.service.helper.CrudHelper;
 import mouse.project.termverseweb.lib.service.model.IdIterable;
@@ -16,9 +17,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class CrudServiceProviderImpl implements CrudServiceProvider {
     private final GenericServiceHelper genericService;
     @Autowired
+    @Auto
     public CrudServiceProviderImpl(GenericServiceHelper genericService) {
         this.genericService = genericService;
     }

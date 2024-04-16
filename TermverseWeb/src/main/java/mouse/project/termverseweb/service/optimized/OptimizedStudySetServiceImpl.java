@@ -2,6 +2,9 @@ package mouse.project.termverseweb.service.optimized;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import mouse.project.lib.data.page.Page;
+import mouse.project.lib.data.page.PageDescription;
+import mouse.project.lib.data.page.PageDescriptionImpl;
 import mouse.project.termverseweb.defines.UserStudySetRelation;
 import mouse.project.termverseweb.dto.studyset.*;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
@@ -16,9 +19,6 @@ import mouse.project.termverseweb.repository.StudySetRepository;
 import mouse.project.termverseweb.service.UserStudySetService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -91,9 +91,9 @@ public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
 
     @Override
     public List<StudySetDescriptionDTO> getStudySetsByUser(Long userId, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<StudySet> allByUserIdAndPage = repository.findAllByUserId(userId, pageable);
-        List<StudySet> studySets = allByUserIdAndPage.stream().toList();
+        PageDescription pageDescription = new PageDescriptionImpl(page, size);
+        Page<StudySet> allByUserIdAndPage = repository.findAllByUserId(userId, pageDescription);
+        List<StudySet> studySets = allByUserIdAndPage.getElements();
         return setsToDescription(studySets);
     }
 

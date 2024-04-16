@@ -18,8 +18,8 @@ public record OptionalResult<MODEL>(MODEL result) {
         return Optional.of(defaultTransformation.apply(result));
     }
 
-    public MODEL getRaw() {
-        return result;
+    public Optional<MODEL> getRaw() {
+        return Optional.ofNullable(result);
     }
 
     public <DTO> DTO orThrow(Function<MODEL, DTO> defaultTransformation) {

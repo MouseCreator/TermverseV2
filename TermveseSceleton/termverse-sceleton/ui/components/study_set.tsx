@@ -1,4 +1,4 @@
-import {StudySetProps} from "@/ui/data/data";
+import {StudySetProps, StudySetPropsListProps} from "@/ui/data/data";
 import Link from "next/link";
 import {formatDate} from "@/ui/utils/format";
 
@@ -19,4 +19,14 @@ export function StudySet({ props}: StudySetProps) {
     </Link>
     )
 }
+
+export function StudSetList({props}: StudySetPropsListProps) {
+
+    return (
+        <div className="flex border flex-col items-center">
+            {props.list.map((set, index) => (
+                <StudySet key={index} props={set} />
+            ))}
+        </div>);
+    }
 

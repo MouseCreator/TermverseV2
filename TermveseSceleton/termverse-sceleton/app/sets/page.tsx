@@ -1,21 +1,27 @@
-import {StudySet} from "@/ui/components/study_set";
-
+'use client'
+import {StudSetList} from "@/ui/components/study_set";
+import {StudySetPropsList} from "@/ui/data/data";
+import React, { useEffect, useState } from 'react';
+import {fetchAllSets} from "@/ui/data/sets";
 
 export default function Page() {
-    return (
 
+    const [list, setList] = useState<StudySetPropsList>({ list: [] });
+
+    useEffect(() => {
+        onFetch();
+    }, []);
+    const onFetch = async () => {
+        try {
+            const data: StudySetPropsList = await fetchAllSets();
+            setList(data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+    return (
         <main className="w-full">
-            <div className="flex border flex-col items-center">
-                <StudySet props={
-                    {id: 1, name: "Set 1", created_at: new Date(Date.now()), picture_url: null, size: 3}
-                } />
-                <StudySet props={
-                    {id: 2, name: "Set 2", created_at: new Date(Date.now()), picture_url: null, size: 3}
-                } />
-                <StudySet props={
-                    {id: 3, name: "Set 3", created_at: new Date(Date.now()), picture_url: null, size: 3}
-                } />
-            </div>
+            <StudSetList props={list}/>
         </main>
     )
 }

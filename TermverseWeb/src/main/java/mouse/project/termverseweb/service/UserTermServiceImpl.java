@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class UserTermServiceImpl implements UserTermService {
     private final StudySetRepository studySetRepository;
     private final UserTermRepository repository;

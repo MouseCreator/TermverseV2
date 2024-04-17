@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class OptimizedTermServiceImpl implements OptimizedTermService {
 
     private final StudySetRepository studySetRepository;

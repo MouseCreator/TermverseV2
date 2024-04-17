@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
 
     private final StudySetRepository repository;

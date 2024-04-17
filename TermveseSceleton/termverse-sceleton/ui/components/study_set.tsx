@@ -1,4 +1,4 @@
-import {StudySetProps, StudySetPropsListProps} from "@/ui/data/data";
+import {StudySetProps, StudySetPropsListProps, StudySetResponseList, StudySetResponseListProps} from "@/ui/data/data";
 import Link from "next/link";
 import {formatDate} from "@/ui/utils/format";
 
@@ -11,16 +11,16 @@ export function StudySet({ props}: StudySetProps) {
             <h3 className="text-2xl font-bold">
                 {props.name}
             </h3>
-            <p className="text-gray-500">{props.size} terms</p>
+            <p className="text-gray-500">Set of terms</p>
         </div>
         <div className="flex flex-col w-full items-end">
-            <p className="text-gray-500 mr-4">Created: {formatDate(props.created_at)}</p>
+            <p className="text-gray-500 mr-4">Created: {props.createdAt}</p>
         </div>
     </Link>
     )
 }
 
-export function StudSetList({props}: StudySetPropsListProps) {
+export function StudSetList({props}: StudySetResponseListProps) {
 
     return (
         <div className="flex border flex-col items-center">

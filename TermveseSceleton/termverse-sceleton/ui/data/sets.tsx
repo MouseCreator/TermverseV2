@@ -1,6 +1,6 @@
-import {StudySetPropsList} from "@/ui/data/data";
+import { StudySetResponseList} from "@/ui/data/data";
 
-export async function fetchAllSets(): Promise<StudySetPropsList> {
+export async function fetchAllSets(): Promise<StudySetResponseList> {
     try {
         const response = await fetch('http://localhost:8080/sets');
         const data = await response.json();

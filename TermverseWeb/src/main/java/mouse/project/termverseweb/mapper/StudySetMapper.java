@@ -15,9 +15,9 @@ import java.util.List;
 @Mapper(config = MapperConfig.class, uses = TermMapper.class)
 public interface StudySetMapper {
     StudySetResponseDTO toResponse(StudySet model);
-    @Mapping(source = "terms", target = "terms", qualifiedByName = "termFromCreate")
+    //@Mapping(source = "terms", target = "terms", qualifiedByName = "termFromCreate")
     StudySet fromCreate(StudySetCreateDTO createDTO);
-    @Mapping(source = "terms", target = "terms", qualifiedByName = "termFromUpdate")
+    //@Mapping(source = "terms", target = "terms", qualifiedByName = "termFromUpdate")
     StudySet fromUpdate(StudySetUpdateDTO updateDTO);
     @Named("studySetById")
     default StudySet getStudySetById(Long id) {

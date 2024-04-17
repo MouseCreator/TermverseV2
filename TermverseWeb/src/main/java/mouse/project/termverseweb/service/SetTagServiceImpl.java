@@ -31,7 +31,6 @@ public class SetTagServiceImpl implements SetTagService {
     private final ServiceProviderContainer services;
 
     private final StudySetMapper studySetMapper;
-
     private final UserRepository userRepository;
     private final StudySetRepository studySetRepository;
     private final TagRepository tagRepository;

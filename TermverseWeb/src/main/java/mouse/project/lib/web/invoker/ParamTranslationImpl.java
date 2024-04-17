@@ -30,6 +30,7 @@ public class ParamTranslationImpl implements ParamTranslation {
     private void prepare(Map<Class<?>, Translation> preparedMap) {
         preparedMap.put(Integer.class, Integer::parseInt);
         preparedMap.put(Float.class, Float::parseFloat);
+        preparedMap.put(Long.class, Long::parseLong);
         preparedMap.put(Double.class, Double::parseDouble);
         preparedMap.put(String.class, s->s);
         preparedMap.put(Short.class, Short::parseShort);

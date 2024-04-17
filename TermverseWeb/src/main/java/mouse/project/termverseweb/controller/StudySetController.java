@@ -5,11 +5,7 @@ import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
 import mouse.project.termverseweb.dto.studyset.*;
 import mouse.project.termverseweb.service.StudySetService;
-import mouse.project.termverseweb.service.optimized.OptimizedStudySetService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,26 +15,34 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class StudySetController {
-    private final OptimizedStudySetService optimized;
     private final StudySetService service;
-    @GetMapping
     @URL
     @Get
     public List<StudySetResponseDTO> findAll() {
         return service.findAll();
     }
 
-    @PostMapping
     @URL
     @Post
-    public StudySetWithTermsResponseDTO crete(@RBody StudySetWithCreatorDTO createDTO) {
-        return optimized.create(createDTO);
+    public StudySetResponseDTO crete(@RBody StudySetCreateDTO createDTO) {
+        return service.save(createDTO);
     }
 
-    @GetMapping("/header")
-    @URL("/header/[id]")
-    @Get()
-    public StudySetHeaderResponseDTO header(@FromURL("id") Long id) {
-        return optimized.getHeader(id);
+    @URL("/[id]")
+    @Get
+    public StudySetResponseDTO findById(@FromURL("id") Long id) {
+        return service.findById(id);
+    }
+
+    @URL("/[id]")
+    @Update
+    public StudySetResponseDTO update(@RBody StudySetUpdateDTO dto) {
+        return service.update(dto);
+    }
+
+    @URL("/[id]")
+    @Delete
+    public void delete(@FromURL("id") Long id) {
+        service.deleteById(id);
     }
 }

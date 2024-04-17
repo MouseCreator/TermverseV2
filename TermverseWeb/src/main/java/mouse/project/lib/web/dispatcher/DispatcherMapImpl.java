@@ -24,7 +24,6 @@ public class DispatcherMapImpl implements DispatcherMap {
 
     private final URLService urlService;
     private final Map<RequestMethod, MapNode> roots;
-
     private static final Logger logger = LogManager.getLogger(DispatcherMapImpl.class);
     @Auto
     public DispatcherMapImpl(URLService urlService) {

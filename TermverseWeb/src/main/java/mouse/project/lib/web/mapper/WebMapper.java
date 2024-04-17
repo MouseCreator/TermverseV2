@@ -60,8 +60,18 @@ public class WebMapper extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doOptions(HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
     private void processRequest(HttpServletRequest req, RequestMethod method, HttpServletResponse resp) throws IOException {
-        logger.debug("Receive request: " + URLTransform.getFullURL(req));
+        resp.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        logger.debug("Receive request: " + method + " " + URLTransform.getFullURL(req));
         Ioc.getConfiguredInjector(configClass)
                 .get(ReqRespContext.class)
                 .useAndExecute(method, req, resp, configClass);

@@ -18,6 +18,7 @@
         <tomcat.version>9.0.84</tomcat.version>
         <jackson.version>2.17.0</jackson.version>
         <log4j2.version>2.23.1</log4j2.version>
+        <keycloak.version>24.0.3</keycloak.version>
     </properties>
     <dependencies>
         <!-- Spring Boot -->
@@ -158,8 +159,23 @@
             <type>pom</type>
             <scope>runtime</scope>
         </dependency>
+        <!-- Keycloak -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-tomcat-adapter</artifactId>
+            <version>${keycloak.version}</version>
+        </dependency>
 
-
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-adapter-core</artifactId>
+            <version>${keycloak.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>${keycloak.version}</version>
+        </dependency>
 
     </dependencies>
 

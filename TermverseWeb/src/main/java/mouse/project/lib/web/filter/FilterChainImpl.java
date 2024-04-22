@@ -1,5 +1,6 @@
 package mouse.project.lib.web.filter;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -20,7 +21,11 @@ public class FilterChainImpl implements FilterChain {
     public void invokeNext() {
         if (hasNext()) {
             MFilter filter = filterList.get(current++);
-            filter.invoke(request, response);
+            try {
+                filter.invoke(request, response);
+            } catch (ServletException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

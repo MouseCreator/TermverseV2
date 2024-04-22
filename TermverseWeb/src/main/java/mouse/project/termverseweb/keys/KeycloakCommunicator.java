@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.keys;
 
 import jakarta.ws.rs.core.Response;
+import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,17 +17,22 @@ import java.util.List;
 public class KeycloakCommunicator {
 
     private final static Logger log = LogManager.getLogger(KeycloakCommunicator.class);
-    private KeycloakPropertiesProvider provider;
+    private final KeycloakPropertiesProvider provider;
+    @Auto
+    public KeycloakCommunicator(KeycloakPropertiesProvider provider) {
+        this.provider = provider;
+    }
+
     public void registerUser(UserData userData) {
         KeycloakProperties properties = provider.getProperties();
         try (Keycloak keycloak = Keycloak.getInstance(
-                properties.getAuthUrl(), // Keycloak URL
-                properties.getRealm(),                        // Realm
-                properties.getAdminUsername(),                   // Admin username
-                properties.getAdminPassword(),                   // Admin password
-                "admin-cli"                                   // Admin client ID
+                properties.getAuthUrl(),                            // Keycloak URL
+                properties.getRealm(),                              // Realm
+                properties.getAdminUsername(),                      // Admin username
+                properties.getAdminPassword(),                      // Admin password
+                "admin-cli"                                         // Admin client ID
         )) {
-            UsersResource usersResource = keycloak.realm("yourRealm").users();
+            UsersResource usersResource = keycloak.realm(properties.getRealm()).users();
 
             CredentialRepresentation credential = new CredentialRepresentation();
             credential.setType(CredentialRepresentation.PASSWORD);
@@ -52,11 +58,11 @@ public class KeycloakCommunicator {
     public String obtainAccessToken(String username, String password) {
         KeycloakProperties properties = provider.getProperties();
         try (Keycloak keycloak = Keycloak.getInstance(
-                properties.getAuthUrl(), //url
-                properties.getRealm(), //realm
-                username, //username
-                password, //password
-                properties.getClientId() //clientId
+                properties.getAuthUrl(),    //url
+                properties.getRealm(),      //realm
+                username,                   //username
+                password,                   //password
+                properties.getClientId()    //clientId
         )) {
             AccessTokenResponse response = keycloak.tokenManager().getAccessToken();
             return response.getToken();

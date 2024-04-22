@@ -1,26 +1,31 @@
 package mouse.project.lib.web.filter;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public class FilterChainImpl implements FilterChain {
     private int current;
-    private final List<Filter> filterList;
-
-    public FilterChainImpl(List<Filter> filterList) {
+    private final List<MFilter> filterList;
+    private final HttpServletResponse response;
+    private final HttpServletRequest request;
+    public FilterChainImpl(List<MFilter> filterList, HttpServletRequest request, HttpServletResponse response) {
         this.filterList = filterList;
+        this.response = response;
+        this.request = request;
         current = 0;
     }
 
     @Override
     public void invokeNext() {
         if (hasNext()) {
-            Filter filter = filterList.get(current++);
-            filter.invoke();
+            MFilter filter = filterList.get(current++);
+            filter.invoke(request, response);
         }
     }
 
     @Override
-    public Filter getNext() {
+    public MFilter getNext() {
         return filterList.get(current + 1);
     }
 

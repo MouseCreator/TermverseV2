@@ -1,9 +1,11 @@
 package mouse.project.lib.web.filter;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-public interface Filter {
-    boolean invoke();
+public interface MFilter {
+    boolean invoke(HttpServletRequest request, HttpServletResponse response);
     default List<String> alwaysApplyToUrls() {
         return List.of("/*");
     };

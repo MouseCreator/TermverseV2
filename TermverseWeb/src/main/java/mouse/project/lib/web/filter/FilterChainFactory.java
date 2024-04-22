@@ -3,40 +3,50 @@ package mouse.project.lib.web.filter;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Collect;
 import mouse.project.lib.ioc.annotation.Service;
-import mouse.project.lib.web.tool.FullURL;
-import mouse.project.lib.web.tool.URLPath;
-import mouse.project.lib.web.tool.URLPathNode;
-import mouse.project.lib.web.tool.URLService;
+import mouse.project.lib.web.dispatcher.RequestPreinitializer;
+import mouse.project.lib.web.tool.*;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Service
 public class FilterChainFactory {
-    private final @Collect(Filter.class) List<Filter> filterList;
+    private final @Collect(MFilter.class) List<MFilter> filterList;
 
+    private final RequestPreinitializer requestPreinitializer;
     private final URLService urlService;
     @Auto
-    public FilterChainFactory(List<Filter> filterList, URLService urlService) {
+    public FilterChainFactory(List<MFilter> filterList,
+                              RequestPreinitializer requestPreinitializer,
+                              URLService urlService) {
         this.filterList = filterList;
+        this.requestPreinitializer = requestPreinitializer;
         this.urlService = urlService;
     }
 
-    public FilterChain createChain(FullURL inputUrl) {
+    public FilterChain createChain(ServletRequest request, ServletResponse response) {
+
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) request;
+        FullURL inputUrl = requestPreinitializer.createRequest(httpRequest).getURL();
         URLPath path = inputUrl.path();
-        List<Filter> list = filterList.stream().filter(f -> matches(path, f)).toList();
-        return new FilterChainImpl(list);
+        List<MFilter> list = filterList.stream().filter(f -> matches(path, f)).toList();
+        return new FilterChainImpl(list, httpRequest, httpResponse);
     }
 
-    private boolean matches(URLPath path, Filter filter) {
+    private boolean matches(URLPath path, MFilter filter) {
         return isAmongAccepted(path, filter) &&
                 !isAmongRejected(path, filter);
     }
 
-    private boolean isAmongAccepted(URLPath path, Filter filter) {
+    private boolean isAmongAccepted(URLPath path, MFilter filter) {
         List<String> acceptUrls = filter.alwaysApplyToUrls();
         return hasUrlMatch(path, acceptUrls);
     }
-    private boolean isAmongRejected(URLPath path, Filter filter) {
+    private boolean isAmongRejected(URLPath path, MFilter filter) {
         List<String> rejectUrls = filter.neverApplyToUrls();
         return hasUrlMatch(path, rejectUrls);
     }

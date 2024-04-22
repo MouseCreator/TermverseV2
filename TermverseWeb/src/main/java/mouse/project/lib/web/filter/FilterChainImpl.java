@@ -3,8 +3,14 @@ package mouse.project.lib.web.filter;
 import java.util.List;
 
 public class FilterChainImpl implements FilterChain {
-    private int current = 0;
-    private List<Filter> filterList;
+    private int current;
+    private final List<Filter> filterList;
+
+    public FilterChainImpl(List<Filter> filterList) {
+        this.filterList = filterList;
+        current = 0;
+    }
+
     @Override
     public void invokeNext() {
         if (hasNext()) {

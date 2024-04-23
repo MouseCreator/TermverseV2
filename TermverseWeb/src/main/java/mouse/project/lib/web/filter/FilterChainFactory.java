@@ -15,7 +15,6 @@ import java.util.List;
 @Service
 public class FilterChainFactory {
     private final @Collect(MFilter.class) List<MFilter> filterList;
-
     private final RequestPreinitializer requestPreinitializer;
     private final URLService urlService;
     @Auto
@@ -31,7 +30,7 @@ public class FilterChainFactory {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        FullURL inputUrl = requestPreinitializer.createRequest(httpRequest).getURL();
+        FullURL inputUrl = requestPreinitializer.getRequestUrl(httpRequest);
         URLPath path = inputUrl.path();
         List<MFilter> list = filterList.stream().filter(f -> matches(path, f)).toList();
         return new FilterChainImpl(list, httpRequest, httpResponse);

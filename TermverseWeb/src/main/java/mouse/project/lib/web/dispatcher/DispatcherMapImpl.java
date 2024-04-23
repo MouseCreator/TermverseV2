@@ -101,6 +101,9 @@ public class DispatcherMapImpl implements DispatcherMap {
             if (node == null) {
                 node = map.get(ARGUMENT_KEY);
             }
+            if (node == null) {
+                node = map.get("*");
+            }
             return Optional.ofNullable(node);
         }
         public void set(ControllerInvoker invoker, String url) {

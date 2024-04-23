@@ -26,6 +26,7 @@ public class RequestPreinitializer {
     }
 
     public RequestURL createRequest(HttpServletRequest req) {
+        FullURL fullURL = getRequestUrl(req);
         String methodString = req.getMethod();
         RequestMethod method = RequestMethod.fromString(methodString);
         RequestBody requestBody;
@@ -35,10 +36,14 @@ public class RequestPreinitializer {
         } catch (IOException e) {
             throw new RequestProcessException(e);
         }
-        String strUrl = URLTransform.getFullURL(req);
-        FullURL fullURL = urlService.create(strUrl);
+
         HashMap<String, Object> map = createMap(req);
         return new RequestURLImpl(fullURL, method, requestBody, map);
+    }
+
+    public FullURL getRequestUrl(HttpServletRequest req) {
+        String strUrl = URLTransform.getFullURL(req);
+        return urlService.create(strUrl);
     }
 
     private HashMap<String, Object> createMap(HttpServletRequest req) {

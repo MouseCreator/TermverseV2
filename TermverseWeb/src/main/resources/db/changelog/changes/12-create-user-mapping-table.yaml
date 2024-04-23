@@ -11,8 +11,7 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     primaryKey: true
-                    references: study_sets(id)
-                    deleteCascade: true
+                    nullable: false
               - column:
                   name: user_id
                   type: bigint

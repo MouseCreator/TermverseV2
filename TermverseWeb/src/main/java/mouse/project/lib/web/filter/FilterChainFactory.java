@@ -30,7 +30,7 @@ public class FilterChainFactory {
     public FilterChain createChain(ServletRequest request, ServletResponse response) {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
         FullURL inputUrl = requestPreinitializer.createRequest(httpRequest).getURL();
         URLPath path = inputUrl.path();
         List<MFilter> list = filterList.stream().filter(f -> matches(path, f)).toList();

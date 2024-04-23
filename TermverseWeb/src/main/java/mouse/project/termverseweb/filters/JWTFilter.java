@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
+import mouse.project.lib.web.exception.StatusException;
 import mouse.project.lib.web.filter.MFilter;
 import mouse.project.termverseweb.exception.FilterException;
 import mouse.project.termverseweb.filters.helper.JWTFacade;
@@ -24,15 +25,14 @@ public class JWTFilter implements MFilter {
     }
 
     @Override
-    public boolean invoke(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public boolean invoke(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader("Authorization");
 
         if (token != null && token.startsWith("Bearer ")) {
             String tokenDecoded = tokenIntrospection.decodeAndValidate(token);
             processTokenResponse(request, tokenDecoded);
         } else {
-            response.setStatus(403);
-            throw new ServletException("Authorization failed");
+            throw new StatusException(403, "Authorization failed");
         }
         return true;
     }

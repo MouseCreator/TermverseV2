@@ -35,7 +35,7 @@ public class TokenIntrospection {
 
             return EntityUtils.toString(client.execute(post).getEntity());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new FilterException(e);
         }
     }
 }

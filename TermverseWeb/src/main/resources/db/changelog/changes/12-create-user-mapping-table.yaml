@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 12-create-user-mapping-table-001
+      author: Mykhailo Tyshchenko
+      changes:
+        - createTable:
+            tableName: user_mapping
+            columns:
+              - column:
+                  name: security_id
+                  type: varchar(255)
+                  constraints:
+                    primaryKey: true
+                    references: study_sets(id)
+                    deleteCascade: true
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_mapping_id_user
+                    references: users(id)
+                    deleteCascade: true
+                    nullable: false

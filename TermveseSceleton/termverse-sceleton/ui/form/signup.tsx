@@ -11,49 +11,38 @@ export function Signup() {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        if (repeatPassword !== password) {
+            console.log("Passwords do not match!")
+            return;
+        }
+        if (isSubmitting) {
+            return;
+        }
         setIsSubmitting(true);
+
         try {
-            if (password !== repeatPassword) {
-                console.log("Passwords do not match")
-                return;
-            }
-            // Step 1: POST request to Java server to create user
-            const response = await axios.post('/api/register', {
-                name: login,
-                profilePictureUrl: null
-            });
+            // Receive token
+            const registerResponse = await axios.post('/api/register', { login: login, password: password });
+            const accessToken = registerResponse.data.accessToken;
 
-            const userId = response.data.id;
 
-            // Step 2: POST request to Keycloak server to register user
-            const keycloakResponse = await axios.post('http://localhost:8180/admin/realms/termverse/users', {
-                username: login,
-                enabled: true,
-                attributes: {
-                    databaseId: userId
+            //Store token
+            localStorage.setItem('termverse_jwt', accessToken);
+            console.log('Token stored:', accessToken);
+
+            //Send to java server
+            const javaResponse = await axios.post('http://localhost:8080/users/',
+                 {
+                    name: login,
+                    profilePictureUrl: null
+                }, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
                 },
-                credentials: [{
-                    type: 'password',
-                    value: password,
-                    temporary: false
-                }]
-            }, {
-                headers: {
-                    'Authorization': `Bearer YOUR_ADMIN_ACCESS_TOKEN`, // Admin token to interact with Keycloak API
-                    'Content-Type': 'application/json'
-                }
             });
 
-            // Step 3: Log-in the user to receive JWT access token
-            const loginResponse = await axios.post('http://localhost:8180/auth/realms/YourRealm/protocol/openid-connect/token', `client_id=your-client-id&username=${login}&password=${password}&grant_type=password`, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            });
-
-            const accessToken = loginResponse.data.access_token;
-            localStorage.setItem('jwt', accessToken);  // Remember the token in local storage
-            console.log('Signup and login successful! Token:', accessToken);
+            console.log('User ID from Java server:', javaResponse.data.id);
         } catch (error) {
             console.error('An error occurred:', error);
         } finally {
@@ -67,21 +56,25 @@ export function Signup() {
                 <div className="bg-gray-100 rounded-2xl p-4">
                 <div className="flex flex-col items-center m-8">
                     <h2 className="text-3xl pb-8">Sign up</h2>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className="flex flex-col items-center pb-4">
                             <label>Login</label>
-                            <input className="border-2 border-gray-400 p-1" autoComplete="off" type="text" name="login"/>
+                            <input className="border-2 border-gray-400 p-1"
+                                   autoComplete="off" type="text" name="login"
+                                   onChange={(e) => setLogin(e.target.value)} />
                         </div>
                         <div className="flex flex-col items-center pb-4">
                             <label>Password</label>
-                            <input className="border-2 border-gray-400 p-1" autoComplete="off" type="text" name="password"/>
+                            <input className="border-2 border-gray-400 p-1" autoComplete="off" type="text" name="password"
+                                   onChange={(e) => setPassword(e.target.value)}/>
                         </div>
                         <div className="flex flex-col items-center pb-4">
                             <label>Confirm password</label>
-                            <input className="border-2 border-gray-400 p-1" autoComplete="off" type="text" name="confirm-password"/>
+                            <input className="border-2 border-gray-400 p-1" autoComplete="off" type="text" name="confirm-password"
+                                   onChange={(e) => setRepeatPassword(e.target.value)}/>
                         </div>
                         <div className="pb-4">
-                            <button type="submit"
+                            <button type="submit" disabled={isSubmitting}
                                     className="bg-purple-600 rounded text-white w-full h-8 hover:bg-purple-400">
                                 Submit
                             </button>

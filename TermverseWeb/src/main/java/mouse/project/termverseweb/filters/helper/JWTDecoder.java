@@ -11,33 +11,44 @@ import io.jsonwebtoken.security.Keys;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.termverseweb.exception.FilterException;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 import javax.crypto.SecretKey;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Map;
+
 @Service
 public class JWTDecoder {
 
-    private final KeycloakHelper keycloakHelper;
+    private final KeycloakInvoker keycloakHelper;
     @Auto
-    public JWTDecoder(KeycloakHelper keycloakHelper) {
+    public JWTDecoder(KeycloakInvoker keycloakHelper) {
         this.keycloakHelper = keycloakHelper;
     }
 
-    public Jws<Claims> decode(String jwt, String publicKey) {
-        SecretKey secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(publicKey));
-        return Jwts.parser()
-                .verifyWith(secret)
-                .build()
-                .parseSignedClaims(jwt);
+    public Jws<Claims> decode(String jwt, PublicKey publicKey) {
+        try {
+
+            return Jwts.parser()
+                    .verifyWith(publicKey)
+                    .build()
+                    .parseSignedClaims(jwt);
+        } catch (Exception e) {
+            throw new FilterException(e);
+        }
     }
 
-    public String getPublicKey(String realm) {
+    public PublicKey getPublicKey(String realm) {
         String keycloakPublicKey = keycloakHelper.getKeycloakPublicKey(realm);
         return extractPublicKeyFromJson(keycloakPublicKey);
     }
 
 
-    private String extractPublicKeyFromJson(String json)  {
+    private PublicKey extractPublicKeyFromJson(String json)  {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode;
         try {
@@ -54,7 +65,12 @@ public class JWTDecoder {
         String publicKeyEncoded = publicKeyPEM.replaceAll("\\s", "");
 
         byte[] decoded = Base64.getDecoder().decode(publicKeyEncoded);
-
-        return new String(java.util.Base64.getMimeEncoder().encode(decoded));
+        try {
+            X509EncodedKeySpec encodedKeySpec = new X509EncodedKeySpec(decoded);
+            KeyFactory factory = KeyFactory.getInstance("RSA");
+            return factory.generatePublic(encodedKeySpec);
+        } catch (Exception e) {
+            throw new FilterException(e);
+        }
     }
 }

@@ -1,11 +1,5 @@
 package mouse.project.termverseweb.filters.helper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.termverseweb.exception.FilterException;
 
@@ -16,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 @Service
-public class KeycloakHelper {
+public class KeycloakHelper implements KeycloakInvoker {
 
     public String getKeycloakPublicKey(String realm) {
         String url = "http://localhost:8180/realms/" + realm + "/protocol/openid-connect/certs";

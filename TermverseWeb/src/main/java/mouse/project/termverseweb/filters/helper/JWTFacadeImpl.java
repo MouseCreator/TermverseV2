@@ -5,10 +5,12 @@ import io.jsonwebtoken.Jws;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 
+import java.security.PublicKey;
+
 @Service
 public class JWTFacadeImpl implements JWTFacade {
     private final JWTDecoder decoder;
-    private String publicKey;
+    private PublicKey publicKey;
     @Auto
     public JWTFacadeImpl(JWTDecoder decoder) {
         this.decoder = decoder;

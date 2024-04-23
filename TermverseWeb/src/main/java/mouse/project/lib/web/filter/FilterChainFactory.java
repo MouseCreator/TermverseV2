@@ -19,7 +19,7 @@ public class FilterChainFactory {
     private final RequestPreinitializer requestPreinitializer;
     private final URLService urlService;
     @Auto
-    public FilterChainFactory(List<MFilter> filterList,
+    public FilterChainFactory(@Collect(MFilter.class) List<MFilter> filterList,
                               RequestPreinitializer requestPreinitializer,
                               URLService urlService) {
         this.filterList = filterList;

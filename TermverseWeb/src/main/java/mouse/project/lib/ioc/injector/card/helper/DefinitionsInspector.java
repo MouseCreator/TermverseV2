@@ -46,7 +46,7 @@ public class DefinitionsInspector {
         Collect collect = el.getAnnotation(Collect.class);
         if (collect == null) {
             throw new MissingAnnotationException("Collection field/parameter must be annotated with @Collect " +
-                    "and specify collection genetic type");
+                    "and specify collection generic type " + el);
         }
         Class<?> type = collect.value();
         return new Implementation<>(type, named);

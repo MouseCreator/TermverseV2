@@ -52,7 +52,7 @@ public class JWTFilter implements MFilter {
 
             if (preferredUsername != null && databaseId != -1) {
                 request.setAttribute("KC_USERNAME", preferredUsername);
-                request.setAttribute("KC_DATABASE_ID", preferredUsername);
+                request.setAttribute("KC_DATABASE_ID", databaseId);
             } else {
                 throw new FilterException("Failed to extract one or both keys (preferred_username, databaseId).");
             }

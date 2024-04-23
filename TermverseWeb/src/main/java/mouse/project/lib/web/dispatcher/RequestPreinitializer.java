@@ -14,6 +14,8 @@ import mouse.project.lib.web.tool.URLService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 @Service
 public class RequestPreinitializer {
@@ -35,6 +37,21 @@ public class RequestPreinitializer {
         }
         String strUrl = URLTransform.getFullURL(req);
         FullURL fullURL = urlService.create(strUrl);
-        return new RequestURLImpl(fullURL, method, requestBody);
+        HashMap<String, Object> map = createMap(req);
+        return new RequestURLImpl(fullURL, method, requestBody, map);
+    }
+
+    private HashMap<String, Object> createMap(HttpServletRequest req) {
+        HashMap<String, Object> attributeMap = new HashMap<>();
+
+        Enumeration<String> attributeNames = req.getAttributeNames();
+
+        while (attributeNames.hasMoreElements()) {
+            String attributeName = attributeNames.nextElement();
+            Object attributeValue = req.getAttribute(attributeName);
+            attributeMap.put(attributeName, attributeValue);
+        }
+
+        return attributeMap;
     }
 }

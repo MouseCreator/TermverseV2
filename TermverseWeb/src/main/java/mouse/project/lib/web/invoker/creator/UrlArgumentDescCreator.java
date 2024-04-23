@@ -11,6 +11,8 @@ import mouse.project.lib.web.invoker.processor.URLArgumentProcessor;
 import mouse.project.lib.web.tool.FullURL;
 
 import java.lang.reflect.Parameter;
+import java.util.Optional;
+
 @Service
 public class UrlArgumentDescCreator implements DescCreator {
     private final URLArgumentProcessor parameterProcessor;
@@ -31,5 +33,13 @@ public class UrlArgumentDescCreator implements DescCreator {
     @Override
     public boolean accepts(ArgumentSource source) {
         return source == ArgumentSource.URL;
+    }
+
+    @Override
+    public Optional<ArgumentSource> canProcess(Parameter parameter) {
+        if (parameter.isAnnotationPresent(FromURL.class)) {
+            return Optional.of(ArgumentSource.URL);
+        }
+        return Optional.empty();
     }
 }

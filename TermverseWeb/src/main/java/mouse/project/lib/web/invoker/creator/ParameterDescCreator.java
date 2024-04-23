@@ -10,6 +10,8 @@ import mouse.project.lib.web.invoker.desc.ParameterDescImpl;
 import mouse.project.lib.web.invoker.processor.ParameterProcessor;
 
 import java.lang.reflect.Parameter;
+import java.util.Optional;
+
 @Service
 public class ParameterDescCreator implements DescCreator {
     private ParameterProcessor parameterProcessor;
@@ -44,5 +46,13 @@ public class ParameterDescCreator implements DescCreator {
     @Override
     public boolean accepts(ArgumentSource source) {
         return source == ArgumentSource.PARAMETER;
+    }
+
+    @Override
+    public Optional<ArgumentSource> canProcess(Parameter parameter) {
+        if (parameter.isAnnotationPresent(Param.class)) {
+            return Optional.of(ArgumentSource.PARAMETER);
+        }
+        return Optional.empty();
     }
 }

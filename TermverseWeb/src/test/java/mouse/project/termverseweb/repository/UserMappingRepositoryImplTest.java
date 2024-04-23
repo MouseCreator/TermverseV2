@@ -2,7 +2,6 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.lib.testutil.MTest;
-import mouse.project.termverseweb.lib.test.deletion.SoftDeletionTest;
 import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.model.UserMapping;
 import mouse.project.termverseweb.mouselib.TestContainer;

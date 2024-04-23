@@ -5,7 +5,7 @@ import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.exception.StatusException;
 import mouse.project.lib.web.filter.MFilter;
 import mouse.project.termverseweb.filters.argument.Args;
-import mouse.project.termverseweb.filters.argument.OptionalAuthorization;
+import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 import mouse.project.termverseweb.filters.argument.OptionalAuthorizationFactory;
 import mouse.project.termverseweb.filters.helper.TokenIntrospection;
 
@@ -31,13 +31,13 @@ public class JWTFilter implements MFilter {
             }
             String tokenDecoded = tokenIntrospection.decodeAndValidate(token);
             try {
-                OptionalAuthorization optionalAuthorization = optionalAuthorizationFactory.processTokenResponse(tokenDecoded);
-                request.setAttribute(Args.OPT_AUTH, optionalAuthorization);
+                OptionalAuthentication optionalAuthentication = optionalAuthorizationFactory.processTokenResponse(tokenDecoded);
+                request.setAttribute(Args.OPT_AUTH, optionalAuthentication);
             } catch (Exception e) {
                 throw new StatusException(403, e.getMessage());
             }
         } else {
-            request.setAttribute(Args.OPT_AUTH, OptionalAuthorization.empty());
+            request.setAttribute(Args.OPT_AUTH, OptionalAuthentication.empty());
         }
         return true;
     }

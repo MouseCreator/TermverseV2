@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class OptionalAuthorizationFactoryTest {
+class OptionalAuthenticationFactoryTest {
 
     private OptionalAuthorizationFactory factory;
 
@@ -16,25 +16,23 @@ class OptionalAuthorizationFactoryTest {
 
     @Test
     void processGoodResponse() {
-        OptionalAuthorization optionalAuthorization = factory.processTokenResponse("""
+        OptionalAuthentication optionalAuthentication = factory.processTokenResponse("""
                 {
+                    "sub:" "some-key"
                     "username": "John",
-                    "databaseId": 3
                 }
                 """);
-        Long userDatabaseId = optionalAuthorization.getUserDatabaseId();
-        String username = optionalAuthorization.getUsername();
-        assertEquals(3, userDatabaseId);
-        assertEquals("John", username);
+        String securityId = optionalAuthentication.getSecurityId();
+        assertEquals("some-key", securityId);
     }
 
     @Test
     void processBadResponse() {
-        OptionalAuthorization optionalAuthorization = factory.processTokenResponse("""
+        OptionalAuthentication optionalAuthentication = factory.processTokenResponse("""
                 {
                     "active": "false"
                 }
                 """);
-        assertTrue(optionalAuthorization.isEmpty());
+        assertTrue(optionalAuthentication.isEmpty());
     }
 }

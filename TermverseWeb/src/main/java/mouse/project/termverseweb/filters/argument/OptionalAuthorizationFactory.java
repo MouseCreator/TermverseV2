@@ -7,7 +7,7 @@ import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.termverseweb.exception.FilterException;
 @Service
 public class OptionalAuthorizationFactory {
-    public OptionalAuthorization processTokenResponse(String jsonResponse){
+    public OptionalAuthentication processTokenResponse(String jsonResponse){
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode;
         try {
@@ -17,16 +17,15 @@ public class OptionalAuthorizationFactory {
         }
 
         if (rootNode.path("active").asBoolean(true)) {
-            String preferredUsername = rootNode.path("username").textValue();
-            long databaseId = rootNode.path("databaseId").asLong(-1);
+            String securityId = rootNode.path("sub").textValue();
 
-            if (preferredUsername != null && databaseId != -1) {
-                return OptionalAuthorization.of(databaseId, preferredUsername);
+            if (securityId != null) {
+                return OptionalAuthentication.of(securityId);
             } else {
                 throw new FilterException("Failed to extract one or both keys (username, databaseId).");
             }
         } else {
-            return OptionalAuthorization.empty();
+            return OptionalAuthentication.empty();
         }
     }
 }

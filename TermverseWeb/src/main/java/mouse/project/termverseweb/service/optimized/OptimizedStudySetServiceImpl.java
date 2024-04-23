@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
 
     private final StudySetRepository repository;
@@ -48,9 +49,8 @@ public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
 
     @Override
     @Transactional
-    public StudySetWithTermsResponseDTO create(StudySetWithCreatorDTO createDTO) {
-        Long creatorId = createDTO.getCreatorId();
-        StudySet saved = services.crud(repository).save(createDTO, studySetMapper::fromCreator).getRaw();
+    public StudySetWithTermsResponseDTO create(Long creatorId, StudySetCreateDTO createDTO) {
+        StudySet saved = services.crud(repository).save(createDTO, studySetMapper::fromCreate).getRaw();
         userStudySetService.save(creatorId, saved.getId(), UserStudySetRelation.OWNER);
         return studySetMapper.toResponseWithTerms(saved);
     }

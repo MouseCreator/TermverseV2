@@ -31,6 +31,7 @@ class TermServiceImplTest {
     private final SetTermService setTermService;
     private final Factories factories;
     private final SoftDeletionTest soft;
+
     @Autowired
     public TermServiceImplTest(TermService termService,
                                StudySetService studySetService, SetTermService setTermService,

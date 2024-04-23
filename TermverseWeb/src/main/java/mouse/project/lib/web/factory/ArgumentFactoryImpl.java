@@ -3,9 +3,6 @@ package mouse.project.lib.web.factory;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Collect;
 import mouse.project.lib.ioc.annotation.Service;
-import mouse.project.lib.web.annotation.FromURL;
-import mouse.project.lib.web.annotation.Param;
-import mouse.project.lib.web.annotation.RBody;
 import mouse.project.lib.web.context.EndpointContext;
 import mouse.project.lib.web.exception.ControllerException;
 import mouse.project.lib.web.invoker.ArgumentSource;
@@ -14,6 +11,7 @@ import mouse.project.lib.web.invoker.desc.ArgumentDesc;
 
 import java.lang.reflect.Parameter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ArgumentFactoryImpl implements ArgumentFactory {
@@ -35,14 +33,11 @@ public class ArgumentFactoryImpl implements ArgumentFactory {
     }
 
     private ArgumentSource getSource(Parameter parameter) {
-        if (parameter.isAnnotationPresent(RBody.class)) {
-            return ArgumentSource.BODY;
-        }
-        if (parameter.isAnnotationPresent(Param.class)) {
-            return ArgumentSource.PARAMETER;
-        }
-        if (parameter.isAnnotationPresent(FromURL.class)) {
-            return ArgumentSource.URL;
+        for (DescCreator descCreator : descCreatorList) {
+            Optional<ArgumentSource> argumentSource = descCreator.canProcess(parameter);
+            if (argumentSource.isPresent()) {
+                return argumentSource.get();
+            }
         }
         throw new ControllerException("Unknown source for parameter: " + parameter);
     }

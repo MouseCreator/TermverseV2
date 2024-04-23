@@ -1,5 +1,6 @@
 package mouse.project.lib.web.tomcat;
 
+import mouse.project.lib.ioc.Ioc;
 import mouse.project.lib.web.mapper.WebMapper;
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
@@ -8,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.util.Collection;
 
 public class TomcatLauncher {
     private Tomcat tomcat;
@@ -26,6 +28,10 @@ public class TomcatLauncher {
 
         Context context = tomcat.addContext("", null);
         Tomcat.addServlet(context, "WebMapper", new WebMapper(configClass));
+
+        Collection<ContextConfigurator> configs = Ioc.getConfiguredInjector(configClass).getAll(ContextConfigurator.class);
+        configs.forEach(c -> c.config(context, configClass));
+
         context.addServletMappingDecoded("/*", "WebMapper");
         logger.debug("Configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
 

@@ -37,3 +37,4 @@ TermverseWeb/src/main/resources/application.properties
 
 #Enviroment variables
 .env
+src/main/resources/kc.secret

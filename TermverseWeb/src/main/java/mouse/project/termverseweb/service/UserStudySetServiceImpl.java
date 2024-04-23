@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class UserStudySetServiceImpl implements UserStudySetService {
     private final UserStudySetRepository repository;
     private final StudySetRepository studySetRepository;

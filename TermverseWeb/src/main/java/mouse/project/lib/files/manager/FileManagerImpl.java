@@ -27,8 +27,14 @@ public class FileManagerImpl implements FileManager {
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
+            boolean first = true;
             while ((line = reader.readLine()) != null) {
-                content.append(line).append(System.lineSeparator());
+                if (!first) {
+                    content.append("\n");
+                } else {
+                    first = false;
+                }
+                content.append(line);
             }
         } catch (IOException e) {
             throw new FileException(e);

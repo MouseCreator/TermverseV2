@@ -1,11 +1,13 @@
 package mouse.project.lib.data.pool;
 
+import mouse.project.lib.data.exception.ORMException;
 import mouse.project.lib.data.provider.ConnectionProvider;
 import mouse.project.lib.ioc.annotation.After;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,11 @@ public class CyclePutConnectionPool implements PutConnectionPool {
 
     private PooledConnection createPooledConnection(boolean additional) {
         Connection toDecorate = provider.provide();
+        try {
+            toDecorate.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new ORMException(e);
+        }
         return new ConnectionDecorated(toDecorate, this, additional);
     }
 

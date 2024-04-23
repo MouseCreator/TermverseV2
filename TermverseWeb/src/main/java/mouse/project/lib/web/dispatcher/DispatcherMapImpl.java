@@ -24,7 +24,6 @@ public class DispatcherMapImpl implements DispatcherMap {
 
     private final URLService urlService;
     private final Map<RequestMethod, MapNode> roots;
-
     private static final Logger logger = LogManager.getLogger(DispatcherMapImpl.class);
     @Auto
     public DispatcherMapImpl(URLService urlService) {
@@ -101,6 +100,9 @@ public class DispatcherMapImpl implements DispatcherMap {
             MapNode node = map.get(str);
             if (node == null) {
                 node = map.get(ARGUMENT_KEY);
+            }
+            if (node == null) {
+                node = map.get("*");
             }
             return Optional.ofNullable(node);
         }

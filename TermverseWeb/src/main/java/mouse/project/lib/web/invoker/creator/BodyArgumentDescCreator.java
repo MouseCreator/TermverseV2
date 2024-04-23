@@ -13,6 +13,8 @@ import mouse.project.lib.web.invoker.desc.BodyDescImpl;
 import mouse.project.lib.web.invoker.processor.BodyArgumentProcessor;
 
 import java.lang.reflect.Parameter;
+import java.util.Optional;
+
 @Service
 public class BodyArgumentDescCreator implements DescCreator{
 
@@ -47,5 +49,15 @@ public class BodyArgumentDescCreator implements DescCreator{
     @Override
     public boolean accepts(ArgumentSource source) {
         return source == ArgumentSource.BODY;
+    }
+
+    @Override
+    public Optional<ArgumentSource> canProcess(Parameter parameter) {
+
+        if (parameter.isAnnotationPresent(RBody.class)) {
+            return Optional.of(ArgumentSource.BODY);
+        }
+        return Optional.empty();
+
     }
 }

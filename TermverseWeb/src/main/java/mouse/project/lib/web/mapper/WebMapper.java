@@ -60,10 +60,20 @@ public class WebMapper extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            processRequest(req, RequestMethod.OPTIONS, resp);
+        } catch (IOException e) {
+            throw new ServletException(e);
+        }
+    }
+
     private void processRequest(HttpServletRequest req, RequestMethod method, HttpServletResponse resp) throws IOException {
-        logger.debug("Receive request: " + URLTransform.getFullURL(req));
+        logger.debug("Receive request: " + method + " " + URLTransform.getFullURL(req));
         Ioc.getConfiguredInjector(configClass)
                 .get(ReqRespContext.class)
                 .useAndExecute(method, req, resp, configClass);
+        logger.debug("Process request: " + method + " " + URLTransform.getFullURL(req));
     }
 }

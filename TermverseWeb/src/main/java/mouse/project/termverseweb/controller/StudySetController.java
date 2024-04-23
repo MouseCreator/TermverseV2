@@ -1,17 +1,15 @@
 package mouse.project.termverseweb.controller;
 
 import lombok.RequiredArgsConstructor;
-import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Controller;
-import mouse.project.lib.web.annotation.Get;
-import mouse.project.lib.web.annotation.RequestPrefix;
-import mouse.project.lib.web.annotation.URL;
-import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
+import mouse.project.lib.web.annotation.*;
+import mouse.project.termverseweb.dto.studyset.*;
+import mouse.project.termverseweb.filters.argument.Args;
+import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
+import mouse.project.termverseweb.filters.argument.OptionalAuthorizationHandler;
 import mouse.project.termverseweb.service.StudySetService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import mouse.project.termverseweb.service.optimized.OptimizedStudySetService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,12 +19,39 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class StudySetController {
-    private final StudySetService studySetService;
-
-    @GetMapping
+    private final StudySetService service;
+    private final OptimizedStudySetService optimized;
+    private final OptionalAuthorizationHandler auth;
     @URL
     @Get
     public List<StudySetResponseDTO> findAll() {
-        return studySetService.findAll();
+        return service.findAll();
+    }
+
+    @URL
+    @Post
+    public StudySetWithTermsResponseDTO create(
+            @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication,
+            @RBody StudySetCreateDTO createDTO) {
+        Long userId = auth.toUserId(optionalAuthentication);
+        return optimized.create(userId, createDTO);
+    }
+
+    @URL("/[id]")
+    @Get
+    public StudySetResponseDTO findById(@FromURL("id") Long id) {
+        return service.findById(id);
+    }
+
+    @URL("/[id]")
+    @Update
+    public StudySetResponseDTO update(@RBody StudySetUpdateDTO dto) {
+        return service.update(dto);
+    }
+
+    @URL("/[id]")
+    @Delete
+    public void delete(@FromURL("id") Long id) {
+        service.deleteById(id);
     }
 }

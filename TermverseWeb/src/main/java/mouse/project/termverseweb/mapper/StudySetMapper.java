@@ -29,8 +29,6 @@ public interface StudySetMapper {
     }
     @Mapping(source = "terms", target = "terms", qualifiedByName = "termToResponse")
     StudySetWithTermsResponseDTO toResponseWithTerms(StudySet studySet);
-    @Mapping(source = "terms", target = "terms", qualifiedByName = "termFromCreate")
-    StudySet fromCreator(StudySetWithCreatorDTO studySetWithCreatorDTO);
     @Mapping(target = "size", source = "termCount")
     StudySetDescriptionDTO toShortDescription(StudySet studySet, int termCount);
     @Mapping(target = "size", source = "size")

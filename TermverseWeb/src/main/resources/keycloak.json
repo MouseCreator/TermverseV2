@@ -1,6 +1,6 @@
 {
   "realm": "termverse",
-  "auth-server-url": "http://localhost:8081/auth",
+  "auth-server-url": "http://localhost:8081/",
   "ssl-required": "external",
   "resource": "termverse-app",
   "verify-token-audience": true,

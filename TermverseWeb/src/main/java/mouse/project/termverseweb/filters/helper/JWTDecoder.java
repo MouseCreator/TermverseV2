@@ -1,25 +1,23 @@
 package mouse.project.termverseweb.filters.helper;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.termverseweb.exception.FilterException;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
-import javax.crypto.SecretKey;
 import java.security.KeyFactory;
 import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.Map;
 
 @Service
 public class JWTDecoder {
@@ -30,25 +28,34 @@ public class JWTDecoder {
         this.keycloakHelper = keycloakHelper;
     }
 
-    public Jws<Claims> decode(String jwt, PublicKey publicKey) {
+    public Jws<Claims> decode(String jwt, String stringPublicKey) {
         try {
+            stringPublicKey = stringPublicKey.replaceAll("-----BEGIN PUBLIC KEY-----", "")
+                    .replaceAll("-----END PUBLIC KEY-----", "")
+                    .replaceAll("\\s", "");
 
-            return Jwts.parser()
-                    .verifyWith(publicKey)
-                    .build()
-                    .parseSignedClaims(jwt);
+            byte[] publicKeyBytes = Base64.getDecoder().decode(stringPublicKey);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
+            PublicKey publicKey = keyFactory.generatePublic(keySpec);
+            Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) publicKey, null);
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            DecodedJWT decodedJWT = verifier.verify(jwt);
+            System.out.println(decodedJWT);
+            return null;
         } catch (Exception e) {
             throw new FilterException(e);
         }
     }
 
-    public PublicKey getPublicKey(String realm) {
+    public String getPublicKey(String realm) {
         String keycloakPublicKey = keycloakHelper.getKeycloakPublicKey(realm);
         return extractPublicKeyFromJson(keycloakPublicKey);
     }
 
 
-    private PublicKey extractPublicKeyFromJson(String json)  {
+    private String extractPublicKeyFromJson(String json)  {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode;
         try {
@@ -56,7 +63,6 @@ public class JWTDecoder {
         } catch (JsonProcessingException e) {
             throw new FilterException(e);
         }
-
 
         JsonNode keyNode = rootNode.path("keys").get(0);
         JsonNode x5cNode = keyNode.get("x5c");
@@ -66,9 +72,7 @@ public class JWTDecoder {
 
         byte[] decoded = Base64.getDecoder().decode(publicKeyEncoded);
         try {
-            X509EncodedKeySpec encodedKeySpec = new X509EncodedKeySpec(decoded);
-            KeyFactory factory = KeyFactory.getInstance("RSA");
-            return factory.generatePublic(encodedKeySpec);
+            return new String(Base64.getEncoder().encode(decoded));
         } catch (Exception e) {
             throw new FilterException(e);
         }

@@ -10,7 +10,7 @@ import java.security.PublicKey;
 @Service
 public class JWTFacadeImpl implements JWTFacade {
     private final JWTDecoder decoder;
-    private PublicKey publicKey;
+    private String publicKey;
     @Auto
     public JWTFacadeImpl(JWTDecoder decoder) {
         this.decoder = decoder;

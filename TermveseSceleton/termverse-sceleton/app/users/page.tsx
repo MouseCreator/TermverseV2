@@ -1,7 +1,9 @@
-
 import {User} from "@/ui/components/user";
 
 export default function Page() {
+
+
+
     return (
         <main className="w-full">
             <div className="flex border flex-col items-center">

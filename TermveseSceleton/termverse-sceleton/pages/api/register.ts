@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     console.log('Receive request: ' + req.url)
     if (req.method === 'POST') {
@@ -59,6 +58,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.log('Send user token access request.')
 
             const accessToken = tokenResponse.data.access_token;
+
+            res.setHeader('Set-Cookie', [
+                `termverse_refresh_token=${tokenResponse.data.refresh_token}; Path=/; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}`,
+                `termverse_access_token=${tokenResponse.data.access_token}; Path=/; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}`
+            ]);
 
             res.status(200).json({ accessToken });
         } catch (error) {

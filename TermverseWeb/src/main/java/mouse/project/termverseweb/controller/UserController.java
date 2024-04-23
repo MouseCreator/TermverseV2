@@ -3,12 +3,15 @@ package mouse.project.termverseweb.controller;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.Get;
+import mouse.project.lib.web.annotation.Post;
 import mouse.project.lib.web.annotation.RequestPrefix;
 import mouse.project.lib.web.annotation.URL;
+import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,5 +35,12 @@ public class UserController {
     @URL
     public List<UserResponseDTO> findAll() {
         return userService.findAll();
+    }
+
+    @PostMapping
+    @Post
+    @URL
+    public UserResponseDTO create(UserCreateDTO userCreateDTO) {
+        return userService.save(userCreateDTO);
     }
 }

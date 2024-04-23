@@ -30,7 +30,7 @@ public class FilterDispatcher implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         mouse.project.lib.web.filter.FilterChain chain = filterChainFactory.createChain(servletRequest, servletResponse);
         try {
             while (chain.hasNext()) {
@@ -39,6 +39,7 @@ public class FilterDispatcher implements Filter {
         } catch (StatusException e) {
             sendError(e, servletResponse);
         }
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
     private void sendError(StatusException e, ServletResponse servletResponse) {

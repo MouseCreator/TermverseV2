@@ -24,7 +24,7 @@ public class StudySetController {
 
     @URL
     @Post
-    public StudySetResponseDTO crete(@RBody StudySetCreateDTO createDTO) {
+    public StudySetResponseDTO create(@RBody StudySetCreateDTO createDTO) {
         return service.save(createDTO);
     }
 

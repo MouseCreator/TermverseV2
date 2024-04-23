@@ -28,9 +28,16 @@ public class JWTFilter implements MFilter {
     public boolean invoke(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader("Authorization");
 
-        if (token != null && token.startsWith("Bearer ")) {
+        if (token != null) {
+            if(token.startsWith("Bearer ")) {
+                token = token.substring("Bearer ".length());
+            }
             String tokenDecoded = tokenIntrospection.decodeAndValidate(token);
-            processTokenResponse(request, tokenDecoded);
+            try {
+                processTokenResponse(request, tokenDecoded);
+            } catch (Exception e) {
+                throw new StatusException(403, e.getMessage());
+            }
         } else {
             throw new StatusException(403, "Authorization failed");
         }

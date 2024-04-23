@@ -3,10 +3,10 @@ package mouse.project.termverseweb.controller;
 import lombok.RequiredArgsConstructor;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
-import mouse.project.lib.web.exception.StatusException;
 import mouse.project.termverseweb.dto.studyset.*;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
+import mouse.project.termverseweb.filters.argument.OptionalAuthorizationHandler;
 import mouse.project.termverseweb.service.StudySetService;
 import mouse.project.termverseweb.service.optimized.OptimizedStudySetService;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +21,7 @@ import java.util.List;
 public class StudySetController {
     private final StudySetService service;
     private final OptimizedStudySetService optimized;
+    private final OptionalAuthorizationHandler auth;
     @URL
     @Get
     public List<StudySetResponseDTO> findAll() {
@@ -32,10 +33,8 @@ public class StudySetController {
     public StudySetWithTermsResponseDTO create(
             @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication,
             @RBody StudySetCreateDTO createDTO) {
-        if (optionalAuthentication.isEmpty()) {
-            throw new StatusException(401);
-        }
-        return optimized.create(optionalAuthentication.getUserDatabaseId(), createDTO);
+        Long userId = auth.toUserId(optionalAuthentication);
+        return optimized.create(userId, createDTO);
     }
 
     @URL("/[id]")

@@ -2,12 +2,12 @@ package mouse.project.termverseweb.controller;
 
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Controller;
-import mouse.project.lib.web.annotation.Get;
-import mouse.project.lib.web.annotation.Post;
-import mouse.project.lib.web.annotation.RequestPrefix;
-import mouse.project.lib.web.annotation.URL;
+import mouse.project.lib.web.annotation.*;
 import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
+import mouse.project.termverseweb.filters.argument.Args;
+import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
+import mouse.project.termverseweb.filters.argument.OptionalAuthorizationHandler;
 import mouse.project.termverseweb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +24,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final OptionalAuthorizationHandler auth;
     @Autowired
     @Auto
-    public UserController(UserService userService) {
+    public UserController(UserService userService, OptionalAuthorizationHandler auth) {
         this.userService = userService;
+        this.auth = auth;
     }
 
     @GetMapping
@@ -40,7 +42,12 @@ public class UserController {
     @PostMapping
     @Post
     @URL
-    public UserResponseDTO create(UserCreateDTO userCreateDTO) {
-        return userService.save(userCreateDTO);
+    public UserResponseDTO create(
+            @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication,
+            @RBody UserCreateDTO userCreateDTO) {
+
+        UserResponseDTO saved = userService.save(userCreateDTO);
+        auth.registerUser(optionalAuthentication, saved.getId());
+        return saved;
     }
 }

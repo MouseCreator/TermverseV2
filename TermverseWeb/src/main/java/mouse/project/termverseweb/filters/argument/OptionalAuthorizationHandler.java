@@ -12,6 +12,7 @@ import mouse.project.termverseweb.repository.UserRepository;
 import java.util.Optional;
 
 @Service
+@org.springframework.stereotype.Service
 public class OptionalAuthorizationHandler {
     private final UserMappingRepository mappingRepository;
 

@@ -3,7 +3,6 @@ package mouse.project.termverseweb.models;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 
 import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetWithCreatorDTO;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.utils.DateUtils;
 import org.springframework.stereotype.Service;

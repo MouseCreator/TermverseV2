@@ -11,5 +11,5 @@ public class StudySetUpdateDTO {
     private Long id;
     private String name;
     private String pictureUrl;
-    //private List<TermUpdateDTO> terms = new ArrayList<>();
+    private List<TermUpdateDTO> terms = new ArrayList<>();
 }

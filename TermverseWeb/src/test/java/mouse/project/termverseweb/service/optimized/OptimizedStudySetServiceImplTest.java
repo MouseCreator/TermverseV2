@@ -1,18 +1,16 @@
 package mouse.project.termverseweb.service.optimized;
 
 import mouse.project.lib.testutil.MTest;
-import mouse.project.termverseweb.dto.studyset.StudySetWithCreatorDTO;
+import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetWithTermsResponseDTO;
 import mouse.project.termverseweb.dto.term.TermCreateDTO;
 import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
-import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.models.Factories;
 
 import mouse.project.termverseweb.models.TermFactory;
 import mouse.project.termverseweb.models.UserFactory;
-import mouse.project.termverseweb.repository.TermRepository;
 import mouse.project.termverseweb.service.TermService;
 import mouse.project.termverseweb.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -45,30 +43,30 @@ class OptimizedStudySetServiceImplTest {
         this.context = context;
     }
 
-    private StudySetWithCreatorDTO createData(String base) {
+    private SetUserPair createData(String base) {
         UserCreateDTO user = factories.getFactory(UserFactory.class).userCreateDTO(base);
         List<TermCreateDTO> termResponseDTOS = generateTerms();
         UserResponseDTO userResponse = generateUserAndSave(user);
         return withCreator(userResponse, termResponseDTOS);
     }
 
-    private List<StudySetWithCreatorDTO> createData(String base, int count) {
+    private List<SetUserPair> createData(String base, int count) {
         UserCreateDTO user = factories.getFactory(UserFactory.class).userCreateDTO(base);
         UserResponseDTO userResponse = generateUserAndSave(user);
-        List<StudySetWithCreatorDTO> result = new ArrayList<>();
+        List<SetUserPair> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             List<TermCreateDTO> termResponseDTOS = generateTerms();
-            StudySetWithCreatorDTO dto = withCreator(userResponse, termResponseDTOS);
+            SetUserPair dto = withCreator(userResponse, termResponseDTOS);
             result.add(dto);
         }
         return result;
     }
 
-    private StudySetWithTermsResponseDTO insertData(StudySetWithCreatorDTO dto) {
-        return service.create(dto);
+    private StudySetWithTermsResponseDTO insertData(SetUserPair dto) {
+        return service.create(dto.user().getId(),dto.set());
     }
 
-    private List<StudySetWithTermsResponseDTO> insertData(List<StudySetWithCreatorDTO> dtos) {
+    private List<StudySetWithTermsResponseDTO> insertData(List<SetUserPair> dtos) {
         return dtos.stream().map(this::insertData).toList();
     }
 
@@ -87,20 +85,19 @@ class OptimizedStudySetServiceImplTest {
         }
         return list;
     }
-
-    private StudySetWithCreatorDTO withCreator(UserResponseDTO createdBy, List<TermCreateDTO> terms) {
-        StudySetWithCreatorDTO dto = new StudySetWithCreatorDTO();
-        dto.setCreatorId(createdBy.getId());
+    private record SetUserPair(UserResponseDTO user, StudySetCreateDTO set) {}
+    private SetUserPair withCreator(UserResponseDTO createdBy, List<TermCreateDTO> terms) {
+        StudySetCreateDTO dto = new StudySetCreateDTO();
         dto.setTerms(terms);
         String name = createdBy.getName() + "'s study set";
         dto.setName(name);
         dto.setPictureUrl("//" + name + "//");
-        return dto;
+        return new SetUserPair(createdBy, dto);
     }
     @Test
     void create() {
         int count = 2;
-        List<StudySetWithCreatorDTO> data = createData("to-create", count);
+        List<SetUserPair> data = createData("to-create", count);
         List<StudySetWithTermsResponseDTO> saved = insertData(data);
         assertEquals(data.size(), saved.size());
 

@@ -7,9 +7,9 @@ import Link from "next/link";
 
 const StudySetPage = () => {
     const params = useParams<{ id: string; }>()
+    const id = params?.id
     const [studySet, setStudySet] = useState<StudySetResponse | null>(null);
     const [deleteStatus, setDeleteStatus] = useState<'success' | 'error' | null>(null);
-    const id = params.id
     useEffect(() => {
         const fetchStudySet = async () => {
             try {

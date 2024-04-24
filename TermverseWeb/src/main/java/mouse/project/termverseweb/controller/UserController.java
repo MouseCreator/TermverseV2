@@ -51,6 +51,13 @@ public class UserController {
         return mapper.toResponse(user);
     }
 
+    @GetMapping
+    @Get
+    @URL("/[id]")
+    public UserResponseDTO findById(@FromURL("id")Long id) {
+        return userService.getById(id);
+    }
+
     @PostMapping
     @Post
     @URL

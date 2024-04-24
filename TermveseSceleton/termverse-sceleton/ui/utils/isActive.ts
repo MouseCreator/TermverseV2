@@ -22,6 +22,10 @@ export function useActive() {
                 if (validationResult === 'expired') {
                     const refreshToken = Cookies.get('termverse_refresh_token');
                     const refreshResponse = await axios.post('/api/refresh_token', { token: refreshToken });
+                    if (refreshResponse.status !== 200) {
+                        setIsActive('inactive');
+                        return;
+                    }
                     const newAccessToken = refreshResponse.data.access_token;
                     const newRefreshToken = refreshResponse.data.refresh_token;
 

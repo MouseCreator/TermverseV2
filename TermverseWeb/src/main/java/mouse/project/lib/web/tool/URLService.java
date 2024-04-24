@@ -29,7 +29,7 @@ public class URLService {
                 return targetNode.content();
             }
         }
-        throw new URLException("Cannot find id " + id + " in pattern " + write(patternPath.getNodes()));
+        throw new URLException("Cannot find " + id + " in pattern " + write(patternPath.getNodes()));
     }
 
 

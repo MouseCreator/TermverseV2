@@ -4,14 +4,17 @@ import lombok.RequiredArgsConstructor;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
 import mouse.project.termverseweb.dto.studyset.*;
+import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 import mouse.project.termverseweb.filters.argument.OptionalAuthorizationHandler;
 import mouse.project.termverseweb.service.StudySetService;
+import mouse.project.termverseweb.service.UserStudySetService;
 import mouse.project.termverseweb.service.optimized.OptimizedStudySetService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/sets")
@@ -22,10 +25,18 @@ public class StudySetController {
     private final StudySetService service;
     private final OptimizedStudySetService optimized;
     private final OptionalAuthorizationHandler auth;
+
+    private final UserStudySetService userStudySetService;
     @URL
     @Get
     public List<StudySetResponseDTO> findAll() {
         return service.findAll();
+    }
+
+    @URL("/byuser/[id]")
+    @Get
+    public List<StudySetResponseDTO> findAllByUser(@FromURL("id") Long id) {
+        return service.findStudySetsByUser(id);
     }
 
     @URL
@@ -53,5 +64,12 @@ public class StudySetController {
     @Delete
     public void delete(@FromURL("id") Long id) {
         service.deleteById(id);
+    }
+
+    @URL("/role/[id]")
+    @Get
+    public UserStudySetResponseDTO role(@FromURL("id") Long sid, @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
+        Long userId = auth.toUserId(optionalAuthentication);
+        return userStudySetService.getByUserAndStudySet(userId, sid);
     }
 }

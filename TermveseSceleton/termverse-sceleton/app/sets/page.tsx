@@ -1,6 +1,6 @@
 'use client'
 import {StudSetList} from "@/ui/components/study_set";
-import {StudySetPropsList, StudySetResponseList} from "@/ui/data/data";
+import { StudySetResponseList} from "@/ui/data/data";
 import React, { useEffect, useState } from 'react';
 import {fetchAllSets} from "@/ui/data/sets";
 import Link from "next/link";

@@ -4,12 +4,15 @@ import { useParams } from 'next/navigation'
 import React, { useState, useEffect } from 'react';
 import {StudySetResponse} from "@/ui/data/data";
 import Link from "next/link";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const StudySetPage = () => {
     const params = useParams<{ id: string; }>()
     const id = params?.id
     const [studySet, setStudySet] = useState<StudySetResponse | null>(null);
     const [deleteStatus, setDeleteStatus] = useState<'success' | 'error' | null>(null);
+    const [role, setRole] = useState<string | null>(null);
     useEffect(() => {
         const fetchStudySet = async () => {
             try {
@@ -21,8 +24,24 @@ const StudySetPage = () => {
             }
         };
 
+        const fetchRole = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/sets/role/${id}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${Cookies.get('termverse_access_token')}`
+                        }
+                    });
+                const data = response.data;
+                setRole(data.type);
+            } catch (error) {
+                console.error('Error fetching study set:', error);
+            }
+        }
+
         if (id) {
             fetchStudySet();
+            fetchRole();
         }
     }, [id]);
     const handleDelete = async () => {
@@ -71,7 +90,12 @@ const StudySetPage = () => {
                 <Link href="/sets/" className= "w-16 bg-purple-600 rounded text-white h-8 hover:bg-purple-400">
                     Back
                 </Link>
-                <button className="w-16 bg-red-600 rounded text-white h-8 hover:bg-purple-400" onClick={handleDelete}>Delete</button>
+                {
+                    role === 'owner' ?
+                    <button className="w-16 bg-red-600 rounded text-white h-8 hover:bg-purple-400" onClick={handleDelete}>Delete</button>
+                        : <div> </div>
+                }
+
             </div>
             {deleteStatus === 'success' && <p>Delete success!</p>}
             {deleteStatus === 'error' && <p>Error deleting study set.</p>}

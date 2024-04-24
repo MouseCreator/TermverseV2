@@ -20,7 +20,6 @@ export function Signin() {
                 login: login,
                 password: password
             });
-            localStorage.setItem('termverse_jwt', response.data.accessToken);
         } catch (error) {
             console.error('Login error:', error);
         } finally {

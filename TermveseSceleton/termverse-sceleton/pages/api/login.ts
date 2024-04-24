@@ -21,7 +21,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
 
             const accessToken = response.data.access_token;
-            res.status(200).json({ accessToken });
+            const refreshToken = response.data.response_token;
+            res.setHeader('Set-Cookie', [
+                `termverse_refresh_token=${refreshToken}; Path=/; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}`,
+                `termverse_access_token=${accessToken}; Path=/; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}`
+            ]);
+            res.status(200).json({ message: "Success!"});
         } catch (error) {
             console.error('Login error:', error);
             res.status(500).json({ message: "Login Failed" });

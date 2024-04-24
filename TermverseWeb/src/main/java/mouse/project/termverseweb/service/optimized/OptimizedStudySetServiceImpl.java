@@ -17,10 +17,12 @@ import mouse.project.termverseweb.model.SizedStudySet;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.repository.StudySetRepository;
 import mouse.project.termverseweb.service.UserStudySetService;
+import mouse.project.termverseweb.utils.DateUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +52,10 @@ public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
     @Override
     @Transactional
     public StudySetWithTermsResponseDTO create(Long creatorId, StudySetCreateDTO createDTO) {
-        StudySet saved = services.crud(repository).save(createDTO, studySetMapper::fromCreate).getRaw();
+        StudySet studySet = studySetMapper.fromCreate(createDTO);
+        LocalDateTime localDateTime = DateUtils.timeNowToSeconds();
+        studySet.setCreatedAt(localDateTime);
+        StudySet saved = services.crud(repository).save(studySet).getRaw();
         userStudySetService.save(creatorId, saved.getId(), UserStudySetRelation.OWNER);
         return studySetMapper.toResponseWithTerms(saved);
     }

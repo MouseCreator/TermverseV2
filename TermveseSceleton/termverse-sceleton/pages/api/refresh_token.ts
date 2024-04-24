@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { refreshToken } = req.body;
-
+    console.log(req)
     if (!refreshToken) {
         return res.status(400).json({ error: 'Refresh token is required' });
     }
@@ -22,8 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
 
         res.setHeader('Set-Cookie', [
-            `accessToken=${response.data.access_token}; Path=/; HttpOnly; Secure; SameSite=Strict`,
-            `refreshToken=${response.data.refresh_token}; Path=/; HttpOnly; Secure; SameSite=Strict`
+            `termverse_access_token=${response.data.access_token}; Path=/; SameSite=Strict`,
+            `termverse_refresh_token=${response.data.refresh_token}; Path=/; SameSite=Strict`
         ]);
 
         res.status(200).json({ accessToken: response.data.access_token, refreshToken: response.data.refresh_token });

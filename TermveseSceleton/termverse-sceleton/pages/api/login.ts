@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
 
             const accessToken = response.data.access_token;
-            const refreshToken = response.data.response_token;
+            const refreshToken = response.data.refresh_token;
             res.setHeader('Set-Cookie', [
                 `termverse_refresh_token=${refreshToken}; Path=/; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}`,
                 `termverse_access_token=${accessToken}; Path=/; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}`

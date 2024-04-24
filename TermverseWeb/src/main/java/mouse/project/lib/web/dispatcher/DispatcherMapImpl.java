@@ -13,6 +13,7 @@ import mouse.project.lib.web.tool.URLPathNode;
 import mouse.project.lib.web.tool.URLService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,20 +63,43 @@ public class DispatcherMapImpl implements DispatcherMap {
         URLPath path = url.path();
         MapNode current = roots.get(method);
         StringBuilder urlBuild = new StringBuilder();
+        MapNode lastStar = null;
+
         for (URLPathNode node : path.getNodes()) {
             String content = node.content();
             urlBuild.append(content).append("/");
+            Optional<MapNode> star = current.moveSafe("*");
+            if (star.isPresent()) {
+                lastStar = star.get();
+            }
             Optional<MapNode> mapNode = current.moveSafe(content);
             if (mapNode.isEmpty()) {
+                if (lastStar != null) {
+                    return getStar(url, lastStar);
+                }
                 throw new NotFoundException("No path defined: " + urlBuild);
             }
             current = mapNode.get();
         }
+
         Optional<ControllerInvoker> invoker = current.getInvoker();
-        if (invoker.isEmpty()) {
+        if (invoker.isPresent()) {
+            return invoker.get();
+        }
+        if (lastStar != null) {
+            return getStar(url, lastStar);
+        }
+        throw new NotFoundException("No invoker defined for url: " + url);
+
+    }
+
+    @NotNull
+    private static ControllerInvoker getStar(FullURL url, MapNode lastStar) {
+        Optional<ControllerInvoker> optInvoker = lastStar.getInvoker();
+        if (optInvoker.isEmpty()) {
             throw new NotFoundException("No invoker defined for url: " + url);
         }
-        return invoker.get();
+        return optInvoker.get();
     }
 
     private static class MapNode {
@@ -100,9 +124,6 @@ public class DispatcherMapImpl implements DispatcherMap {
             MapNode node = map.get(str);
             if (node == null) {
                 node = map.get(ARGUMENT_KEY);
-            }
-            if (node == null) {
-                node = map.get("*");
             }
             return Optional.ofNullable(node);
         }

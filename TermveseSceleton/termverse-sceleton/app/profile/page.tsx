@@ -52,11 +52,11 @@ export default function Page() {
         }
     };
     if (state === 'loading') {
-        return(<div className="p-8">Loading...</div>);
+        return(<div className="p-8 text-2xl">Loading...</div>);
     }
     if (state === 'inactive') {
         return <div  className="p-8">
-            <h1> Your session is not active! </h1>
+            <h1 className="text-2xl"> Your session is not active! </h1>
             <Link href="/signin" >
                 <div className="bg-purple-600 rounded text-white w-32 h-16 text-center hover:bg-purple-400">
                     Sign in
@@ -71,8 +71,8 @@ export default function Page() {
         return <div className="p-8">
             {
                 user.present ? (
-                    <h1>Hello, {user.name}! Your id is {user.id}</h1>
-                ) : (<h1>Active!</h1>)
+                    <h1 className="text-2xl">Hello, {user.name}! Your id is {user.id}</h1>
+                ) : (<h1 className="text-2xl">Active!</h1>)
             }
 
             <button onClick={signOut} type="button" className="bg-red-500 rounded text-white w-32 h-16 hover:bg-red-400">

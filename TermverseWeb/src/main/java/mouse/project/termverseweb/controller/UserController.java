@@ -8,6 +8,8 @@ import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 import mouse.project.termverseweb.filters.argument.OptionalAuthorizationHandler;
+import mouse.project.termverseweb.mapper.UserMapper;
+import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,11 +27,13 @@ public class UserController {
 
     private final UserService userService;
     private final OptionalAuthorizationHandler auth;
+    private final UserMapper mapper;
     @Autowired
     @Auto
-    public UserController(UserService userService, OptionalAuthorizationHandler auth) {
+    public UserController(UserService userService, OptionalAuthorizationHandler auth, UserMapper mapper) {
         this.userService = userService;
         this.auth = auth;
+        this.mapper = mapper;
     }
 
     @GetMapping
@@ -37,6 +41,14 @@ public class UserController {
     @URL
     public List<UserResponseDTO> findAll() {
         return userService.findAll();
+    }
+
+    @GetMapping
+    @Get
+    @URL("/current")
+    public UserResponseDTO userInfo(@FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
+        User user = auth.toUser(optionalAuthentication);
+        return mapper.toResponse(user);
     }
 
     @PostMapping

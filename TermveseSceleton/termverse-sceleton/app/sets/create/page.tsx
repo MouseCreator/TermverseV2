@@ -2,7 +2,11 @@
 import React, { useState } from 'react';
 import {StudySetCreate, StudySetResponse} from "@/ui/data/data";
 import Link from "next/link";
+import Cookies from "js-cookie";
+import axios from "axios";
+import {useRouter} from "next/navigation";
 export default function Page() {
+    const router = useRouter()
     const [formData, setFormData] = useState<StudySetCreate>({
         name: '',
         pictureUrl: null,
@@ -11,19 +15,19 @@ export default function Page() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8080/sets', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-            if (response.ok) {
+            const response = await axios.post('http://localhost:8080/sets', formData,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': Cookies.get('termverse_access_token'),
+                    }
+                });
+            if (response.status===201 || response.status===200) {
                 console.log('Study set created successfully');
-                const createdSet: StudySetResponse = await response.json();
-                setErrorMessage('Study set created successfully!')
+                const createdSet: StudySetResponse = await response.data;
+                router.push('/sets')
             } else {
-                const errorData = await response.json();
+                const errorData = await response.data;
                 setErrorMessage(errorData.message || 'Error creating study set');
                 console.error('Error creating study set:', response.statusText);
             }

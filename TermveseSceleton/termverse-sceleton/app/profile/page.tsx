@@ -1,24 +1,80 @@
 'use client'
+import { useRouter } from "next/navigation";
 
-import {useActive, useActiveOrRedirect} from "@/ui/utils/isActive";
+import {useActive} from "@/ui/utils/isActive";
 import Link from "next/link";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
 export default function Page() {
     let state = useActive();
+    const router = useRouter();
+    const [user, setUser] = useState({
+         present: false, id: 0, name: ""
+    });
+    const [error, setError] = useState('');
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/users/current'
+                ,{ headers: {
+                            'Authorization': `Bearer ${Cookies.get('termverse_access_token')}`
+                        },});
+                if (response.status === 200) {
+                    // Assuming the response data includes user details directly
+                    setUser({
+                        present: true,
+                        id: response.data.id,
+                        name: response.data.name,
+                    });
+                } else {
+                    setError('Failed to fetch user details: ' + response.status);
+                }
+            } catch (error) {
+                setError('Error fetching user: ' + error);
+            }
+        };
+
+        fetchUser();
+    }, []);
+    const signOut = async () => {
+        try {
+            const response = await fetch('/api/signout', { method: 'POST' });
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error('Failed to sign out:', data.message);
+            } else {
+                router.push('/signin')
+            }
+        } catch (error) {
+            console.error('Failed to sign out:', error);
+        }
+    };
     if (state === 'loading') {
         return(<div className="p-8">Loading...</div>);
     }
     if (state === 'inactive') {
         return <div  className="p-8">
             <h1> Your session is not active! </h1>
-            <Link href="/signin" className="bg-purple-600 rounded text-white w-full h-8 hover:bg-purple-400">
-                Sign in
+            <Link href="/signin" >
+                <div className="bg-purple-600 rounded text-white w-32 h-16 text-center hover:bg-purple-400">
+                    Sign in
+                </div>
             </Link>
         </div>
     }
 
     if (state === 'active') {
+
+
         return <div className="p-8">
-            <h1>Active!</h1>
+            {
+                user.present ? (
+                    <h1>Hello, {user.name}! Your id is {user.id}</h1>
+                ) : (<h1>Active!</h1>)
+            }
+
             <button onClick={signOut} type="button" className="bg-red-500 rounded text-white w-32 h-16 hover:bg-red-400">
                 Sign Out
             </button>
@@ -32,16 +88,3 @@ export default function Page() {
     );
 };
 
-const signOut = async () => {
-
-    try {
-        const response = await fetch('/api/signout', { method: 'POST' });
-        const data = await response.json();
-
-        if (!response.ok) {
-            console.error('Failed to sign out:', data.message);
-        }
-    } catch (error) {
-        console.error('Failed to sign out:', error);
-    }
-};

@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import Link from "next/link";
 import axios from 'axios';
+import {useRouter} from "next/navigation";
 
 export function Signin() {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const router = useRouter()
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
         if (isSubmitting) {
@@ -20,6 +21,9 @@ export function Signin() {
                 login: login,
                 password: password
             });
+            if (response.status===200) {
+                router.push('/profile')
+            }
         } catch (error) {
             console.error('Login error:', error);
         } finally {

@@ -2,13 +2,14 @@
 import Link from "next/link";
 import React, { useState } from 'react';
 import axios from "axios";
+import {useRouter} from "next/navigation";
 export function Signup() {
 
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const router = useRouter()
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -43,6 +44,7 @@ export function Signup() {
             });
 
             console.log('User ID from Java server:', javaResponse.data.id);
+            router.push("/profile")
         } catch (error) {
             console.error('An error occurred:', error);
         } finally {

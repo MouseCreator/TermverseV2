@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await axios.post('http://localhost:8180/realms/termverse/protocol/openid-connect/token',
                     {
                         client_id: "termverse-app",
-                        username: login,
+                        name: login,
                         password: password,
                         grant_type: "password",
                         client_secret: process.env.KEYCLOAK_CLIENT_SECRET

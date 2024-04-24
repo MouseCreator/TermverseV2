@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const admin = await axios.post(
                 'http://localhost:8180/realms/master/protocol/openid-connect/token',
             {
-                        username: process.env.KEYCLOAK_ADMIN_USERNAME,
+                        name: process.env.KEYCLOAK_ADMIN_USERNAME,
                         password: process.env.KEYCLOAK_ADMIN_PASSWORD,
                         grant_type: "password",
                         client_id: "admin-cli"
@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.log('Send admin access request.')
 
             await axios.post('http://localhost:8180/admin/realms/termverse/users', {
-                username: login,
+                name: login,
                 enabled: true,
                 email: login + '@mail.com',
                 emailVerified: true,
@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const tokenResponse = await axios.post(
                 'http://localhost:8180/realms/termverse/protocol/openid-connect/token', {
                     client_id: "termverse-app",
-                    username: login,
+                    name: login,
                     password: password,
                     grant_type: "password",
                     client_secret: process.env.KEYCLOAK_CLIENT_SECRET

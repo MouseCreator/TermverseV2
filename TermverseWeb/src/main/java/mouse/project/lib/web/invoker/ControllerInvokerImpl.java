@@ -25,7 +25,7 @@ public class ControllerInvokerImpl implements ControllerInvoker {
         try {
             return method.invoke(controller, res);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ControllerException("Error invoking method: ", e);
+            throw new ControllerException("Error invoking method: " + method, e);
         }
     }
     private Object[] getMethodParams(RequestURL requestURL) {

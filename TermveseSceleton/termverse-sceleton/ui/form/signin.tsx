@@ -8,6 +8,7 @@ export function Signin() {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('')
     const router = useRouter()
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -15,7 +16,6 @@ export function Signin() {
             return;
         }
         setIsSubmitting(true);
-
         try {
             const response = await axios.post('/api/login', {
                 login: login,
@@ -23,9 +23,12 @@ export function Signin() {
             });
             if (response.status===200) {
                 router.push('/profile')
+            } else {
+                setError('Login error')
             }
         } catch (error) {
             console.error('Login error:', error);
+            setError('Login error')
         } finally {
             setIsSubmitting(false);
         }
@@ -38,6 +41,7 @@ export function Signin() {
                 <div className="bg-gray-100 rounded-2xl p-4">
                     <div className="flex flex-col items-center m-8">
                         <h2 className="text-3xl pb-8">Sign in</h2>
+                        <p className="text-red-600">{error}</p>
                         <form onSubmit={handleLogin}>
                             <div className="flex flex-col items-center pb-4">
                                 <label>Login</label>

@@ -167,22 +167,6 @@
             <scope>runtime</scope>
         </dependency>
         <!-- Keycloak -->
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-tomcat-adapter</artifactId>
-            <version>${keycloak.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-adapter-core</artifactId>
-            <version>${keycloak.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-admin-client</artifactId>
-            <version>${keycloak.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -238,9 +222,6 @@
                 <version>4.23.0</version>
                 <configuration>
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
-                    <url>${env.DATASOURCE_URL}</url>
-                    <username>${env.DATASOURCE_USERNAME}</username>
-                    <password>${env.DATASOURCE_PASSWORD}</password>
                 </configuration>
             </plugin>
         </plugins>

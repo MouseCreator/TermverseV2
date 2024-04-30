@@ -1,10 +1,7 @@
 package mouse.project.lib.testutil;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class MTest {
@@ -32,6 +29,14 @@ public class MTest {
     }
 
     public static <T> void noDuplicates(List<T> all) {
-        assertEquals(all.size(), distinct(all).size(), "Collection has duplicates");
+        Set<T> set = new HashSet<>();
+        Set<T> duplicates = new HashSet<>();
+        for (T v : all) {
+            boolean contained = !set.add(v);
+            if (contained) {
+                duplicates.add(v);
+            }
+        }
+        assertTrue(duplicates.isEmpty(), "Collection has duplicates: " + duplicates);
     }
 }

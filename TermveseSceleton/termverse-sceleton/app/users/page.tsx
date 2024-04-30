@@ -37,8 +37,8 @@ export default function Page() {
         <main className="w-full">
             <div className="flex border flex-col items-center">
                 {
-                    users.map((user) => (
-                        <User props={user}/>
+                    users.map((user, id) => (
+                        <User key={"user"+id} props={user}/>
                     ))
                 }
             </div>

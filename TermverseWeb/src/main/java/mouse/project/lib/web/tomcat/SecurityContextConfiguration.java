@@ -1,11 +1,9 @@
 package mouse.project.lib.web.tomcat;
 
 import mouse.project.lib.ioc.annotation.Service;
-import mouse.project.lib.web.tomcat.ContextConfigurator;
 import org.apache.catalina.Context;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
-import org.keycloak.adapters.tomcat.KeycloakAuthenticatorValve;
 @Service
 public class SecurityContextConfiguration implements ContextConfigurator {
     @Override

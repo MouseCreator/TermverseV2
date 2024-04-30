@@ -6,7 +6,7 @@ export default function SetsLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="min-h-screen flex flex-col items-center p-12">
+        <div className="min-h-screen flex flex-col items-center px-12">
             <Header />
             {children}
         </div>

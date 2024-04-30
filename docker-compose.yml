@@ -42,6 +42,7 @@ services:
       JWT_SECRET: askfj-dskfSJ23-SSADSXX_d34032et3453-XX44S
       KEYCLOAK_CLIENT_ID: termverse_app
       KEYCLOAK_SECRET: jikvp5fJQE7yOl6723o2ewb9PYIXDDbK
+      CHOKIDAR_USEPOLLING: true
 
   tverse_keycloak:
     image: quay.io/keycloak/keycloak:24.0.3

@@ -38,15 +38,23 @@ export interface StudySetResponseList {
 export interface StudySetCreate {
     name: string
     pictureUrl: string | null
+    terms: TermCreateDTO[]
 }
 
 export interface TermCreateDTO {
      term : string;
      definition : string;
-     hint : string;
-     picture_url : string;
+     hint : string | null;
+     picture_url : string | null;
      order : number;
-
+}
+export interface TermResponseDTO {
+        id: number,
+        term: string,
+        definition: string,
+        hint: string | null,
+        picture_url: string | null,
+        order: number
 }
 
 export interface UserProps {

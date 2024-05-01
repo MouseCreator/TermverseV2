@@ -145,7 +145,7 @@ export default function Page() {
                                     <button onClick={handleAddTerm} className="bg-purple-500 text-white px-4 py-2 rounded m-4 text-center">
                                         New Term
                                     </button>
-                                    <Link href="/sets/" >
+                                    <Link href={"/sets/"+setId} >
                                         <div className="bg-purple-500  text-white px-4 py-2 rounded m-4 text-center">
                                             Back
                                         </div>

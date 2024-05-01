@@ -38,6 +38,12 @@ public interface UserStudySetRepository extends Repository<UserStudySet, Long>, 
 
     @Query("SELECT us " +
             "FROM UserStudySet us " +
+            "WHERE us.studySet.id = :setId AND us.type = :type " +
+            "AND us.user.deletedAt IS NULL")
+    List<UserStudySet> findByStudySetAndType(@Param("setId") Long userId, @Param("type") String type);
+
+    @Query("SELECT us " +
+            "FROM UserStudySet us " +
             "WHERE us.user.id = :userId " +
             "AND us.user.deletedAt IS NULL")
     List<UserStudySet> findByUser(@Param("userId") Long userId);

@@ -66,8 +66,8 @@ export default function Page() {
     if (error) {
         return (<div>error</div>)
     }
-    return <div>
-        <h1 className="text-2xl text-purple-600 font-bold">{user?.name}</h1>
+    return <div className="w-full">
+        <h1 className="text-2xl text-purple-600 font-bold text-center">{user?.name}</h1>
         {
             list.list ? (<StudSetList props={list}/>) : (<div>User has no study sets</div>)
         }

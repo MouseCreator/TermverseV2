@@ -89,8 +89,21 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
                 "SELECT * " +
                     "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
+                    "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE u.id = ? AND us.type = ? " +
-                    "AND u.deleted_at IS NULL", userId, type
+                    "AND u.deleted_at IS NULL AND s.deleted_at IS NULL", userId, type
+        ).adjustedList(UserStudySetModel.class).map(this::transform).get());
+    }
+
+    @Override
+    public List<UserStudySet> findByStudySetAndType(Long setId, String type) {
+        return executor.read(e -> e.executeQuery(
+                "SELECT * " +
+                        "FROM users_study_sets us " +
+                        "INNER JOIN study_sets s ON s.id = us.study_set_id " +
+                        "INNER JOIN users u ON u.id = us.user_id " +
+                        "WHERE s.id = ? AND us.type = ? " +
+                        "AND s.deleted_at IS NULL AND u.deleted_at IS NULL", setId, type
         ).adjustedList(UserStudySetModel.class).map(this::transform).get());
     }
 

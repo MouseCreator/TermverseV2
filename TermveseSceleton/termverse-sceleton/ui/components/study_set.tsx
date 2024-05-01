@@ -23,7 +23,7 @@ export function StudySet({ props}: StudySetProps) {
 export function StudSetList({props}: StudySetResponseListProps) {
 
     return (
-        <div className="flex border flex-col items-center">
+        <div className="flex border w-full flex-col items-center">
             {props.list.map((set, index) => (
                 <StudySet key={index} props={set} />
             ))}

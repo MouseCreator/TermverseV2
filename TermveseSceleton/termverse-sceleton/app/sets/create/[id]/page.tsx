@@ -41,12 +41,15 @@ export default function Page() {
 
     }
     const findErrorCauser = () => {
-        return terms.findIndex(t => t.term==="" || t.definition==="");
+        return terms.findIndex(t => t.term.trim()==="" || t.definition.trim()==="");
 
     }
     const handleSubmit = async () => {
         if (!setId) return;
         try {
+            if (name.trim()==="") {
+                return;
+            }
             const errC = findErrorCauser()
             if (errC !== -1) {
                 triggerError (`Term # ${errC+1} is incomplete`)
@@ -121,7 +124,7 @@ export default function Page() {
                         <div className="p-4">
                             <label htmlFor="name">Study Set Name:</label>
                             <input
-                                className="flex-grow p-2 border w-full rounded" autoComplete="off" type="text"
+                                className={`flex-grow p-2 border w-full rounded ${name.trim()==="" && "border-red-600"}`} autoComplete="off" type="text"
                                 id="name"
                                 name="name"
                                 value={name}

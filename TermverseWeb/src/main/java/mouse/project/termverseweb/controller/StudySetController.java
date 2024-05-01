@@ -5,6 +5,7 @@ import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
 import mouse.project.lib.web.exception.StatusException;
 import mouse.project.termverseweb.dto.studyset.*;
+import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
@@ -82,5 +83,10 @@ public class StudySetController {
     public UserStudySetResponseDTO role(@FromURL("id") Long sid, @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
         Long userId = auth.toUserId(optionalAuthentication);
         return userStudySetService.getByUserAndStudySet(userId, sid);
+    }
+    @URL("/author/[id]")
+    @Get
+    public UserResponseDTO author(@FromURL("id") Long sid) {
+        return userStudySetService.getOwnerOfStudySet(sid);
     }
 }

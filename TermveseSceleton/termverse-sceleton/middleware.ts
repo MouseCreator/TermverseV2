@@ -15,7 +15,8 @@ export function middleware(req: NextRequest) {
     if (cookies.has("termverse_access_token")) {
         const cookie = cookies.get("termverse_access_token");
 
-        if (cookie) return validateToken(cookie.value).then(result => {
+        if (cookie)
+            return validateToken(cookie.value).then(result => {
             if (result) {
                 return NextResponse.next();
             } else {
@@ -48,23 +49,14 @@ async function refresh(token: string, cookies: RequestCookies, req: NextRequest)
 
 async function validateToken(token: string) {
     try {
-        const response = await fetch('http://localhost:8080/validate', {
-            method: 'POST',
+        const response = await axios.get('http://localhost:8080/validate', {
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token })
         });
-        const data = await response.json();
+        const data = await response.data.status;
         console.log(data);
         return data === "token-valid";
     } catch (error) {
         console.error('Error validating token:', error);
-        return { isValid: false, headers: new Headers() };
-    }
-}
-
-function migrateHeaders(sourceHeaders: Headers, response: NextResponse) {
-    const setCookie = sourceHeaders.get('Set-Cookie');
-    if (setCookie) {
-        response.headers.set('Set-Cookie', setCookie);
+        return false;
     }
 }

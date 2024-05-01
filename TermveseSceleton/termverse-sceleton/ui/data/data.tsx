@@ -64,6 +64,9 @@ export interface TermResponseDTO {
         picture_url: string | null,
         order: number
 }
+export interface TermsProps {
+    terms: TermResponseDTO[]
+}
 
 export interface UserProps {
     props: UserDescription

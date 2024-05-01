@@ -24,11 +24,11 @@ export function Signin() {
             if (response.status===200) {
                 router.push('/profile')
             } else {
-                setError('Login error')
+                setError('Login error. Check your login and password.')
             }
         } catch (error) {
             console.error('Login error:', error);
-            setError('Login error')
+            setError('Login error. Check your login and password.')
         } finally {
             setIsSubmitting(false);
         }
@@ -41,7 +41,7 @@ export function Signin() {
                 <div className="bg-gray-100 rounded-2xl p-4">
                     <div className="flex flex-col items-center m-8">
                         <h2 className="text-3xl pb-8">Sign in</h2>
-                        <p className="text-red-600">{error}</p>
+                        <p className="text-red-600 max-w-64">{error}</p>
                         <form onSubmit={handleLogin}>
                             <div className="flex flex-col items-center pb-4">
                                 <label>Login</label>

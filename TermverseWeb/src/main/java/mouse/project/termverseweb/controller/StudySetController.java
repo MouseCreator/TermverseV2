@@ -17,7 +17,6 @@ import mouse.project.termverseweb.service.optimized.OptimizedStudySetService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/sets")
@@ -32,14 +31,22 @@ public class StudySetController {
     private final UserStudySetService userStudySetService;
     @URL
     @Get
-    public List<StudySetResponseDTO> findAll() {
-        return service.findAll();
+    public List<StudySetWithOwnerDTO> findAll() {
+        List<StudySetResponseDTO> all = service.findAll();
+        return all.stream().map(s -> {
+            UserResponseDTO owner = userStudySetService.getOwnerOfStudySet(s.getId());
+            return new StudySetWithOwnerDTO(s, owner.getName());
+        }).toList();
     }
 
     @URL("/byuser/[id]")
     @Get
-    public List<StudySetResponseDTO> findAllByUser(@FromURL("id") Long id) {
-        return service.findStudySetsByUser(id);
+    public List<StudySetWithOwnerDTO> findAllByUser(@FromURL("id") Long id) {
+        List<StudySetResponseDTO> studySetsByUser = service.findStudySetsByUser(id);
+        return studySetsByUser.stream().map(s -> {
+            UserResponseDTO owner = userStudySetService.getOwnerOfStudySet(s.getId());
+            return new StudySetWithOwnerDTO(s, owner.getName());
+        }).toList();
     }
 
     @URL
@@ -101,8 +108,12 @@ public class StudySetController {
 
     @URL("/saved")
     @Get
-    public List<StudySetDescriptionDTO> saved(@FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
+    public List<StudySetWithOwnerDTO> saved(@FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
         Long userId = auth.toUserId(optionalAuthentication);
-        return optimized.getStudySetsByUser(userId);
+        List<StudySetDescriptionDTO> studySetsByUser = optimized.getStudySetsByUser(userId);
+        return studySetsByUser.stream().map(s -> {
+            UserResponseDTO owner = userStudySetService.getOwnerOfStudySet(s.getId());
+            return new StudySetWithOwnerDTO(s, owner.getName());
+        }).toList();
     }
 }

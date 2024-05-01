@@ -24,12 +24,14 @@ export interface StudySetDescription {
     pictureUrl: string | null
     created_at: Date
     size: number
+    owner: string | null
 }
 export interface StudySetResponse {
     id: number
     name: string
     pictureUrl: string | null
     createdAt: string | null
+    owner: string | null
 }
 
 export interface StudySetResponseFull {

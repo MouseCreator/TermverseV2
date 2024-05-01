@@ -137,4 +137,9 @@ public class UserStudySetServiceImpl implements UserStudySetService {
             return new UserWithRelation(response, u.getType());
         }).toList();
     }
+
+    @Override
+    public void remove(Long userId, Long setId) {
+        repository.deleteByUserAndStudySet(userId, setId);
+    }
 }

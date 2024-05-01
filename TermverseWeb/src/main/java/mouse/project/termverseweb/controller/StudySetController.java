@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
@@ -82,7 +83,15 @@ public class StudySetController {
     @Get
     public UserStudySetResponseDTO role(@FromURL("id") Long sid, @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
         Long userId = auth.toUserId(optionalAuthentication);
-        return userStudySetService.getByUserAndStudySet(userId, sid);
+        try {
+            return userStudySetService.getByUserAndStudySet(userId, sid);
+        } catch (EntityNotFoundException e) {
+            UserStudySetResponseDTO dto = new UserStudySetResponseDTO();
+            dto.setStudySetId(sid);
+            dto.setUserId(userId);
+            dto.setType("none");
+            return dto;
+        }
     }
     @URL("/author/[id]")
     @Get

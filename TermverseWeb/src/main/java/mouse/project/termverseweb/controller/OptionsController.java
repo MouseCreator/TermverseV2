@@ -11,7 +11,5 @@ public class OptionsController {
     @Options
     @URL
     public void options() {
-        int i = 0;
-        i++;
     }
 }

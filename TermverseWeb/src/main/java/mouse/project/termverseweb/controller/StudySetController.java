@@ -98,4 +98,11 @@ public class StudySetController {
     public UserResponseDTO author(@FromURL("id") Long sid) {
         return userStudySetService.getOwnerOfStudySet(sid);
     }
+
+    @URL("/saved")
+    @Get
+    public List<StudySetDescriptionDTO> saved(@FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
+        Long userId = auth.toUserId(optionalAuthentication);
+        return optimized.getStudySetsByUser(userId);
+    }
 }

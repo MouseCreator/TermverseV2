@@ -14,6 +14,7 @@ import mouse.project.termverseweb.filters.argument.OptionalAuthorizationHandler;
 import mouse.project.termverseweb.service.StudySetService;
 import mouse.project.termverseweb.service.UserStudySetService;
 import mouse.project.termverseweb.service.optimized.OptimizedStudySetService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,11 @@ public class StudySetController {
     @Get
     public List<StudySetWithOwnerDTO> findAll() {
         List<StudySetResponseDTO> all = service.findAll();
+        return toOwnerStudySet(all);
+    }
+
+    @NotNull
+    private List<StudySetWithOwnerDTO> toOwnerStudySet(List<StudySetResponseDTO> all) {
         return all.stream().map(s -> {
             UserResponseDTO owner = userStudySetService.getOwnerOfStudySet(s.getId());
             return new StudySetWithOwnerDTO(s, owner.getName());
@@ -43,10 +49,7 @@ public class StudySetController {
     @Get
     public List<StudySetWithOwnerDTO> findAllByUser(@FromURL("id") Long id) {
         List<StudySetResponseDTO> studySetsByUser = service.findStudySetsByUser(id);
-        return studySetsByUser.stream().map(s -> {
-            UserResponseDTO owner = userStudySetService.getOwnerOfStudySet(s.getId());
-            return new StudySetWithOwnerDTO(s, owner.getName());
-        }).toList();
+        return toOwnerStudySet(studySetsByUser);
     }
 
     @URL

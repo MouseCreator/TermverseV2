@@ -2,6 +2,7 @@
 import React, {FormEvent, useState} from "react";
 import {useRouter} from "next/navigation";
 import axios from 'axios';
+import Link from "next/link";
 export default function Page() {
 
     const router = useRouter();
@@ -54,7 +55,13 @@ export default function Page() {
                     onChange={e => setName(e.target.value)}
                 />
                 <button type="submit" className="bg-purple-500 text-white p-2 w-full my-2 rounded text-center">Create!</button>
+                <Link href="/sets/">
+                    <div className="bg-red-500 text-white p-2 w-full my-2 rounded text-center">
+                        Back
+                    </div>
+                </Link>
             </form>
+
         </main>
     )
 }

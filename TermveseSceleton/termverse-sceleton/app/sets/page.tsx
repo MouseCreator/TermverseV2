@@ -22,8 +22,10 @@ export default function Page() {
     };
     return (
         <main className="w-full">
-            <Link className= "w-32 bg-purple-600 rounded text-white h-8 hover:bg-purple-400" href="sets/create">
+            <Link href="sets/create">
+                <div className="w-32 bg-purple-600 rounded text-white h-8 hover:bg-purple-400">
                 Create
+                </div>
             </Link>
             <StudSetList props={list}/>
         </main>

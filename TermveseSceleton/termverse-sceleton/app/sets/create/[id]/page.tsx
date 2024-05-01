@@ -4,7 +4,7 @@ import {StudySetResponseFull, TermCreateDTO, TermResponseDTO} from "@/ui/data/da
 import Link from "next/link";
 import axios, {AxiosResponse} from "axios";
 import {useRouter, useParams } from "next/navigation";
-import {DragDropContext, Droppable, Draggable, OnDragEndResponder, DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, Droppable, Draggable, DropResult} from 'react-beautiful-dnd';
 import Image from "next/image";
 
 interface TempTerm {
@@ -37,12 +37,16 @@ export default function Page() {
     }, [setId]);
 
 
-    const handleDelete = () => {
-
+    const handleDelete = async () => {
+        const success = await deleteStudySet(setId);
+        if (success) {
+            router.push('/sets/')
+        } else {
+            setError("Error deleting study set")
+        }
     }
     const findErrorCauser = () => {
         return terms.findIndex(t => t.term.trim()==="" || t.definition.trim()==="");
-
     }
     const handleSubmit = async () => {
         if (!setId) return;
@@ -65,8 +69,8 @@ export default function Page() {
         }
 
     };
-    const handleDeleteTerm = (id: string) => {
-        setTerms(terms.filter(term => term.id !== id));
+    const handleDeleteTerm = (index: number) => {
+        setTerms(terms.filter((term, termIndex) => termIndex !== index));
     };
     const handleDragEnd = (result: DropResult) => {
         if (!result.destination) return;
@@ -146,7 +150,7 @@ export default function Page() {
                                             Back
                                         </div>
                                     </Link>
-                                    <button onClick={()=>{}} className="bg-red-500 text-white px-4 py-2 rounded m-4 text-center">
+                                    <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded m-4 text-center">
                                         Delete
                                     </button>
                                 </div>
@@ -186,7 +190,7 @@ export default function Page() {
          <input className="flex-grow p-2 border rounded" placeholder="Definition"
          onChange={(e) => handleDefinitionChange(index, e.target.value)}
          value={terms[index].definition}/>
-         <button onClick={() => handleDeleteTerm(term.id)} className="w-8 h-8">
+         <button onClick={() => handleDeleteTerm(index)} className="w-8 h-8">
              <Image src="/trash.svg" alt="Delete" width="32" height="32" />
          </button>
      </div>
@@ -246,6 +250,20 @@ async function fetchStudySet(id: number, setName: (name: string) => void, setTer
     const data = response.data;
     setName(data.name)
     setTerms(mapFromTerms(data.terms))
+}
+
+async function deleteStudySet(setId: number | undefined) {
+    if (!setId) {
+        return false;
+    }
+    const response: AxiosResponse<StudySetResponseFull> = await axios.delete('http://localhost:8080/sets/'+setId,  {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return response.status === 200;
+
 }
 interface StudySetData {
     name: string,

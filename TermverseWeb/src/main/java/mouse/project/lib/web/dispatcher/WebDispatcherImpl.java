@@ -2,6 +2,7 @@ package mouse.project.lib.web.dispatcher;
 
 import mouse.project.lib.ioc.annotation.Prototype;
 import mouse.project.lib.ioc.annotation.Service;
+import mouse.project.lib.web.exception.ControllerException;
 import mouse.project.lib.web.exception.StatusException;
 import mouse.project.lib.web.invoker.ControllerInvoker;
 import mouse.project.lib.web.register.RequestMethod;
@@ -22,6 +23,10 @@ public class WebDispatcherImpl implements WebDispatcher {
             invoked = invoker.invoke(requestURL);
         } catch (StatusException statusException) {
             status = statusException.getStatus();
+        } catch (ControllerException controllerException) {
+            if (controllerException.getCause() instanceof StatusException) {
+                status = ((StatusException) controllerException.getCause()).getStatus();
+            }
         }
         return toResponse(status, invoked);
     }

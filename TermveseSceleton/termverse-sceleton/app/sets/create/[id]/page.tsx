@@ -101,7 +101,7 @@ export default function Page() {
         setShowError(true);
         setTimeout(() => {
             setShowError(false);
-        }, 5000);  // Hide after 5000 ms (5 seconds)
+        }, 5000);
     };
     const handleTermChange = (index: number, newTerm: string) => {
         const newTerms = terms.map((term, i) => {
@@ -147,7 +147,7 @@ export default function Page() {
                                         Delete
                                     </button>
                                 </div>
-                                <div className="w-1/2 p-4">{error}</div>
+                                <div className="w-1/2 p-4">{showError && error}</div>
                             </div>
                         </div>
                     </div>
@@ -164,7 +164,7 @@ export default function Page() {
                                                 style={getListStyle(snapshot.isDraggingOver)}
                                             >
                                                  {terms.map((term, index) => (
-                                                     <Draggable key={index} draggableId={term.id.toString()} index={index}>
+                                                     <Draggable key={index} draggableId={index.toString()} index={index}>
                                                          {(provided, snapshot) => (
                                                              <div
                                                                  ref={provided.innerRef}

@@ -15,7 +15,7 @@ public enum RequestMethod {
         return switch (methodString) {
             case "POST" -> POST;
             case "GET" -> GET;
-            case "UPDATE" -> UPDATE;
+            case "UPDATE", "PUT" -> UPDATE;
             case "DELETE" -> DELETE;
             case "OPTIONS" -> OPTIONS;
             default -> throw new IllegalArgumentException("Unexpected request method: " + methodString);

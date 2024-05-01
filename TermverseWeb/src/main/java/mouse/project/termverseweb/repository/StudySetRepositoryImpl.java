@@ -78,12 +78,21 @@ public class StudySetRepositoryImpl implements StudySetRepository {
 
     @Override
     public StudySet save(StudySet model) {
-        executor.write(e -> e.execute(
-            "INSERT INTO study_sets " +
-                "(name, picture_url, created_at, deleted_at)" +
-                " VALUES (?, ?, ?, ?)",
-                        model.getName(), model.getPictureUrl(), model.getCreatedAt(), null)
-                .affectOne().singleKey(Long.class, model::setId));
+        if (model.getId() == null) {
+            executor.write(e -> e.execute(
+                            "INSERT INTO study_sets " +
+                                    "(name, picture_url, created_at, deleted_at)" +
+                                    " VALUES (?, ?, ?, ?)",
+                            model.getName(), model.getPictureUrl(), model.getCreatedAt(), null)
+                    .affectOne().singleKey(Long.class, model::setId));
+        } else {
+            executor.write(e -> e.execute(
+                            "UPDATE study_sets SET " +
+                                    "name = ?, picture_url = ?, created_at = ?, deleted_at = ? " +
+                                    "WHERE id = ?",
+                            model.getName(), model.getPictureUrl(), model.getCreatedAt(), null, model.getId())
+                    .affectOne());
+        }
         return model;
     }
 

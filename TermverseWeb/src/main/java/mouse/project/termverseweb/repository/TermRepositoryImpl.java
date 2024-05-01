@@ -63,10 +63,17 @@ public class TermRepositoryImpl implements TermRepository {
 
     @Override
     public Term save(Term model) {
-        executor.write(e -> e.execute("INSERT INTO terms (term, definition, hint, picture_url, term_order, deleted_at)" +
-                                " VALUES (?, ?, ?, ?, ?, ?)",
-                model.getTerm(), model.getDefinition(), model.getHint(), model.getPicture_url(), model.getOrder(), null)
-                .affectOne().singleKey(Long.class, model::setId));
+        if (model.getId() == null) {
+            executor.write(e -> e.execute(
+                            "INSERT INTO terms (term, definition, hint, picture_url, term_order, deleted_at) VALUES (?, ?, ?, ?, ?, ?)",
+                            model.getTerm(), model.getDefinition(), model.getHint(), model.getPicture_url(), model.getOrder(), null)
+                    .affectOne().singleKey(Long.class, model::setId));
+        } else {
+            executor.write(e -> e.execute(
+                            "UPDATE terms SET term = ?, definition = ?, hint = ?, picture_url = ?, term_order = ?, deleted_at = ? WHERE id = ?",
+                            model.getTerm(), model.getDefinition(), model.getHint(), model.getPicture_url(), model.getOrder(), null, model.getId())
+                    .affectOne());
+        }
         return model;
     }
 

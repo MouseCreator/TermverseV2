@@ -48,10 +48,17 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public Tag save(Tag model) {
-        executor.write(e ->  e.execute(
-                "INSERT INTO tags (name, color, owner, deleted_at) VALUES (?, ?, ?, ?)",
-                model.getName(), model.getColorHex(), model.getOwner().getId(), null
-        ).affectOne().singleKey(Long.class, model::setId));
+        if (model.getId() == null) {
+            executor.write(e -> e.execute(
+                            "INSERT INTO tags (name, color, owner, deleted_at) VALUES (?, ?, ?, ?)",
+                            model.getName(), model.getColorHex(), model.getOwner().getId(), null)
+                    .affectOne().singleKey(Long.class, model::setId));
+        } else {
+            executor.write(e -> e.execute(
+                            "UPDATE tags SET name = ?, color = ?, owner = ?, deleted_at = ? WHERE id = ?",
+                            model.getName(), model.getColorHex(), model.getOwner().getId(), null, model.getId())
+                    .affectOne());
+        }
         return model;
     }
 

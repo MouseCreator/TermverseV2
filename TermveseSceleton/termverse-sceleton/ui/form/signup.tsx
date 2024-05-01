@@ -9,12 +9,13 @@ export function Signup() {
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
     const router = useRouter()
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         if (repeatPassword !== password) {
-            console.log("Passwords do not match!")
+            setError("Password and Confirm password do not match")
             return;
         }
         if (isSubmitting) {
@@ -30,9 +31,8 @@ export function Signup() {
 
             //Store token
             localStorage.setItem('termverse_jwt', accessToken);
-            console.log('Token stored:', accessToken);
 
-            //Send to java server
+            //Send to server
             const javaResponse = await axios.post('http://localhost:8080/users/',
                  {
                     name: login,
@@ -46,7 +46,7 @@ export function Signup() {
             console.log('User ID from Java server:', javaResponse.data.id);
             router.push("/profile")
         } catch (error) {
-            console.error('An error occurred:', error);
+            setError(`An error occurred: Failed to sign in`);
         } finally {
             setIsSubmitting(false);
         }
@@ -58,6 +58,12 @@ export function Signup() {
                 <div className="bg-gray-100 rounded-2xl p-4">
                 <div className="flex flex-col items-center m-8">
                     <h2 className="text-3xl pb-8">Sign up</h2>
+                    {
+                        error &&
+                        (
+                            <div className="p-4 text-center bg-red-300 max-w-64 rounded-2xl mb-4">{error}</div>
+                        )
+                    }
                     <form onSubmit={handleSubmit}>
                         <div className="flex flex-col items-center pb-4">
                             <label>Login</label>

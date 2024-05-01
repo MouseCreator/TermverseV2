@@ -3,6 +3,7 @@ package mouse.project.termverseweb.controller;
 import lombok.RequiredArgsConstructor;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
+import mouse.project.lib.web.exception.StatusException;
 import mouse.project.termverseweb.dto.studyset.*;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.filters.argument.Args;
@@ -54,10 +55,20 @@ public class StudySetController {
         return service.findById(id);
     }
 
+    @URL("/full/[id]")
+    @Get
+    public StudySetWithTermsResponseDTO findFullById(@FromURL("id") Long id) {
+        return service.findByIdWithTerms(id);
+    }
     @URL("/[id]")
     @Update
-    public StudySetResponseDTO update(@RBody StudySetUpdateDTO dto) {
-        return service.update(dto);
+    public StudySetWithTermsResponseDTO update(@FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication,
+                                      @RBody StudySetSubmitDTO dto) {
+        if (optionalAuthentication.isEmpty()) {
+            throw new StatusException(401);
+        }
+        Long userId = auth.toUserId(optionalAuthentication);
+        return optimized.update(userId, dto);
     }
 
     @URL("/[id]")

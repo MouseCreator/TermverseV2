@@ -5,17 +5,24 @@ import jakarta.transaction.Transactional;
 import mouse.project.lib.data.page.Page;
 import mouse.project.lib.data.page.PageDescription;
 import mouse.project.lib.data.page.PageDescriptionImpl;
+import mouse.project.lib.web.exception.StatusException;
 import mouse.project.termverseweb.defines.UserStudySetRelation;
 import mouse.project.termverseweb.dto.studyset.*;
+import mouse.project.termverseweb.dto.term.TermSubmitDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.user.UserWithRelation;
+import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.exception.EntityStateException;
 import mouse.project.termverseweb.exception.MissingEntityException;
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
 import mouse.project.termverseweb.mapper.StudySetMapper;
+import mouse.project.termverseweb.mapper.TermMapper;
 import mouse.project.termverseweb.model.SizedStudySet;
 import mouse.project.termverseweb.model.StudySet;
+import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.repository.StudySetRepository;
+import mouse.project.termverseweb.service.SetTermService;
+import mouse.project.termverseweb.service.TermService;
 import mouse.project.termverseweb.service.UserStudySetService;
 import mouse.project.termverseweb.utils.DateUtils;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @mouse.project.lib.ioc.annotation.Service
@@ -36,17 +41,25 @@ public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
     private final ServiceProviderContainer services;
     private final UserStudySetService userStudySetService;
     private final OptimizedTermService optimizedTermService;
+    private final TermMapper termMapper;
+    private final TermService termService;
+    private final SetTermService setTermService;
     @Autowired
     public OptimizedStudySetServiceImpl(StudySetRepository repository,
                                         StudySetMapper studySetMapper,
                                         ServiceProviderContainer services,
                                         UserStudySetService userStudySetService,
-                                        OptimizedTermService optimizedTermService) {
+                                        OptimizedTermService optimizedTermService,
+                                        TermMapper termMapper,
+                                        TermService termService, SetTermService setTermService) {
         this.repository = repository;
         this.studySetMapper = studySetMapper;
         this.services = services;
         this.userStudySetService = userStudySetService;
         this.optimizedTermService = optimizedTermService;
+        this.termMapper = termMapper;
+        this.termService = termService;
+        this.setTermService = setTermService;
     }
 
     @Override
@@ -82,7 +95,7 @@ public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
         if (owners.size() > 1) {
             throw new EntityStateException("Study Set " + setId + " has " + owners.size() + " owners.");
         }
-        UserWithRelation result = owners.get(0);
+        UserWithRelation result = owners.getFirst();
         relatedUsers.remove(result);
         return result.getResponseDTO();
     }
@@ -133,6 +146,69 @@ public class OptimizedStudySetServiceImpl implements OptimizedStudySetService {
         UserResponseDTO owner = excludeOwner(users, id);
         List<UserResponseDTO> savers = users.stream().map(UserWithRelation::getResponseDTO).toList();
         return studySetMapper.toHeader(studySet, owner, savers);
+    }
+
+    @Override
+    @Transactional
+    public StudySetWithTermsResponseDTO update(Long issuer, StudySetSubmitDTO dto) {
+        Long setId = dto.getId();
+        UserStudySetResponseDTO byUserAndStudySet = userStudySetService.getByUserAndStudySet(issuer, setId);
+        String type = byUserAndStudySet.getType();
+        if (type.equals(UserStudySetRelation.VIEWER)) {
+            throw new StatusException(403);
+        }
+        List<TermSubmitDTO> terms = dto.getTerms();
+        List<Term> prevTerms = optimizedTermService.getAllByStudySet(setId);
+        compareAndUpdate(setId, prevTerms, terms);
+        Optional<StudySet> set = repository.findById(setId);
+        if (set.isEmpty()) {
+            throw new StatusException(404);
+        }
+        StudySet studySet = set.get();
+        studySet.setName(dto.getName());
+        studySet.setPictureUrl(dto.getPictureUrl());
+        repository.save(studySet);
+        Optional<StudySet> fSet = repository.findAllByIdWithTerms(setId);
+        if (fSet.isEmpty()) {
+            throw new StatusException(404);
+        }
+        return studySetMapper.toResponseWithTerms(fSet.get());
+    }
+    private record TermData(String t, String d) {
+    }
+    private void compareAndUpdate(Long setId, List<Term> prevTerms, List<TermSubmitDTO> terms) {
+        List<Term> needToAdd = new ArrayList<>();
+        List<Term> newOnes = new ArrayList<>();
+        List<Term> needToRemove = new ArrayList<>();
+
+        Map<TermData, Term> prevMap = new HashMap<>();
+        for (Term term : prevTerms) {
+            prevMap.put(new TermData(term.getTerm(), term.getDefinition()), term);
+        }
+
+        Map<TermData, TermSubmitDTO> currentMap = new HashMap<>();
+        for (TermSubmitDTO term : terms) {
+            currentMap.put(new TermData(term.getTerm(), term.getDefinition()), term);
+        }
+        for (TermData termData : prevMap.keySet()) {
+            if (currentMap.containsKey(termData))
+                continue;
+            Term term = prevMap.get(termData);
+            needToRemove.add(term);
+        }
+        for (TermData termData : currentMap.keySet()) {
+            Term term = termMapper.fromSubmit(currentMap.get(termData));
+            Term termPrev = prevMap.get(termData);
+            if (termPrev != null)
+                term.setId(termPrev.getId());
+            else
+                newOnes.add(term);
+            needToAdd.add(term);
+        }
+        needToRemove.forEach(t -> termService.removeById(t.getId()));
+        needToRemove.forEach(t -> setTermService.delete(setId, t.getId()));
+        needToAdd.forEach(termService::save);
+        newOnes.forEach(t -> setTermService.save(setId, t.getId()));
     }
 
 }

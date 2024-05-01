@@ -1,12 +1,11 @@
 'use client';
-import React, { useState } from 'react';
-import {StudySetCreate, StudySetResponse, TermCreateDTO, TermResponseDTO} from "@/ui/data/data";
+import React, { useState, useEffect } from 'react';
+import {StudySetResponseFull, TermCreateDTO, TermResponseDTO} from "@/ui/data/data";
 import Link from "next/link";
-import Cookies from "js-cookie";
-import axios from "axios";
-import {useRouter} from "next/navigation";
-import TermForm from "@/ui/components/TermForm";
+import axios, {AxiosResponse} from "axios";
+import {useRouter, useParams } from "next/navigation";
 import {DragDropContext, Droppable, Draggable, OnDragEndResponder, DropResult} from 'react-beautiful-dnd';
+import Image from "next/image";
 
 interface TempTerm {
     id: string,
@@ -16,49 +15,52 @@ interface TempTerm {
 export default function Page() {
     const router = useRouter();
     const [terms, setTerms] = useState<TempTerm[]>([]);
+    const [error, setError] = useState<String>("");
+    const [errorCauser, setErrorCauser] = useState<String | null>(null);
     const handleAddTerm = () => {
-        setTerms([...terms, { id: `T- ${Date.now()}`, term: '', definition: '' }]);
+        setTerms([...terms, { id: `T-${Date.now()}`, term: '', definition: '' }]);
     };
-    const [formData, setFormData] = useState<StudySetCreate>({
-        name: '',
-        pictureUrl: null,
-        terms: []
-    });
-    const [errorMessage, setErrorMessage] = useState('');
+    const [name, setName] = useState<string>("");
+    const params = useParams<{ id: string; }>()
+    const tempId = params?.id;
+
+    const setId = tempId ? Number.parseInt(tempId) : undefined;
+    useEffect(() => {
+        if (setId) {
+            try {
+                fetchStudySet(setId, setName, setTerms);
+                setError("")
+            } catch (error) {
+                setError(`${error}`)
+            }
+        }
+    }, [setId]);
+
 
     const handleDelete = () => {
 
     }
-    const handleSubmit = async () => {
-        try {
-            const response = await axios.post('http://localhost:8080/sets', formData,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': Cookies.get('termverse_access_token'),
-                    }
-                });
-            if (response.status===201 || response.status===200) {
-                console.log('Study set created successfully');
-                const createdSet: StudySetResponse = await response.data;
-                router.push('/sets')
-            } else {
-                const errorData = await response.data;
-                setErrorMessage(errorData.message || 'Error creating study set');
-                console.error('Error creating study set:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error creating study set:', error);
-            setErrorMessage('An error occurred while creating the study set');
-        }
-    };
+    const findErrorCauser = () => {
+        return terms.findIndex(t => t.term==="" || t.definition==="");
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: value,
-        }));
+    }
+    const handleSubmit = async () => {
+        if (!setId) return;
+        try {
+            const errC = findErrorCauser()
+            if (errC !== -1) {
+                triggerError (`Term # ${errC+1} is incomplete`)
+                setErrorCauser(terms[errC].id)
+                return;
+            }
+            const updated = await updateStudySet(setId, name, terms)
+            setName(updated.name)
+            setTerms(updated.terms);
+            triggerError ("Saved!")
+        } catch (error) {
+            triggerError (String(error))
+        }
+
     };
     const handleDeleteTerm = (id: string) => {
         setTerms(terms.filter(term => term.id !== id));
@@ -70,6 +72,7 @@ export default function Page() {
         items.splice(result.destination.index, 0, reorderedItem);
         setTerms(items);
     };
+    const [showError, setShowError] = useState(false);
 
     const getListStyle = (isDraggingOver: boolean) => ({
         background: isDraggingOver ? "#F0F0F0" : "white",
@@ -84,10 +87,35 @@ export default function Page() {
         return (isDragging ? "#D1EBFF" : "white");
     };
 
+    const handleDefinitionChange = (index: number, newDefinition: string) => {
+        const newTerms = terms.map((term, i) => {
+            if (i === index) {
+                return { ...term, definition: newDefinition };
+            }
+            return term;
+        });
+        setTerms(newTerms);
+    };
+    const triggerError = (msg: string) => {
+        setError(msg);
+        setShowError(true);
+        setTimeout(() => {
+            setShowError(false);
+        }, 5000);  // Hide after 5000 ms (5 seconds)
+    };
+    const handleTermChange = (index: number, newTerm: string) => {
+        const newTerms = terms.map((term, i) => {
+            if (i === index) {
+                return { ...term, term: newTerm };
+            }
+            return term;
+        });
+        setTerms(newTerms);
+    };
+
     return (
         <div className="w-full px-2 justify-center ">
             <div className="w-full">
-                <label className="error">{errorMessage}</label>
                 <main className="w-full flex flex-row">
                     <div className="w-1/4">
                         <div className="p-4">
@@ -96,8 +124,8 @@ export default function Page() {
                                 className="flex-grow p-2 border w-full rounded" autoComplete="off" type="text"
                                 id="name"
                                 name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
+                                value={name}
+                                onChange={e => setName(e.target.value)}
                                 required
                             />
                         </div>
@@ -119,8 +147,7 @@ export default function Page() {
                                         Delete
                                     </button>
                                 </div>
-                                <div className="w-1/2 p-4">
-                                </div>
+                                <div className="w-1/2 p-4">{error}</div>
                             </div>
                         </div>
                     </div>
@@ -137,7 +164,7 @@ export default function Page() {
                                                 style={getListStyle(snapshot.isDraggingOver)}
                                             >
                                                  {terms.map((term, index) => (
-                                                     <Draggable key={term.id} draggableId={term.id.toString()} index={index}>
+                                                     <Draggable key={index} draggableId={term.id.toString()} index={index}>
                                                          {(provided, snapshot) => (
                                                              <div
                                                                  ref={provided.innerRef}
@@ -145,7 +172,22 @@ export default function Page() {
                                                                  style={{ ...provided.draggableProps.style }}
                                                              >
                                                                  <div {...provided.dragHandleProps}>
-                                                                     <TermForm id={term.id} onDelete={handleDeleteTerm} bg={getItemBackground(snapshot.isDragging)} />
+ <div className="border-2 border-gray-200 px-10 py-3 rounded-2xl my-2 w-[32vw]"
+      style={{
+          background: getItemBackground(snapshot.isDragging)
+      }}>
+     <div className={`flex items-center space-x-4 ${ term.id===errorCauser ? 'bg-red-200' : ''}`}>
+         <input className="flex-grow p-2 border rounded" placeholder="Term"
+         onChange={(e) => handleTermChange(index, e.target.value)}
+         value={terms[index].term}/>
+         <input className="flex-grow p-2 border rounded" placeholder="Definition"
+         onChange={(e) => handleDefinitionChange(index, e.target.value)}
+         value={terms[index].definition}/>
+         <button onClick={() => handleDeleteTerm(term.id)} className="w-8 h-8">
+             <Image src="/trash.svg" alt="Delete" width="32" height="32" />
+         </button>
+     </div>
+ </div>
                                                                  </div>
                                                              </div>
                                                          )}
@@ -186,4 +228,55 @@ function mapFromTerms(temps: TermResponseDTO[]): TempTerm[] {
             definition: t.definition,
         }
     })
+}
+
+async function fetchStudySet(id: number, setName: (name: string) => void, setTerms: (terms: TempTerm[]) => void) {
+    const response: AxiosResponse<StudySetResponseFull> = await axios.get('http://localhost:8080/sets/full/'+id,  {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if (response.status !== 200) {
+        throw new Error("Cannot get study set from database")
+    }
+    const data = response.data;
+    setName(data.name)
+    setTerms(mapFromTerms(data.terms))
+}
+interface StudySetData {
+    name: string,
+    terms: TempTerm[]
+}
+async function updateStudySet(id: number, name: String, temps: TempTerm[]): Promise<StudySetData> {
+    const termCreateDTOS = mapToTerms(temps);
+    try {
+        const response: AxiosResponse<StudySetResponseFull> = await axios.put('http://localhost:8080/sets/' + id,
+            {
+                id: id,
+                name: name,
+                pictureUrl: null,
+                terms: termCreateDTOS
+            }, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        if (response.status === 401 || response.status === 403) {
+            throw new Error("You don't have permission to edit this study set")
+        }
+        if (response.status !== 200) {
+            throw new Error("Cannot update study set!")
+        }
+        return {
+            name: response.data.name,
+            terms: mapFromTerms(response.data.terms)
+        }
+    } catch (error) {
+        throw new Error(`Cannot save study set: ${error}`)
+    }
+
+
+
 }

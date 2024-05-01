@@ -16,7 +16,13 @@ export default function Page() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get<UserDescription>(`http://localhost:8080/users/${id}`);
+                const response = await axios.get<UserDescription>(`http://localhost:8080/users/${id}`,
+                    {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
                 if (response.status === 200) {
                     setUser(response.data);
                 } else {
@@ -31,7 +37,13 @@ export default function Page() {
 
         const fetchUserStudySets = async () => {
             try {
-                const response = await axios.get<StudySetResponse[]>(`http://localhost:8080/sets/byuser/${id}`);
+                const response = await axios.get<StudySetResponse[]>(`http://localhost:8080/sets/byuser/${id}`,
+                    {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
                 if (response.status === 200) {
                     setList({list: response.data });
                     console.log(list);

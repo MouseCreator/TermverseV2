@@ -32,6 +32,14 @@ export interface StudySetResponse {
     createdAt: string | null
 }
 
+export interface StudySetResponseFull {
+    id: number
+    name: string
+    pictureUrl: string | null
+    createdAt: string | null
+    terms: TermResponseDTO[]
+}
+
 export interface StudySetResponseList {
     list: StudySetResponse[]
 }

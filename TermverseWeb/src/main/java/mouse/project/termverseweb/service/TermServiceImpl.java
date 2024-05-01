@@ -6,12 +6,14 @@ import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermUpdateDTO;
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
 import mouse.project.termverseweb.mapper.TermMapper;
+import mouse.project.termverseweb.model.Term;
 import mouse.project.termverseweb.repository.TermRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class TermServiceImpl implements TermService {
 
     private final ServiceProviderContainer services;
@@ -39,6 +41,11 @@ public class TermServiceImpl implements TermService {
     @Override
     public TermResponseDTO save(TermCreateDTO createDTO) {
         return services.crud(repository).save(createDTO, mapper::fromCreate).to(mapper::toResponse);
+    }
+
+    @Override
+    public Term save(Term term) {
+        return repository.save(term);
     }
 
     @Override

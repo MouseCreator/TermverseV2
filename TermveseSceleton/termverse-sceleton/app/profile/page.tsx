@@ -17,9 +17,7 @@ export default function Page() {
         const fetchUser = async () => {
             try {
                 const response = await axios.get('http://localhost:8080/users/current'
-                ,{ headers: {
-                            'Authorization': `Bearer ${Cookies.get('termverse_access_token')}`
-                        },});
+                ,{ withCredentials: true,});
                 if (response.status === 200) {
                     // Assuming the response data includes user details directly
                     setUser({

@@ -9,7 +9,7 @@ export default function Page() {
     const [error, setError] = useState('');
 
     const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault(); // Prevent the default form submission behavior
+        event.preventDefault();
 
         try {
             const studySetName = (name==="") ? "My study set" : name;
@@ -18,7 +18,7 @@ export default function Page() {
                 pictureUrl: null,
                 terms: [],
             }, {
-                withCredentials: true,  // This option will include cookies with the request
+                withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -51,6 +51,7 @@ export default function Page() {
                     id="name"
                     name="name"
                     placeholder="My study set"
+                    onChange={e => setName(e.target.value)}
                 />
                 <button type="submit" className="bg-purple-500 text-white p-2 w-full my-2 rounded text-center">Create!</button>
             </form>

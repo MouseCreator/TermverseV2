@@ -1,10 +1,7 @@
 package mouse.project.termverseweb.mapper;
 
 import mouse.project.termverseweb.config.MapperConfig;
-import mouse.project.termverseweb.dto.term.TermCreateDTO;
-import mouse.project.termverseweb.dto.term.TermResponseDTO;
-import mouse.project.termverseweb.dto.term.TermUpdateDTO;
-import mouse.project.termverseweb.dto.term.TermWithProgressResponseDTO;
+import mouse.project.termverseweb.dto.term.*;
 import mouse.project.termverseweb.model.Term;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,6 +15,7 @@ public interface TermMapper {
     @Mapping(target = "progress", source = "progress")
     TermWithProgressResponseDTO toResponseWithProgress(Term model, String progress);
     Term fromCreate(TermCreateDTO createDTO);
+    Term fromSubmit(TermSubmitDTO createDTO);
     Term fromUpdate(TermUpdateDTO updateDTO);
     @Named("termToResponse")
     default List<TermResponseDTO> toResponse(List<Term> termList) {
@@ -26,6 +24,10 @@ public interface TermMapper {
     @Named("termFromCreate")
     default List<Term> fromCreate(List<TermCreateDTO> createDTOList) {
         return createDTOList.stream().map(this::fromCreate).toList();
+    }
+    @Named("termsFromSubmit")
+    default List<Term> fromSubmit(List<TermSubmitDTO> createDTOList) {
+        return createDTOList.stream().map(this::fromSubmit).toList();
     }
     @Named("termFromUpdate")
     default List<Term> fromUpdate(List<TermUpdateDTO> updateDTOs) {

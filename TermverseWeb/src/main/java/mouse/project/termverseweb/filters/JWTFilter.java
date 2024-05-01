@@ -9,6 +9,7 @@ import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 import mouse.project.termverseweb.filters.argument.OptionalAuthorizationFactory;
 import mouse.project.termverseweb.filters.helper.TokenIntrospection;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 @Service
@@ -23,8 +24,8 @@ public class JWTFilter implements MFilter {
 
     @Override
     public boolean invoke(HttpServletRequest request, HttpServletResponse response) {
-        String token = request.getHeader("Authorization");
-
+        Cookie[] cookies = request.getCookies();
+        String token = getAuthToken(cookies);
         if (token != null) {
             if(token.startsWith("Bearer ")) {
                 token = token.substring("Bearer ".length());
@@ -40,6 +41,18 @@ public class JWTFilter implements MFilter {
             request.setAttribute(Args.OPT_AUTH, OptionalAuthentication.empty());
         }
         return true;
+    }
+
+    private String getAuthToken(Cookie[] cookies) {
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("termverse_access_token")) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 
 

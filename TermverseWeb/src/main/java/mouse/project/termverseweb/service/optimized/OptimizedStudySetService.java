@@ -11,6 +11,5 @@ public interface OptimizedStudySetService {
     List<StudySetDescriptionDTO> getStudySetsByUser(Long userId, Integer page, Integer size);
     StudySetDescriptionWithProgressDTO getDescription(Long id, Long userId);
     StudySetHeaderResponseDTO getHeader(Long id);
-
-
+    StudySetWithTermsResponseDTO update(Long userId, StudySetSubmitDTO dto);
 }

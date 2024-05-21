@@ -12,10 +12,7 @@ import mouse.project.termverseweb.mapper.UserMapper;
 import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -54,7 +51,7 @@ public class UserController {
     @GetMapping("/{id}")
     @Get
     @URL("/[id]")
-    public UserResponseDTO findById(@FromURL("id")Long id) {
+    public UserResponseDTO findById(@FromURL("id") @PathVariable("id") Long id) {
         return userService.getById(id);
     }
 

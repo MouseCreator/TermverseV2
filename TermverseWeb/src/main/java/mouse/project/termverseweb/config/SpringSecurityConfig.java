@@ -5,7 +5,7 @@ import mouse.project.termverseweb.security.kc.KeycloakState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,28 +22,31 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@Profile("prod")
 public class SpringSecurityConfig {
     private final KeycloakState keycloakState;
-    private final OptionalAuthenticationFilter optionalAuthenticationFilter;
     @Autowired
-    public SpringSecurityConfig(KeycloakState keycloakState,
-                                OptionalAuthenticationFilter optionalAuthenticationFilter) {
+    public SpringSecurityConfig(KeycloakState keycloakState) {
         this.keycloakState = keycloakState;
-        this.optionalAuthenticationFilter = optionalAuthenticationFilter;
     }
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           JwtDecoder jwtDecoder,
+                                           OptionalAuthenticationFilter optionalAuthenticationFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(c -> c.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)))
                 .addFilterBefore(optionalAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             ;
         return http.build();
     }
-
+    @Bean
+    public OptionalAuthenticationFilter optionalAuthenticationFilter(JwtDecoder jwtDecoder) {
+        return new OptionalAuthenticationFilter(jwtDecoder);
+    }
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(keyToUse()).build();

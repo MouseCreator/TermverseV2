@@ -43,7 +43,7 @@ public class UserController {
         return userService.findAll();
     }
 
-    @GetMapping
+    @GetMapping("/current")
     @Get
     @URL("/current")
     public UserResponseDTO userInfo(@FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
@@ -51,7 +51,7 @@ public class UserController {
         return mapper.toResponse(user);
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     @Get
     @URL("/[id]")
     public UserResponseDTO findById(@FromURL("id")Long id) {

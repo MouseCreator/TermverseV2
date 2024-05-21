@@ -33,8 +33,7 @@ public class JWTFilter implements MFilter {
                 token = token.substring("Bearer ".length());
             }
             try {
-                Claims payload = tokenService.getPayload(token);
-                String subject = payload.getSubject();
+                String subject = tokenService.getSubject(token);
                 OptionalAuthentication optionalAuthentication = optionalAuthorizationFactory.fromSubject(subject);
                 request.setAttribute(Args.OPT_AUTH, optionalAuthentication);
             } catch (TokenValidationException e) {

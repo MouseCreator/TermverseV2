@@ -3,6 +3,7 @@ package mouse.project.termverseweb.security.kc;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.termverseweb.exception.FilterException;
 import mouse.project.termverseweb.security.KeyService;
+import mouse.project.termverseweb.service.register.KeycloakClient;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -18,19 +19,17 @@ import java.security.interfaces.RSAPublicKey;
 public class KeycloakState {
     private RSAPublicKey publicKey = null;
     private final KeyService keyService;
+    private final KeycloakClient keycloakClient;
     @Auto
     @Autowired
-    public KeycloakState(KeyService keyService) {
+    public KeycloakState(KeyService keyService, KeycloakClient keycloakClient) {
         this.keyService = keyService;
+        this.keycloakClient = keycloakClient;
     }
 
     private String fetchKeycloakKeys() {
-        String publicKeyUrl = "http://localhost:8180/realms/termverse/protocol/openid-connect/certs";
-
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost(publicKeyUrl);
-            HttpEntity entity = client.execute(post).getEntity();
-            return EntityUtils.toString(entity);
+        try {
+            return keycloakClient.fetchKeycloakKeys();
         } catch (Exception e) {
             throw new FilterException(e);
         }

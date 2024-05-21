@@ -1,9 +1,11 @@
 package mouse.project.termverseweb.filters.helper;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("prod")
 public class KeycloakDataProviderBean implements KeycloakDataProvider {
     @Value("${KC_CLIENT_ID}")
     private String kcClientId;

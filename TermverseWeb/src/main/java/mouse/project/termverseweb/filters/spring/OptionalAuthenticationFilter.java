@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Component
 public class OptionalAuthenticationFilter extends OncePerRequestFilter {
     private final JwtDecoder decoder;
     public OptionalAuthenticationFilter(JwtDecoder decoder) {

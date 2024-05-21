@@ -5,6 +5,7 @@ import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.exception.StatusException;
 import mouse.project.lib.web.filter.MFilter;
+import mouse.project.termverseweb.exception.TokenValidationException;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 import mouse.project.termverseweb.filters.argument.OptionalAuthorizationFactory;
@@ -36,7 +37,7 @@ public class JWTFilter implements MFilter {
                 String subject = payload.getSubject();
                 OptionalAuthentication optionalAuthentication = optionalAuthorizationFactory.fromSubject(subject);
                 request.setAttribute(Args.OPT_AUTH, optionalAuthentication);
-            } catch (Exception e) {
+            } catch (TokenValidationException e) {
                 throw new StatusException(403, e.getMessage());
             }
         } else {

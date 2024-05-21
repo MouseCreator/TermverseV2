@@ -4,6 +4,8 @@ import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Prototype;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.context.WebContext;
+import mouse.project.lib.web.error.ErrorHandlerInvoker;
+import mouse.project.lib.web.exception.ControllerException;
 import mouse.project.lib.web.exception.RequestProcessException;
 import mouse.project.lib.web.parse.JacksonBodyParser;
 import mouse.project.lib.web.register.RequestMethod;
@@ -20,13 +22,16 @@ public class ReqRespContextImpl implements ReqRespContext {
     private final WebContext webContext;
     private final RequestPreinitializer requestPreinitializer;
     private final JacksonBodyParser json;
+    private final ErrorHandlerInvoker errorHandlerInvoker;
     @Auto
     public ReqRespContextImpl(WebContext webContext,
                               RequestPreinitializer requestPreinitializer,
-                              JacksonBodyParser json) {
+                              JacksonBodyParser json,
+                              ErrorHandlerInvoker errorHandlerInvoker) {
         this.webContext = webContext;
         this.requestPreinitializer = requestPreinitializer;
         this.json = json;
+        this.errorHandlerInvoker = errorHandlerInvoker;
     }
 
     @Override
@@ -45,22 +50,37 @@ public class ReqRespContextImpl implements ReqRespContext {
         RequestURL requestURL = requestPreinitializer.createRequest(req);
 
         WebDispatcher dispatcher = webContext.getDispatcher(config);
-        WebResponse webResponse = dispatcher.onRequest(requestURL);
+        try {
+            WebResponse webResponse = dispatcher.onRequest(requestURL);
+            onSuccess(resp, webResponse);
+        } catch (ControllerException controllerException) {
+            onError(resp, controllerException);
+        } catch (RuntimeException e) {
+            onFatalError(e, resp);
+        }
+
+    }
+
+    private void onFatalError(RuntimeException e, HttpServletResponse response) {
+        errorHandlerInvoker.onFatalError(e, response);
+    }
+
+    private void onError(HttpServletResponse resp, ControllerException controllerException) {
+        Throwable cause = controllerException.getCause();
+        if (cause instanceof RuntimeException) {
+            errorHandlerInvoker.processError((RuntimeException) cause, resp);
+        }
+    }
+
+    private void onSuccess(HttpServletResponse resp, WebResponse webResponse) throws IOException {
         Object result = webResponse.getResult();
         int status = webResponse.status();
         resp.setStatus(status);
-
-        if (status >= 400) {
-            resp.sendError(status);
-            return;
-        }
 
         String toWrite = json.unparse(result);
         resp.getWriter().write(toWrite);
         resp.flushBuffer();
     }
-
-
 
 
 }

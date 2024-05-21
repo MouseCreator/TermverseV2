@@ -1,8 +1,14 @@
 package mouse.project.lib.web.filter;
 
+import mouse.project.lib.exception.MultipleImplementationsException;
+import mouse.project.lib.ioc.Inj;
 import mouse.project.lib.ioc.Ioc;
 import mouse.project.lib.ioc.annotation.Service;
-import mouse.project.lib.web.exception.StatusException;
+import mouse.project.lib.web.error.ErrorHandler;
+import mouse.project.lib.web.error.ErrorHandlerInvoker;
+import mouse.project.lib.web.error.ErrorHandlerMap;
+import mouse.project.lib.web.error.ErrorStyle;
+import mouse.project.lib.web.response.ErrorResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,23 +17,31 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class FilterDispatcher implements Filter {
 
     private FilterChainFactory filterChainFactory;
 
-    private final Logger logger = LogManager.getLogger(FilterDispatcher.class);
+    private ErrorHandlerInvoker errorHandlerInvoker;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         String configurationClass = filterConfig.getInitParameter("configurationClass");
         try {
             Class<?> clazz = Class.forName(configurationClass);
-            filterChainFactory = Ioc.getConfiguredInjector(clazz).get(FilterChainFactory.class);
+            Inj inj = Ioc.getConfiguredInjector(clazz);
+            filterChainFactory = inj.get(FilterChainFactory.class);
+            errorHandlerInvoker = inj.get(ErrorHandlerInvoker.class);
         } catch (ClassNotFoundException e) {
             throw new ServletException(e);
         }
     }
+
+
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -36,21 +50,13 @@ public class FilterDispatcher implements Filter {
             while (chain.hasNext()) {
                 chain.invokeNext();
             }
-        } catch (StatusException e) {
-            sendError(e, servletResponse);
+        } catch (RuntimeException e) {
+            errorHandlerInvoker.processError(e, servletResponse);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private void sendError(StatusException e, ServletResponse servletResponse) {
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-        try {
-            logger.debug(e.getMessage());
-            response.sendError(e.getStatus());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
+
 
     @Override
     public void destroy() {

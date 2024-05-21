@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.filters;
 
+import io.jsonwebtoken.Claims;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.exception.StatusException;
@@ -7,18 +8,18 @@ import mouse.project.lib.web.filter.MFilter;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 import mouse.project.termverseweb.filters.argument.OptionalAuthorizationFactory;
-import mouse.project.termverseweb.filters.helper.TokenIntrospection;
+import mouse.project.termverseweb.security.TokenService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 @Service
 public class JWTFilter implements MFilter {
-    private final TokenIntrospection tokenIntrospection;
+    private final TokenService tokenService;
     private final OptionalAuthorizationFactory optionalAuthorizationFactory;
     @Auto
-    public JWTFilter(TokenIntrospection tokenIntrospection, OptionalAuthorizationFactory optionalAuthorizationFactory) {
-        this.tokenIntrospection = tokenIntrospection;
+    public JWTFilter(TokenService tokenService, OptionalAuthorizationFactory optionalAuthorizationFactory) {
+        this.tokenService = tokenService;
         this.optionalAuthorizationFactory = optionalAuthorizationFactory;
     }
 
@@ -30,9 +31,10 @@ public class JWTFilter implements MFilter {
             if(token.startsWith("Bearer ")) {
                 token = token.substring("Bearer ".length());
             }
-            String tokenDecoded = tokenIntrospection.decodeAndValidate(token);
             try {
-                OptionalAuthentication optionalAuthentication = optionalAuthorizationFactory.processTokenResponse(tokenDecoded);
+                Claims payload = tokenService.getPayload(token);
+                String subject = payload.getSubject();
+                OptionalAuthentication optionalAuthentication = optionalAuthorizationFactory.fromSubject(subject);
                 request.setAttribute(Args.OPT_AUTH, optionalAuthentication);
             } catch (Exception e) {
                 throw new StatusException(403, e.getMessage());

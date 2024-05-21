@@ -28,4 +28,8 @@ public class OptionalAuthorizationFactory {
             return OptionalAuthentication.empty();
         }
     }
+
+    public OptionalAuthentication fromSubject(String subject) {
+        return OptionalAuthentication.of(subject);
+    }
 }

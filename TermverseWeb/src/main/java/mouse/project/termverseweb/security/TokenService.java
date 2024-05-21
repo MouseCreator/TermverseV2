@@ -15,12 +15,10 @@ import java.security.interfaces.RSAPublicKey;
 @mouse.project.lib.ioc.annotation.Service
 public class TokenService {
 
-    private final KeyService keyService;
     private final KeycloakState keycloakState;
     @Auto
     @Autowired
-    public TokenService(KeyService keyService, KeycloakState keycloakState) {
-        this.keyService = keyService;
+    public TokenService(KeycloakState keycloakState) {
         this.keycloakState = keycloakState;
     }
 

@@ -49,7 +49,7 @@ class UserRepositoryImplTest {
     @Test
     void findById() {
         List<User> users = insertData("FA", 1);
-        User user = users.get(0);
+        User user = users.getFirst();
         Long id = user.getId();
         Optional<User> uOptional = userRepository.findById(id);
         assertTrue(uOptional.isPresent());
@@ -62,7 +62,7 @@ class UserRepositoryImplTest {
     @Test
     void deleteById() {
         List<User> users = insertData("DEL", 1);
-        User user = users.get(0);
+        User user = users.getFirst();
         Long id = user.getId();
         assertTrue(userRepository.findById(id).isPresent());
         userRepository.deleteById(id);
@@ -78,7 +78,7 @@ class UserRepositoryImplTest {
     @Test
     void findAllIncludeDeleted() {
         List<User> users = insertData("F_A_I_D", 1);
-        User user = users.get(0);
+        User user = users.getFirst();
         Long id = user.getId();
         userRepository.deleteById(id);
         List<User> list = userRepository.findAllIncludeDeleted();
@@ -89,7 +89,7 @@ class UserRepositoryImplTest {
     @Test
     void restoreById() {
         List<User> users = insertData("DEL", 1);
-        User user = users.get(0);
+        User user = users.getFirst();
         Long id = user.getId();
         userRepository.deleteById(id);
         assertTrue(userRepository.findById(id).isEmpty());
@@ -100,7 +100,7 @@ class UserRepositoryImplTest {
     @Test
     void findByIdIncludeDeleted() {
         List<User> users = insertData("FIND_DEL", 1);
-        User user = users.get(0);
+        User user = users.getFirst();
         Long id = user.getId();
         assertTrue(userRepository.findByIdIncludeDeleted(id).isPresent());
         userRepository.deleteById(id);
@@ -115,5 +115,17 @@ class UserRepositoryImplTest {
         List<User> allSpecial = userRepository.findAllByNameIgnoreCase(lowerCase);
         assertEquals(users.size(), allSpecial.size());
         assertTrue(users.containsAll(allSpecial));
+    }
+
+    @Test
+    void existsByLogin() {
+        String name = "EXISTS";
+        User user = new User();
+        user.setName(name);
+        User saved = userRepository.save(user);
+        assertTrue(userRepository.existsByName(name));
+        userRepository.deleteById(saved.getId());
+        assertFalse(userRepository.existsByName(name));
+        assertFalse(userRepository.existsByName("__NOT_EXISTING__"));
     }
 }

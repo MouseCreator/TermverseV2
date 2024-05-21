@@ -70,7 +70,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean existsByName(String login) {
         return executor.read(e ->
-                e.executeQuery("SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM users WHERE name = ? AND deleted_at IS NULL", login)
+                e.executeQuery("SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM users u WHERE u.name = ? AND deleted_at IS NULL", login)
                 .getRaw().map(Raw::getBoolean));
     }
 

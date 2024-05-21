@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.security.interfaces.RSAPublicKey;
 
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class KeycloakState {
     private RSAPublicKey publicKey = null;
     private final KeyService keyService;

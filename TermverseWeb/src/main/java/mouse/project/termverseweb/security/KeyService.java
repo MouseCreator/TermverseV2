@@ -12,6 +12,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 @Service
+@mouse.project.lib.ioc.annotation.Service
 public class KeyService {
     public RSAPublicKey convertToRSAPublicKey(String json) {
         JacksonBodyParser jacksonBodyParser = new JacksonBodyParser();

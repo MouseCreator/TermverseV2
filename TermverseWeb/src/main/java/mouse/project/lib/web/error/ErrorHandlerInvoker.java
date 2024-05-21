@@ -3,6 +3,7 @@ package mouse.project.lib.web.error;
 import mouse.project.lib.exception.MultipleImplementationsException;
 import mouse.project.lib.ioc.annotation.After;
 import mouse.project.lib.ioc.annotation.Auto;
+import mouse.project.lib.ioc.annotation.Collect;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.response.ErrorResponse;
 
@@ -21,7 +22,7 @@ public class ErrorHandlerInvoker {
         this.errorHandlerMap = errorHandlerMap;
     }
     @After
-    public void withErrorStyle(List<ErrorStyle> errorStyles) {
+    public void withErrorStyle(@Collect(ErrorStyle.class) List<ErrorStyle> errorStyles) {
         if (errorStyles.isEmpty()) {
             errorStyle = ErrorResponse::getMessage;
         }

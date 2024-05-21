@@ -1,25 +1,14 @@
 package mouse.project.lib.web.filter;
 
-import mouse.project.lib.exception.MultipleImplementationsException;
 import mouse.project.lib.ioc.Inj;
 import mouse.project.lib.ioc.Ioc;
 import mouse.project.lib.ioc.annotation.Service;
-import mouse.project.lib.web.error.ErrorHandler;
 import mouse.project.lib.web.error.ErrorHandlerInvoker;
-import mouse.project.lib.web.error.ErrorHandlerMap;
-import mouse.project.lib.web.error.ErrorStyle;
-import mouse.project.lib.web.response.ErrorResponse;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import javax.servlet.*;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.*;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FilterDispatcher implements Filter {

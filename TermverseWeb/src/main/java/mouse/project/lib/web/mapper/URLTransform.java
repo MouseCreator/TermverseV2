@@ -1,6 +1,6 @@
 package mouse.project.lib.web.mapper;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class URLTransform {
     public static String getFullURL(HttpServletRequest request) {

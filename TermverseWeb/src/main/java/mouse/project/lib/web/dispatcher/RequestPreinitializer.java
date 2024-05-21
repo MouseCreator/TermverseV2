@@ -12,7 +12,7 @@ import mouse.project.lib.web.request.RequestURLImpl;
 import mouse.project.lib.web.tool.FullURL;
 import mouse.project.lib.web.tool.URLService;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;

@@ -13,8 +13,8 @@ import mouse.project.lib.web.register.RequestMethod;
 import mouse.project.lib.web.request.RequestURL;
 import mouse.project.lib.web.response.WebResponse;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Service

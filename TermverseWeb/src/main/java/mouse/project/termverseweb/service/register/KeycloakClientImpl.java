@@ -11,6 +11,7 @@ import mouse.project.termverseweb.filters.helper.KeycloakData;
 import mouse.project.termverseweb.filters.helper.KeycloakDataProvider;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -127,7 +128,7 @@ public class KeycloakClientImpl implements KeycloakClient{
         String publicKeyUrl = "http://localhost:8180/realms/termverse/protocol/openid-connect/certs";
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost(publicKeyUrl);
+            HttpGet post = new HttpGet(publicKeyUrl);
             HttpEntity entity = client.execute(post).getEntity();
             return EntityUtils.toString(entity);
         }

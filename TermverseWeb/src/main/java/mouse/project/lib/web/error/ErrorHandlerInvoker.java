@@ -7,8 +7,8 @@ import mouse.project.lib.ioc.annotation.Collect;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.response.ErrorResponse;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;

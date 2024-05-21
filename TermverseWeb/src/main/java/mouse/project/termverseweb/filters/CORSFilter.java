@@ -3,8 +3,8 @@ package mouse.project.termverseweb.filters;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.filter.MFilter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 @Service
 public class CORSFilter implements MFilter{
     @Override

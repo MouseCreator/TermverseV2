@@ -1,6 +1,5 @@
 package mouse.project.termverseweb.filters;
 
-import io.jsonwebtoken.Claims;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.exception.StatusException;
@@ -11,9 +10,9 @@ import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 import mouse.project.termverseweb.filters.argument.OptionalAuthorizationFactory;
 import mouse.project.termverseweb.security.TokenService;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 @Service
 public class JWTFilter implements MFilter {
     private final TokenService tokenService;

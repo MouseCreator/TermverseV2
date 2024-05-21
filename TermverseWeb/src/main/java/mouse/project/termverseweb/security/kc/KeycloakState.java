@@ -38,7 +38,11 @@ public class KeycloakState {
     public RSAPublicKey getPublicKey() {
         if (publicKey == null) {
             String keysJson = fetchKeycloakKeys();
-            publicKey = keyService.convertToRSAPublicKey(keysJson);
+            try {
+                publicKey = keyService.convertToRSAPublicKey(keysJson);
+            } catch (Exception e) {
+                throw new RuntimeException("Error parsing keycloak response: " + keysJson, e);
+            }
         }
         return publicKey;
     }

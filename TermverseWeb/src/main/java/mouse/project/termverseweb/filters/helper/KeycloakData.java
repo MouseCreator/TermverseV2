@@ -6,5 +6,6 @@ import lombok.Data;
 public class KeycloakData {
     private String clientId;
     private String clientSecret;
-
+    private String adminUsername;
+    private String adminPassword;
 }

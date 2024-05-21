@@ -7,6 +7,7 @@ import mouse.project.lib.web.context.WebContext;
 import mouse.project.lib.web.error.ErrorHandlerInvoker;
 import mouse.project.lib.web.exception.ControllerException;
 import mouse.project.lib.web.exception.RequestProcessException;
+import mouse.project.lib.web.exception.StatusException;
 import mouse.project.lib.web.parse.JacksonBodyParser;
 import mouse.project.lib.web.register.RequestMethod;
 import mouse.project.lib.web.request.RequestURL;
@@ -55,6 +56,8 @@ public class ReqRespContextImpl implements ReqRespContext {
             onSuccess(resp, webResponse);
         } catch (ControllerException controllerException) {
             onError(resp, controllerException);
+        } catch (StatusException statusException) {
+            errorHandlerInvoker.processError(statusException, resp);
         } catch (RuntimeException e) {
             onFatalError(e, resp);
         }

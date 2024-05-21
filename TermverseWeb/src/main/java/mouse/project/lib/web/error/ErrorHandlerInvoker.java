@@ -62,7 +62,7 @@ public class ErrorHandlerInvoker {
     public void onFatalError(RuntimeException e, HttpServletResponse response) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setStatus(500);
-        errorResponse.setMessage("Fatal:" + e.getMessage());
+        errorResponse.setMessage("Fatal: " + e.getMessage());
         writeToResponse(errorResponse, response);
     }
 }

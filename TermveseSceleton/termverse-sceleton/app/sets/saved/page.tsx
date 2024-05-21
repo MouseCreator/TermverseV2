@@ -22,7 +22,7 @@ export default function Page() {
     return (
         <main className="w-full">
             <div className="p-4 flex flex-row justify-around">
-                <Link href="sets/create">
+                <Link href="/sets/create">
                     <div className="w-32 text-center bg-purple-600 rounded text-white h-8 hover:bg-purple-400">
                         Create
                     </div>

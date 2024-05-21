@@ -41,7 +41,8 @@ async function refresh(token: string, cookies: RequestCookies, req: NextRequest,
         const response = await fetch('http://localhost:8180/realms/termverse/protocol/openid-connect/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
+            body: new URLSearchParams(
+                {
                 client_id: process.env.KEYCLOAK_CLIENT_ID,
                 client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
                 grant_type: "refresh_token",

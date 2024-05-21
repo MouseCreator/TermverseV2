@@ -27,26 +27,21 @@ export function Signup() {
             // Receive token
             const registerResponse = await axios.post('/api/register', { login: login, password: password });
             const accessToken = registerResponse.data.accessToken;
-
-
-            //Store token
-            localStorage.setItem('termverse_jwt', accessToken);
-
             //Send to server
             const javaResponse = await axios.post('http://localhost:8080/users/',
                  {
                     name: login,
                     profilePictureUrl: null
                 }, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                },
+                    withCredentials: true
             });
 
             console.log('User ID from Java server:', javaResponse.data.id);
             router.push("/profile")
         } catch (error) {
-            setError(`An error occurred: Failed to sign in`);
+            if (axios.isAxiosError(error)) {
+                setError(`Cannot sign up:` + JSON.stringify(error.response?.data.message));
+            }
         } finally {
             setIsSubmitting(false);
         }

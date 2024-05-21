@@ -66,8 +66,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             res.status(200).json({ accessToken });
         } catch (error) {
-            console.error('Error during registration/token retrieval:', error);
-            res.status(500).json({ message: "Internal Server Error" });
+            if (axios.isAxiosError(error)) {
+                res.status(error.status || 500).json({ message: error.message})
+            } else {
+                res.status(500).json({message: "Internal Server Error"});
+            }
         }
     } else {
         res.setHeader('Allow', ['POST']);

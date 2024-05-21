@@ -1,7 +1,7 @@
 package mouse.project.termverseweb.config;
 
 import mouse.project.termverseweb.security.KeyService;
-import mouse.project.termverseweb.security.kc.KeycloakCommunication;
+import mouse.project.termverseweb.security.kc.KeycloakState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,11 +17,11 @@ import java.security.interfaces.RSAPublicKey;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
-    private final KeycloakCommunication keycloakCommunication;
+    private final KeycloakState keycloakState;
     private final KeyService keyService;
     @Autowired
-    public SpringSecurityConfig(KeycloakCommunication keycloakCommunication, KeyService keyService) {
-        this.keycloakCommunication = keycloakCommunication;
+    public SpringSecurityConfig(KeycloakState keycloakState, KeyService keyService) {
+        this.keycloakState = keycloakState;
         this.keyService = keyService;
     }
 
@@ -38,16 +38,8 @@ public class SpringSecurityConfig {
         return NimbusJwtDecoder.withPublicKey(keyToUse()).build();
     }
 
-    private String getPublicKey() {
-        return keycloakCommunication.getPublicKey();
-    }
-
     private RSAPublicKey keyToUse() {
-        String publicKey = getPublicKey();
-        return convertToRSAPublicKey(publicKey);
+        return keycloakState.getPublicKey();
     }
 
-    private RSAPublicKey convertToRSAPublicKey(String publicKey) {
-        return keyService.convertToRSAPublicKey(publicKey);
-    }
 }

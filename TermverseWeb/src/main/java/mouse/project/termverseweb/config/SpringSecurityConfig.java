@@ -1,6 +1,6 @@
 package mouse.project.termverseweb.config;
 
-import mouse.project.termverseweb.security.KeyService;
+import mouse.project.termverseweb.filters.spring.OptionalAuthenticationFilter;
 import mouse.project.termverseweb.security.kc.KeycloakState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,26 +11,37 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
     private final KeycloakState keycloakState;
-    private final KeyService keyService;
+    private final OptionalAuthenticationFilter optionalAuthenticationFilter;
     @Autowired
-    public SpringSecurityConfig(KeycloakState keycloakState, KeyService keyService) {
+    public SpringSecurityConfig(KeycloakState keycloakState,
+                                OptionalAuthenticationFilter optionalAuthenticationFilter) {
         this.keycloakState = keycloakState;
-        this.keyService = keyService;
+        this.optionalAuthenticationFilter = optionalAuthenticationFilter;
     }
-
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .cors(c -> c.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
-                .build();
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
+                .addFilterBefore(optionalAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            ;
+        return http.build();
     }
 
     @Bean
@@ -42,4 +53,17 @@ public class SpringSecurityConfig {
         return keycloakState.getPublicKey();
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "DELETE", "PUT", "UPDATE"));
+        configuration.setAllowedHeaders(List.of("Content-Type", "Authorization", "Content-Length", "X-Requested-With"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

@@ -3,14 +3,14 @@ package mouse.project.termverseweb.controller;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
-import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
-import mouse.project.termverseweb.filters.argument.OptionalAuthorizationHandler;
 import mouse.project.termverseweb.mapper.UserMapper;
 import mouse.project.termverseweb.model.User;
+import mouse.project.termverseweb.resolver.CurrentUserContext;
 import mouse.project.termverseweb.service.UserService;
+import mouse.project.termverseweb.service.help.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,14 +23,14 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final OptionalAuthorizationHandler auth;
     private final UserMapper mapper;
+    private final AuthService authService;
     @Autowired
     @Auto
-    public UserController(UserService userService, OptionalAuthorizationHandler auth, UserMapper mapper) {
+    public UserController(UserService userService, UserMapper mapper, AuthService authService) {
         this.userService = userService;
-        this.auth = auth;
         this.mapper = mapper;
+        this.authService = authService;
     }
 
     @GetMapping
@@ -40,11 +40,14 @@ public class UserController {
         return userService.findAll();
     }
 
-    @GetMapping("/current")
     @Get
     @URL("/current")
-    public UserResponseDTO userInfo(@FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
-        User user = auth.toUser(optionalAuthentication);
+    @GetMapping("/current")
+    public UserResponseDTO userInfo(@CurrentUserContext @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
+        return doUserInfo(optionalAuthentication);
+    }
+    private UserResponseDTO doUserInfo(Object authParam) {
+        User user = authService.onAuth(authParam).toUser();
         return mapper.toResponse(user);
     }
 
@@ -53,17 +56,5 @@ public class UserController {
     @URL("/[id]")
     public UserResponseDTO findById(@FromURL("id") @PathVariable("id") Long id) {
         return userService.getById(id);
-    }
-
-    @PostMapping
-    @Post
-    @URL
-    public UserResponseDTO create(
-            @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication,
-            @RBody UserCreateDTO userCreateDTO) {
-
-        UserResponseDTO saved = userService.save(userCreateDTO);
-        auth.registerUser(optionalAuthentication, saved.getId());
-        return saved;
     }
 }

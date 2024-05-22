@@ -37,7 +37,7 @@ public class OptionalAuthContext implements AuthContext {
     }
 
     @Override
-    public boolean isAuthorized() {
+    public boolean isAuthenticated() {
         return optionalAuthentication.isPresent();
     }
 

@@ -6,6 +6,6 @@ import mouse.project.termverseweb.model.User;
 public interface AuthContext {
     Long toUserId();
     User toUser();
-    boolean isAuthorized();
+    boolean isAuthenticated();
     OptionalAuthentication getOptionalAuthentication();
 }

@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.controller;
 
+import lombok.extern.log4j.Log4j2;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping(value = "/users")
 @RequestPrefix("/users")
 @Controller
+@Log4j2
 public class UserController {
 
     private final UserService userService;

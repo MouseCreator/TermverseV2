@@ -2,13 +2,11 @@ package mouse.project.termverseweb.controller;
 
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Controller;
-import mouse.project.lib.web.annotation.FromAttribute;
-import mouse.project.lib.web.annotation.Get;
-import mouse.project.lib.web.annotation.RBody;
-import mouse.project.lib.web.annotation.URL;
+import mouse.project.lib.web.annotation.*;
 import mouse.project.termverseweb.dto.register.UserRegisterDTO;
 import mouse.project.termverseweb.dto.register.UserTokensDTO;
 import mouse.project.termverseweb.exception.AlreadyAuthorizedException;
+import mouse.project.termverseweb.exception.NoSuchUserException;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 import mouse.project.termverseweb.resolver.CurrentUserContext;
@@ -16,6 +14,7 @@ import mouse.project.termverseweb.service.help.AuthContext;
 import mouse.project.termverseweb.service.help.AuthService;
 import mouse.project.termverseweb.service.register.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,8 +30,9 @@ public class RegistrationController {
         this.authService = authService;
     }
 
-    @Get
+    @Post
     @URL("/register")
+    @PostMapping("/register")
     public UserTokensDTO register(@RBody @RequestBody UserRegisterDTO userRegisterDTO,
                                   @CurrentUserContext @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
         return doRegister(userRegisterDTO, optionalAuthentication);
@@ -45,8 +45,9 @@ public class RegistrationController {
         return registerService.register(userRegisterDTO);
     }
 
-    @Get
+    @Post
     @URL("/login")
+    @PostMapping("/login")
     public UserTokensDTO login(@RBody @RequestBody UserRegisterDTO userRegisterDTO,
                                @CurrentUserContext @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
         return doLogin(userRegisterDTO, optionalAuthentication);
@@ -55,8 +56,8 @@ public class RegistrationController {
     private UserTokensDTO doLogin(UserRegisterDTO userRegisterDTO, Object authParam) {
         AuthContext authContext = authService.onAuth(authParam);
         if (authContext.isAuthenticated()) {
-            throw new AlreadyAuthorizedException("User is already logged in");
+            throw new NoSuchUserException("User is already logged in");
         }
-        return registerService.register(userRegisterDTO);
+        return registerService.login(userRegisterDTO);
     }
 }

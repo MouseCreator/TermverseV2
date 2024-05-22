@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
-import mouse.project.lib.web.exception.StatusException;
 import mouse.project.termverseweb.dto.studyset.*;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
@@ -83,9 +82,6 @@ public class StudySetController {
     @PutMapping("/{id}")
     public StudySetWithTermsResponseDTO update(@FromAttribute(Args.OPT_AUTH) @CurrentUserContext OptionalAuthentication optionalAuthentication,
                                                @RBody @RequestBody StudySetSubmitDTO dto) {
-        if (optionalAuthentication.isEmpty()) {
-            throw new StatusException(401);
-        }
         Long userId = auth.onAuth(optionalAuthentication).toUserId();
         return optimized.update(userId, dto);
     }

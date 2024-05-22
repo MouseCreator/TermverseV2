@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import mouse.project.termverseweb.defines.Progress;
 import mouse.project.termverseweb.dto.progress.TermProgressPair;
 import mouse.project.termverseweb.dto.progress.TermProgressUpdates;
+import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermWithProgressResponseDTO;
 import mouse.project.termverseweb.exception.UpdateException;
 import mouse.project.termverseweb.mapper.TermMapper;
@@ -178,5 +179,10 @@ public class OptimizedTermServiceImpl implements OptimizedTermService {
         TermsOfSet termsFromSet = getTermsFromSet(studySetId);
         return (int) repository.findByUserAndTerms(userId, termsFromSet.ids())
                 .stream().filter(t -> t.getProgress().equals(Progress.LEARNED)).count();
+    }
+
+    @Override
+    public List<Term> getAllByStudySet(Long setId) {
+        return termRepository.findAllByStudySet(setId);
     }
 }

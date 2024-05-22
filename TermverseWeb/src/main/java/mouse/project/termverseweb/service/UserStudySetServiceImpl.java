@@ -117,7 +117,7 @@ public class UserStudySetServiceImpl implements UserStudySetService {
     @Override
     @Transactional
     public UserResponseDTO getOwnerOfStudySet(Long id) {
-        List<UserStudySet> byUserAndType = repository.findByUserAndType(id, UserStudySetRelation.OWNER);
+        List<UserStudySet> byUserAndType = repository.findByStudySetAndType(id, UserStudySetRelation.OWNER);
         if (byUserAndType.isEmpty()) {
             throw new MissingEntityException("Study set " + id + " has no owner");
         }
@@ -136,5 +136,10 @@ public class UserStudySetServiceImpl implements UserStudySetService {
             UserResponseDTO response = userMapper.toResponse(u.getUser());
             return new UserWithRelation(response, u.getType());
         }).toList();
+    }
+
+    @Override
+    public void remove(Long userId, Long setId) {
+        repository.deleteByUserAndStudySet(userId, setId);
     }
 }

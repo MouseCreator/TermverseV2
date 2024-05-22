@@ -6,10 +6,10 @@ import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.dispatcher.RequestPreinitializer;
 import mouse.project.lib.web.tool.*;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Service

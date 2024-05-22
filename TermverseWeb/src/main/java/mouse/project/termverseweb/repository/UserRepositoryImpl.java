@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.data.executor.Executor;
+import mouse.project.lib.data.executor.result.Raw;
 import mouse.project.termverseweb.model.User;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Dao;
@@ -36,12 +37,17 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User model) {
-        executor.write(e -> e.execute("INSERT INTO users " +
-                        "(name, profile_picture_url, deleted_at) " +
-                        "VALUES (?, ?, ?)",
-                model.getName(), model.getProfilePictureUrl(), null)
-                .affectOne()
-                .singleKey(Long.class, model::setId));
+        if (model.getId() == null) {
+            executor.write(e -> e.execute(
+                            "INSERT INTO users (name, profile_picture_url, deleted_at) VALUES (?, ?, ?)",
+                            model.getName(), model.getProfilePictureUrl(), null)
+                    .affectOne().singleKey(Long.class, model::setId));
+        } else {
+            executor.write(e -> e.execute(
+                            "UPDATE users SET name = ?, profile_picture_url = ?, deleted_at = ? WHERE id = ?",
+                            model.getName(), model.getProfilePictureUrl(), null, model.getId())
+                    .affectOne());
+        }
         return model;
     }
 
@@ -59,6 +65,13 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByIdIncludeDeleted(Long id) {
         return executor.read(e -> e.executeQuery( "SELECT * FROM users u WHERE u.id = ?", id)
                 .optional(User.class));
+    }
+
+    @Override
+    public boolean existsByName(String login) {
+        return executor.read(e ->
+                e.executeQuery("SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM users u WHERE u.name = ? AND deleted_at IS NULL", login)
+                .getRaw().map(Raw::getBoolean));
     }
 
     @Override

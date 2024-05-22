@@ -1,7 +1,5 @@
-import {StudySetProps, StudySetPropsListProps, StudySetResponseList, StudySetResponseListProps} from "@/ui/data/data";
+import {StudySetProps, StudySetResponseListProps} from "@/ui/data/data";
 import Link from "next/link";
-import {formatDate} from "@/ui/utils/format";
-
 
 export function StudySet({ props}: StudySetProps) {
     let link = `/sets/${ props.id }`
@@ -11,7 +9,10 @@ export function StudySet({ props}: StudySetProps) {
             <h3 className="text-2xl font-bold">
                 {props.name}
             </h3>
-            <p className="text-gray-500">Set of terms</p>
+            { props.owner ?
+                (<p className="text-gray-500"> Study set by {props.owner} </p>) :
+                (<p className="text-gray-500">Set of terms</p>)
+            }
         </div>
         <div className="flex flex-col w-full items-end">
             <p className="text-gray-500 mr-4">Created: {props.createdAt}</p>
@@ -21,9 +22,11 @@ export function StudySet({ props}: StudySetProps) {
 }
 
 export function StudSetList({props}: StudySetResponseListProps) {
-
+    if (!props.list) {
+        return (<div>No study sets...</div>)
+    }
     return (
-        <div className="flex border flex-col items-center">
+        <div className="flex border w-full flex-col items-center">
             {props.list.map((set, index) => (
                 <StudySet key={index} props={set} />
             ))}

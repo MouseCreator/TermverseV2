@@ -1,6 +1,6 @@
 'use client'
 import {StudSetList} from "@/ui/components/study_set";
-import {StudySetPropsList, StudySetResponseList} from "@/ui/data/data";
+import { StudySetResponseList} from "@/ui/data/data";
 import React, { useEffect, useState } from 'react';
 import {fetchAllSets} from "@/ui/data/sets";
 import Link from "next/link";
@@ -22,9 +22,18 @@ export default function Page() {
     };
     return (
         <main className="w-full">
-            <Link className= "w-32 bg-purple-600 rounded text-white h-8 hover:bg-purple-400" href="sets/create">
-                Create
-            </Link>
+            <div className="p-4 flex flex-row justify-around">
+                <Link href="sets/create">
+                    <div className="w-32 text-center bg-purple-600 rounded text-white h-8 hover:bg-purple-400">
+                    Create
+                    </div>
+                </Link>
+                <Link href="sets/saved">
+                    <div className="w-32 text-center bg-purple-600 rounded text-white h-8 hover:bg-purple-400">
+                        View saved
+                    </div>
+                </Link>
+            </div>
             <StudSetList props={list}/>
         </main>
     )

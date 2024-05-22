@@ -1,19 +1,19 @@
 package mouse.project.termverseweb.controller;
 
+import lombok.extern.log4j.Log4j2;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
-import mouse.project.termverseweb.dto.user.UserCreateDTO;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
-import mouse.project.termverseweb.filters.argument.OptionalAuthorizationHandler;
+import mouse.project.termverseweb.mapper.UserMapper;
+import mouse.project.termverseweb.model.User;
+import mouse.project.termverseweb.resolver.CurrentUserContext;
 import mouse.project.termverseweb.service.UserService;
+import mouse.project.termverseweb.service.help.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,15 +21,18 @@ import java.util.List;
 @RequestMapping(value = "/users")
 @RequestPrefix("/users")
 @Controller
+@Log4j2
 public class UserController {
 
     private final UserService userService;
-    private final OptionalAuthorizationHandler auth;
+    private final UserMapper mapper;
+    private final AuthService authService;
     @Autowired
     @Auto
-    public UserController(UserService userService, OptionalAuthorizationHandler auth) {
+    public UserController(UserService userService, UserMapper mapper, AuthService authService) {
         this.userService = userService;
-        this.auth = auth;
+        this.mapper = mapper;
+        this.authService = authService;
     }
 
     @GetMapping
@@ -39,15 +42,23 @@ public class UserController {
         return userService.findAll();
     }
 
-    @PostMapping
-    @Post
-    @URL
-    public UserResponseDTO create(
-            @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication,
-            @RBody UserCreateDTO userCreateDTO) {
+    @Get
+    @URL("/current")
+    @GetMapping("/current")
+    public UserResponseDTO userInfo(@CurrentUserContext @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
+        return doUserInfo(optionalAuthentication);
+    }
+    private UserResponseDTO doUserInfo(Object authParam) {
+        User user = authService.onAuth(authParam).toUser();
+        log.debug("User got his info:" + user);
+        return mapper.toResponse(user);
+    }
 
-        UserResponseDTO saved = userService.save(userCreateDTO);
-        auth.registerUser(optionalAuthentication, saved.getId());
-        return saved;
+    @GetMapping("/{id}")
+    @Get
+    @URL("/[id]")
+    public UserResponseDTO findById(@FromURL("id") @PathVariable("id") Long id) {
+        log.debug("Processed finding user by id:" + id);
+        return userService.getById(id);
     }
 }

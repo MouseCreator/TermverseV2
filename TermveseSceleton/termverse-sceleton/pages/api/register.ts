@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type {NextApiRequest, NextApiResponse} from 'next';
 import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -7,63 +7,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { login: login, password } = req.body;
 
         try {
-            const admin = await axios.post(
-                'http://localhost:8180/realms/master/protocol/openid-connect/token',
-            {
-                        username: process.env.KEYCLOAK_ADMIN_USERNAME,
-                        password: process.env.KEYCLOAK_ADMIN_PASSWORD,
-                        grant_type: "password",
-                        client_id: "admin-cli"
-            }, {
+
+            const tokenResponse = await axios.post(
+                'http://localhost:8080/register', {
+                    login: login,
+                    password: password,
+                }, {
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     }
-                }
-            );
-
-            console.log('Send admin access request.')
-
-            await axios.post('http://localhost:8180/admin/realms/termverse/users', {
-                username: login,
-                enabled: true,
-                email: login + '@mail.com',
-                emailVerified: true,
-                credentials: [{
-                    type: 'password',
-                    value: password,
-                    temporary: false
-                }]
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${admin.data.access_token}`,
-                }
-            });
-
-            console.log('Send user create request.')
-
-            const tokenResponse = await axios.post(
-                'http://localhost:8180/realms/termverse/protocol/openid-connect/token', {
-                    client_id: "termverse-app",
-                    username: login,
-                    password: password,
-                    grant_type: "password",
-                    client_secret: process.env.KEYCLOAK_CLIENT_SECRET
-                },
-                {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            });
+                });
 
             console.log('Send user token access request.')
+            if (tokenResponse.status===200) {
+                const accessToken = tokenResponse.data.access_token;
+                const refreshToken = tokenResponse.data.refresh_token;
 
-            const accessToken = tokenResponse.data.access_token;
+                res.setHeader('Set-Cookie', [
+                    `termverse_refresh_token=${accessToken}; Path=/; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}`,
+                    `termverse_access_token=${refreshToken}; Path=/; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}`
+                ]);
 
-            res.status(200).json({ accessToken });
+                res.status(200).json({accessToken});
+            } else {
+                res.status(tokenResponse.status).json({ message: tokenResponse.data.error })
+            }
         } catch (error) {
-            console.error('Error during registration/token retrieval:', error);
-            res.status(500).json({ message: "Internal Server Error" });
+            if (axios.isAxiosError(error)) {
+                res.status(error.status || 500).json({ message: error.message})
+            } else {
+                res.status(500).json({message: "Internal Server Error"});
+            }
         }
     } else {
         res.setHeader('Allow', ['POST']);

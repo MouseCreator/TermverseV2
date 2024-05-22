@@ -1,7 +1,9 @@
 package mouse.project.termverseweb.service.optimized;
 
 import mouse.project.termverseweb.dto.progress.TermProgressUpdates;
+import mouse.project.termverseweb.dto.term.TermResponseDTO;
 import mouse.project.termverseweb.dto.term.TermWithProgressResponseDTO;
+import mouse.project.termverseweb.model.Term;
 
 import java.util.List;
 
@@ -13,4 +15,5 @@ public interface OptimizedTermService {
     void removeProgress(Long userId, Long studySetId);
 
     int getUserProgress(Long userId, Long studySetId);
+    List<Term> getAllByStudySet(Long setId);
 }

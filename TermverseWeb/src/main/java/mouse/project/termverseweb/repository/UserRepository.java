@@ -35,5 +35,6 @@ public interface UserRepository extends Repository<User, Long>, SoftDeleteCrudRe
     Optional<User> findById(@Param("id") Long id);
     @Query("SELECT u FROM User u WHERE u.id = :id")
     Optional<User> findByIdIncludeDeleted(@Param("id")  Long id);
-
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.name = :login AND u.deletedAt IS NULL")
+    boolean existsByName(@Param("login") String login);
 }

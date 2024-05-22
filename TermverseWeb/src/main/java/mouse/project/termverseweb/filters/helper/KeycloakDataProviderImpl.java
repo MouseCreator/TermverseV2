@@ -24,11 +24,15 @@ public class KeycloakDataProviderImpl implements KeycloakDataProvider {
 
     private KeycloakData readKeycloakData() {
         PropertyMap propertyMap = fileReader.readFile("src/main/resources/kc.secret");
-        String kcClientId = propertyMap.getPropertyValue("KC_CLIENT_ID");
-        String kcClientSecret = propertyMap.getPropertyValue("KC_CLIENT_SECRET");
+        String kcClientId = propertyMap.getPropertyValue("KEYCLOAK_CLIENT_ID");
+        String kcClientSecret = propertyMap.getPropertyValue("KEYCLOAK_CLIENT_SECRET");
+        String kcAdminUsername = propertyMap.getPropertyValue("KEYCLOAK_ADMIN_USERNAME");
+        String kcAdminPassword = propertyMap.getPropertyValue("KEYCLOAK_ADMIN_PASSWORD");
         KeycloakData instance = new KeycloakData();
         instance.setClientId(kcClientId);
         instance.setClientSecret(kcClientSecret);
+        instance.setAdminUsername(kcAdminUsername);
+        instance.setAdminPassword(kcAdminPassword);
         return instance;
     }
 }

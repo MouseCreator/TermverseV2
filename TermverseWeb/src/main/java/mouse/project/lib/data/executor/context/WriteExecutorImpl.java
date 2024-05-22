@@ -37,7 +37,7 @@ public class WriteExecutorImpl implements WriteExecutor {
             default -> throw new ExecutorException("Unknown method: " + upperCase);
         };
     }
-        @NotNull
+    @NotNull
     private static ArrayList<Object> fromArgs(Object[] args) {
         return new ArrayList<>(Arrays.asList(args));
     }

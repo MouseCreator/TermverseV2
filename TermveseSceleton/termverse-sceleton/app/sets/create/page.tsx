@@ -1,66 +1,67 @@
-'use client';
-import React, { useState } from 'react';
-import {StudySetCreate, StudySetResponse} from "@/ui/data/data";
+'use client'
+import React, {FormEvent, useState} from "react";
+import {useRouter} from "next/navigation";
+import axios from 'axios';
 import Link from "next/link";
 export default function Page() {
-    const [formData, setFormData] = useState<StudySetCreate>({
-        name: '',
-        pictureUrl: null,
-    });
-    const [errorMessage, setErrorMessage] = useState('');
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+
+    const router = useRouter();
+    const [name, setName] = useState('');
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+
         try {
-            const response = await fetch('http://localhost:8080/sets', {
-                method: 'POST',
+            const studySetName = (name==="") ? "My study set" : name;
+            const response = await axios.post('http://localhost:8080/sets', {
+                name: studySetName,
+                pictureUrl: null,
+                terms: [],
+            }, {
+                withCredentials: true,
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
+                    'Content-Type': 'application/json'
+                }
             });
-            if (response.ok) {
-                console.log('Study set created successfully');
-                const createdSet: StudySetResponse = await response.json();
-                setErrorMessage('Study set created successfully!')
-            } else {
-                const errorData = await response.json();
-                setErrorMessage(errorData.message || 'Error creating study set');
-                console.error('Error creating study set:', response.statusText);
+
+            if (response.status!==200 && response.status!==201) {
+                setError("Error while creating study set. Response: " + response.status)
             }
+
+            const data = await response.data;
+            const setId = data.id;
+
+            router.push(`/sets/create/${setId}`);
         } catch (error) {
-            console.error('Error creating study set:', error);
-            setErrorMessage('An error occurred while creating the study set');
+            setError(`Error while creating study set: ${error}`)
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: value,
-        }));
-    };
-
     return (
-        <div className="w-full p-16 flex flex-row justify-center">
-            <form onSubmit={handleSubmit}>
-                <label className="error">{errorMessage}</label>
-                <div className="p-4">
-                    <label htmlFor="name">Name:</label>
-                    <input
-                        className="border-2 border-gray-400 p-1" autoComplete="off" type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <button type="submit" className="bg-purple-600 rounded text-white w-full h-8 hover:bg-purple-400">Create Study Set</button>
+        <main className="w-full flex flex-col items-center h-[60vh] justify-center">
+            {
+                error && (
+                    <div className="rounded-3xl bg-red-400 border-red-500 border-2 p-5 w-1/4" >{error}</div>
+                )
+            }
+            <form className="p-4 flex-col w-1/4" onSubmit={handleSubmit}>
+                <h2 className="text-2xl font-bold text-center pb-10">Name Your Study Set</h2>
+                <input
+                    className="flex-grow p-2 border rounded w-full" autoComplete="off" type="text"
+                    id="name"
+                    name="name"
+                    placeholder="My study set"
+                    onChange={e => setName(e.target.value)}
+                />
+                <button type="submit" className="bg-purple-500 text-white p-2 w-full my-2 rounded text-center">Create!</button>
+                <Link href="/sets/">
+                    <div className="bg-red-500 text-white p-2 w-full my-2 rounded text-center">
+                        Back
+                    </div>
+                </Link>
             </form>
-            <Link href="/sets/" >
-                Back
-            </Link>
-        </div>
-    );
+
+        </main>
+    )
 }

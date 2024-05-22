@@ -85,6 +85,18 @@ public class UserServiceImpl implements UserService {
         return toResponse(models);
     }
 
+    @Override
+    public User saveUser(String login) {
+        User user = new User();
+        user.setName(login);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public boolean existsByName(String login) {
+        return userRepository.existsByName(login);
+    }
+
     private List<UserResponseDTO> toResponse(List<User> models) {
         return Mapper.mapAll(models).toAndGet(userMapper::toResponse);
     }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class OptionalAuthenticationFactoryTest {
+class OptionalAuthContextFactoryTest {
 
     private OptionalAuthorizationFactory factory;
 
@@ -18,8 +18,8 @@ class OptionalAuthenticationFactoryTest {
     void processGoodResponse() {
         OptionalAuthentication optionalAuthentication = factory.processTokenResponse("""
                 {
-                    "sub:" "some-key"
-                    "username": "John",
+                    "sub": "some-key",
+                    "username": "John"
                 }
                 """);
         String securityId = optionalAuthentication.getSecurityId();

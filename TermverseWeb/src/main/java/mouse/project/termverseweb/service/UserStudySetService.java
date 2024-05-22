@@ -18,4 +18,5 @@ public interface UserStudySetService {
     UserStudySetResponseDTO save(Long userId, Long studySetId, String type);
     UserResponseDTO getOwnerOfStudySet(Long id);
     List<UserWithRelation> getUsersByStudySet(Long id);
+    void remove(Long userId, Long setId);
 }

@@ -19,18 +19,21 @@ import mouse.project.termverseweb.service.help.AuthContextService;
 public class JWTFilter implements MFilter {
     private final TokenService tokenService;
     private final OptionalAuthorizationFactory optionalAuthorizationFactory;
+
+    private final JWTHelper helper;
     @Auto
     public JWTFilter(TokenService tokenService,
                      OptionalAuthorizationFactory optionalAuthorizationFactory,
-                     AuthContextService authContextService) {
+                     AuthContextService authContextService, JWTHelper helper) {
         this.tokenService = tokenService;
         this.optionalAuthorizationFactory = optionalAuthorizationFactory;
+        this.helper = helper;
     }
 
     @Override
     public boolean invoke(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
-        String token = getAuthToken(cookies);
+        String token = helper.getAuthToken(cookies);
         if (token != null) {
             if(token.startsWith("Bearer ")) {
                 token = token.substring("Bearer ".length());
@@ -48,17 +51,7 @@ public class JWTFilter implements MFilter {
         return true;
     }
 
-    private String getAuthToken(Cookie[] cookies) {
-        if (cookies == null) {
-            return null;
-        }
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("termverse_access_token")) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
+
 
 
 }

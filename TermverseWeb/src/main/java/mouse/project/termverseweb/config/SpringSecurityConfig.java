@@ -1,5 +1,6 @@
 package mouse.project.termverseweb.config;
 
+import mouse.project.termverseweb.filters.JWTHelper;
 import mouse.project.termverseweb.filters.spring.OptionalAuthenticationFilter;
 import mouse.project.termverseweb.security.kc.KeycloakState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +45,8 @@ public class SpringSecurityConfig {
         return http.build();
     }
     @Bean
-    public OptionalAuthenticationFilter optionalAuthenticationFilter(JwtDecoder jwtDecoder) {
-        return new OptionalAuthenticationFilter(jwtDecoder);
+    public OptionalAuthenticationFilter optionalAuthenticationFilter(JwtDecoder jwtDecoder, JWTHelper helper) {
+        return new OptionalAuthenticationFilter(jwtDecoder, helper);
     }
     @Bean
     public JwtDecoder jwtDecoder() {

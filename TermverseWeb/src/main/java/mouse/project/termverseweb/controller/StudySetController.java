@@ -78,9 +78,9 @@ public class StudySetController {
     public StudySetWithTermsResponseDTO findFullById(@PathVariable("id") @FromURL("id") Long id) {
         return service.findByIdWithTerms(id);
     }
-    @URL
+    @URL("/[id]")
     @Update
-    @PutMapping
+    @PutMapping("/{id}")
     public StudySetWithTermsResponseDTO update(@FromAttribute(Args.OPT_AUTH) @CurrentUserContext OptionalAuthentication optionalAuthentication,
                                                @RBody @RequestBody StudySetSubmitDTO dto) {
         if (optionalAuthentication.isEmpty()) {

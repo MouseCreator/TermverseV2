@@ -4,6 +4,7 @@ import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 
 @Service
+@org.springframework.stereotype.Service
 public class MouseAuthService implements AuthService {
 
     private final AuthContextService authContextService;
@@ -14,10 +15,9 @@ public class MouseAuthService implements AuthService {
 
     @Override
     public AuthContext onAuth(Object param) {
-        if (! (param instanceof OptionalAuthentication)) {
+        if (! (param instanceof OptionalAuthentication optA)) {
             throw new UnsupportedOperationException();
         }
-        OptionalAuthentication optA = (OptionalAuthentication) param;
         return authContextService.provideContext(optA);
     }
 }

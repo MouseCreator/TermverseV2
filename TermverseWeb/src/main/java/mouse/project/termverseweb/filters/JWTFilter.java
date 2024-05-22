@@ -13,12 +13,16 @@ import mouse.project.termverseweb.security.TokenService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mouse.project.termverseweb.service.help.AuthContextService;
+
 @Service
 public class JWTFilter implements MFilter {
     private final TokenService tokenService;
     private final OptionalAuthorizationFactory optionalAuthorizationFactory;
     @Auto
-    public JWTFilter(TokenService tokenService, OptionalAuthorizationFactory optionalAuthorizationFactory) {
+    public JWTFilter(TokenService tokenService,
+                     OptionalAuthorizationFactory optionalAuthorizationFactory,
+                     AuthContextService authContextService) {
         this.tokenService = tokenService;
         this.optionalAuthorizationFactory = optionalAuthorizationFactory;
     }

@@ -18,8 +18,8 @@ class OptionalAuthContextFactoryTest {
     void processGoodResponse() {
         OptionalAuthentication optionalAuthentication = factory.processTokenResponse("""
                 {
-                    "sub:" "some-key"
-                    "username": "John",
+                    "sub": "some-key",
+                    "username": "John"
                 }
                 """);
         String securityId = optionalAuthentication.getSecurityId();

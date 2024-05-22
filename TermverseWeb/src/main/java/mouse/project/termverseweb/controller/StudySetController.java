@@ -2,6 +2,7 @@ package mouse.project.termverseweb.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
 import mouse.project.termverseweb.dto.studyset.*;
@@ -24,6 +25,7 @@ import java.util.List;
 @RequestPrefix("/sets")
 @Controller
 @RequiredArgsConstructor
+@Log4j2
 public class StudySetController {
     private final StudySetService service;
     private final OptimizedStudySetService optimized;
@@ -51,6 +53,7 @@ public class StudySetController {
     @GetMapping("/byuser/{id}")
     public List<StudySetWithOwnerDTO> findAllByUser(@PathVariable("id") @FromURL("id") Long id) {
         List<StudySetResponseDTO> studySetsByUser = service.findStudySetsByUser(id);
+        log.debug("Found all study sets by user with id: " + id);
         return toOwnerStudySet(studySetsByUser);
     }
 
@@ -61,13 +64,16 @@ public class StudySetController {
             @FromAttribute(Args.OPT_AUTH) @CurrentUserContext OptionalAuthentication optionalAuthentication,
             @RBody @RequestBody StudySetCreateDTO createDTO) {
         Long userId = auth.onAuth(optionalAuthentication).toUserId();
-        return optimized.create(userId, createDTO);
+        StudySetWithTermsResponseDTO studySet = optimized.create(userId, createDTO);
+        log.debug("User " + userId + " created new study set. New study set id: " + studySet.getId());
+        return studySet;
     }
 
     @URL("/[id]")
     @Get
     @GetMapping("/{id}")
     public StudySetResponseDTO findById(@PathVariable("id") @FromURL("id") Long id) {
+        log.debug("Performing search study set by id: " + id);
         return service.findById(id);
     }
 
@@ -75,6 +81,7 @@ public class StudySetController {
     @Get
     @GetMapping("/full/{id}")
     public StudySetWithTermsResponseDTO findFullById(@PathVariable("id") @FromURL("id") Long id) {
+        log.debug("Performing search study set by id: " + id);
         return service.findByIdWithTerms(id);
     }
     @URL("/[id]")
@@ -83,6 +90,7 @@ public class StudySetController {
     public StudySetWithTermsResponseDTO update(@FromAttribute(Args.OPT_AUTH) @CurrentUserContext OptionalAuthentication optionalAuthentication,
                                                @RBody @RequestBody StudySetSubmitDTO dto) {
         Long userId = auth.onAuth(optionalAuthentication).toUserId();
+        log.debug("User " + userId + " updates study set id: " + dto.getId());
         return optimized.update(userId, dto);
     }
 
@@ -90,6 +98,7 @@ public class StudySetController {
     @Delete
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") @FromURL("id") Long id) {
+        log.debug("Deleting study set: " + id);
         service.deleteById(id);
     }
 
@@ -113,6 +122,7 @@ public class StudySetController {
     @Get
     @GetMapping("/author/{id}")
     public UserResponseDTO author(@PathVariable("id") @FromURL("id") Long sid) {
+        log.debug("Getting author of study set: " + sid);
         return userStudySetService.getOwnerOfStudySet(sid);
     }
 
@@ -121,6 +131,7 @@ public class StudySetController {
     @GetMapping("/saved")
     public List<StudySetWithOwnerDTO> saved(@CurrentUserContext @FromAttribute(Args.OPT_AUTH) OptionalAuthentication optionalAuthentication) {
         Long userId = auth.onAuth(optionalAuthentication).toUserId();
+        log.debug("Getting all study sets of user " + userId);
         List<StudySetDescriptionDTO> studySetsByUser = optimized.getStudySetsByUser(userId);
         return studySetsByUser.stream().map(s -> {
             UserResponseDTO owner = userStudySetService.getOwnerOfStudySet(s.getId());

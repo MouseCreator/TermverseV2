@@ -50,6 +50,7 @@ public class UserController {
     }
     private UserResponseDTO doUserInfo(Object authParam) {
         User user = authService.onAuth(authParam).toUser();
+        log.debug("User got his info:" + user);
         return mapper.toResponse(user);
     }
 
@@ -57,6 +58,7 @@ public class UserController {
     @Get
     @URL("/[id]")
     public UserResponseDTO findById(@FromURL("id") @PathVariable("id") Long id) {
+        log.debug("Processed finding user by id:" + id);
         return userService.getById(id);
     }
 }

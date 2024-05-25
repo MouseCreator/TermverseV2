@@ -90,7 +90,7 @@ async function getKeycloakPublicKey(): Promise<JWK> {
         const response = await fetch(url);
         const jwks: JWKS = await response.json();
         const key = jwks.keys.find((k: any) => k.use === 'sig');
-        console.log(`KEY: ${JSON.stringify(key)}`)
+        console.log(`Successfully got KEY for middleware.`)
         return key;
     } catch (error) {
         throw new Error(`Failed to fetch public key from Keycloak: ${url}. Details: ${error}`);

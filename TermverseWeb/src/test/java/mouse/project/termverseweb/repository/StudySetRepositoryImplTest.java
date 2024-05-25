@@ -2,6 +2,7 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.data.page.Page;
 import mouse.project.lib.data.page.PageDescription;
+import mouse.project.lib.data.page.PageDescriptionImpl;
 import mouse.project.lib.data.page.PageFactory;
 import mouse.project.lib.tests.annotation.InitBeforeEach;
 import mouse.project.lib.testutil.MTest;
@@ -61,7 +62,7 @@ class StudySetRepositoryImplTest {
     }
     private StudySet insertData(String base) {
         List<StudySet> sets = insertions.generateStudySets(base, 1);
-        return insertions.saveAll(repository, sets).get(0);
+        return insertions.saveAll(repository, sets).getFirst();
     }
     @Test
     void save() {
@@ -273,5 +274,46 @@ class StudySetRepositoryImplTest {
         SizedStudySet sizedStudySet = byIdWithSize.get();
         assertEquals(size, sizedStudySet.size());
         assertEquals(studySet, sizedStudySet.studySet());
+    }
+    @Test
+    void testAllByNameAndType() {
+        List<StudySet> studySet = insertData("by-name-and-type", 2);
+        StudySet set1 = studySet.get(0);
+        StudySet set2 = studySet.get(1);
+        List<User> users = insertions.generateUsers("Bnat", 2);
+        List<User> savedUsers = insertions.saveAll(userRepository, users);
+        User user1 = savedUsers.get(0);
+        User user2 = savedUsers.get(1);
+        UserStudySet u11 = userStudySetRepository.save(new UserStudySet(user1, set1, UserStudySetRelation.OWNER));
+        UserStudySet u22 = userStudySetRepository.save(new UserStudySet(user2, set2, UserStudySetRelation.OWNER));
+        UserStudySet u12 = userStudySetRepository.save(new UserStudySet(user1, set2, UserStudySetRelation.VIEWER));
+        Page<UserStudySet> allByNameAndType = repository.findAllByNameAndType("by-name-and-type", UserStudySetRelation.OWNER, new PageDescriptionImpl(0, 3));
+        List<UserStudySet> elements = allByNameAndType.getElements();
+        assertEquals(2, elements.size());
+        assertTrue(elements.contains(u11));
+        assertTrue(elements.contains(u22));
+        assertFalse(elements.contains(u12));
+    }
+
+    @Test
+    void testAllByNameAndUser() {
+        List<StudySet> studySet = insertData("by-name-and-user", 2);
+        StudySet set1 = studySet.get(0);
+        StudySet set2 = studySet.get(1);
+        List<User> users = insertions.generateUsers("Bnau", 2);
+        List<User> savedUsers = insertions.saveAll(userRepository, users);
+        User user1 = savedUsers.get(0);
+        User user2 = savedUsers.get(1);
+        UserStudySet u21 = userStudySetRepository.save(new UserStudySet(user2, set1, UserStudySetRelation.OWNER));
+        UserStudySet u22 = userStudySetRepository.save(new UserStudySet(user2, set2, UserStudySetRelation.OWNER));
+        UserStudySet u11 = userStudySetRepository.save(new UserStudySet(user1, set1, UserStudySetRelation.VIEWER));
+        Page<UserStudySet> allByNameAndType = repository.
+                findAllByNameAndUser("by-name-and-user", user1.getId(),
+                UserStudySetRelation.OWNER, new PageDescriptionImpl(0, 3));
+        List<UserStudySet> elements = allByNameAndType.getElements();
+        assertEquals(1, elements.size(), "Unexpected elements: " + elements);
+        assertTrue(elements.contains(u21));
+        assertFalse(elements.contains(u22));
+        assertFalse(elements.contains(u11));
     }
 }

@@ -1,16 +1,17 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.transaction.Transactional;
+import mouse.project.lib.data.page.PageDescription;
+import mouse.project.lib.data.page.PageDescriptionImpl;
 import mouse.project.lib.ioc.annotation.Auto;
-import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
+import mouse.project.termverseweb.dto.data.StudySetSearchParams;
+import mouse.project.termverseweb.dto.studyset.*;
 
-import mouse.project.termverseweb.dto.studyset.StudySetWithTermsResponseDTO;
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
 import mouse.project.termverseweb.mapper.StudySetMapper;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.repository.StudySetRepository;
+import mouse.project.termverseweb.service.search.StudySetSearch;
 import mouse.project.termverseweb.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +25,15 @@ public class StudySetServiceImpl implements StudySetService {
     private final StudySetRepository repository;
     private final StudySetMapper studySetMapper;
     private final ServiceProviderContainer services;
+    private final StudySetSearch studySetSearch;
     @Auto
     @Autowired
-    public StudySetServiceImpl(StudySetRepository repository, StudySetMapper studySetMapper, ServiceProviderContainer services) {
+    public StudySetServiceImpl(StudySetRepository repository, StudySetMapper studySetMapper, ServiceProviderContainer services,
+                               StudySetSearch studySetSearch) {
         this.repository = repository;
         this.studySetMapper = studySetMapper;
         this.services = services;
+        this.studySetSearch = studySetSearch;
     }
 
     @Override
@@ -116,5 +120,14 @@ public class StudySetServiceImpl implements StudySetService {
         return services.use(repository)
                 .optional(r -> r.findAllByIdWithTerms(id))
                 .orThrow(studySetMapper::toResponseWithTerms);
+    }
+
+    @Override
+    public List<StudySetWithOwnerDTO> findAllBySearchParams(StudySetSearchParams searchParams) {
+        PageDescription pageDescription = new PageDescriptionImpl(searchParams.getPageNumber(), searchParams.getPageSize());
+        String query = searchParams.getSearchParam();
+        String category = searchParams.getCategory();
+        Long userId = searchParams.getUserId();
+        return studySetSearch.search(category, query, userId, pageDescription);
     }
 }

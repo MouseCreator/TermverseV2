@@ -47,4 +47,5 @@ public interface UserStudySetRepository extends Repository<UserStudySet, Long>, 
             "WHERE us.user.id = :userId " +
             "AND us.user.deletedAt IS NULL")
     List<UserStudySet> findByUser(@Param("userId") Long userId);
+
 }

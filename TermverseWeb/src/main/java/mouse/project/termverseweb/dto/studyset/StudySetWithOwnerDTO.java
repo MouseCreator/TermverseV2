@@ -1,6 +1,7 @@
 package mouse.project.termverseweb.dto.studyset;
 
 import lombok.Data;
+import mouse.project.termverseweb.dto.user.UserResponseDTO;
 
 import java.time.LocalDateTime;
 @Data
@@ -9,8 +10,8 @@ public class StudySetWithOwnerDTO {
     private String name;
     private LocalDateTime createdAt;
     private String pictureUrl;
-    private String owner;
-    public StudySetWithOwnerDTO(StudySetResponseDTO responseDTO, String owner) {
+    private UserResponseDTO owner;
+    public StudySetWithOwnerDTO(StudySetResponseDTO responseDTO, UserResponseDTO owner) {
         id = responseDTO.getId();
         name = responseDTO.getName();
         createdAt = responseDTO.getCreatedAt();
@@ -18,7 +19,7 @@ public class StudySetWithOwnerDTO {
         this.owner = owner;
     }
 
-    public StudySetWithOwnerDTO(StudySetDescriptionDTO responseDTO, String owner) {
+    public StudySetWithOwnerDTO(StudySetDescriptionDTO responseDTO, UserResponseDTO owner) {
         id = responseDTO.getId();
         name = responseDTO.getName();
         createdAt = responseDTO.getCreatedAt();

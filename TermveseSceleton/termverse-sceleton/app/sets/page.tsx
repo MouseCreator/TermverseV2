@@ -68,7 +68,7 @@ export default function Page() {
                     <div className="mb-4">
                         <h2 className="text-lg font-semibold mb-2">Sort by</h2>
                         <ul>
-                            {['Name', 'Recent', 'Latest'].map((sortOption) => (
+                            {['Name', 'Recent', 'Oldest'].map((sortOption) => (
                                 <li key={sortOption}>
                                     <button
                                         onClick={() => setSort(sortOption)}

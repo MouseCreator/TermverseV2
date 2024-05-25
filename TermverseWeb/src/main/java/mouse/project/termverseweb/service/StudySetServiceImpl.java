@@ -127,7 +127,8 @@ public class StudySetServiceImpl implements StudySetService {
         PageDescription pageDescription = new PageDescriptionImpl(searchParams.getPageNumber(), searchParams.getPageSize());
         String query = searchParams.getSearchParam();
         String category = searchParams.getCategory();
+        String sort = searchParams.getSortBy();
         Long userId = searchParams.getUserId();
-        return studySetSearch.search(category, query, userId, pageDescription);
+        return studySetSearch.search(category, query, userId, sort, pageDescription);
     }
 }

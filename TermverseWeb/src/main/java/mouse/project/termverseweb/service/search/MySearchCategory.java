@@ -9,6 +9,7 @@ import mouse.project.termverseweb.dto.studyset.StudySetWithOwnerDTO;
 import mouse.project.termverseweb.mapper.StudySetWithOwnerMapper;
 import mouse.project.termverseweb.model.UserStudySet;
 import mouse.project.termverseweb.repository.StudySetRepository;
+import mouse.project.termverseweb.service.sort.StudySetSorter;
 
 import java.util.List;
 
@@ -16,19 +17,23 @@ public class MySearchCategory implements SearchCategoryHandler {
     private final StudySetRepository studySetRepository;
     private final StudySetWithOwnerMapper studySetWithOwnerMapper;
 
-    public MySearchCategory(StudySetRepository studySetRepository, StudySetWithOwnerMapper studySetWithOwnerMapper) {
+    private final StudySetSorter sorter;
+
+    public MySearchCategory(StudySetRepository studySetRepository, StudySetWithOwnerMapper studySetWithOwnerMapper, StudySetSorter sorter) {
         this.studySetRepository = studySetRepository;
         this.studySetWithOwnerMapper = studySetWithOwnerMapper;
+        this.sorter = sorter;
     }
 
     @Override
     @Transactional
-    public List<StudySetWithOwnerDTO> search(String query, Long userId, PageDescription page) {
+    public List<StudySetWithOwnerDTO> search(String query, Long userId, String sort, PageDescription page) {
         Page<UserStudySet> allByNameAndUser = studySetRepository.findAllByNameAndUser(query,
                 userId, UserStudySetRelation.OWNER, page);
         return allByNameAndUser.getElements()
                 .stream()
                 .filter(u -> u.getUser().getId().equals(userId))
+                .sorted(sorter.chooseComparator(sort))
                 .map(u -> studySetWithOwnerMapper.toStudySetWithOwner(u.getUser(), u.getStudySet()))
                 .toList();
     }

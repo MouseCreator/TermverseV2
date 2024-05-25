@@ -39,11 +39,11 @@ public class StudySetSearch {
         }
     }
 
-    public List<StudySetWithOwnerDTO> search(String category, String query, Long userId, PageDescription pageDescription) {
+    public List<StudySetWithOwnerDTO> search(String category, String query, Long userId, String sort, PageDescription pageDescription) {
         SearchCategoryHandler searchCategoryHandler = handlers.get(category);
         if (searchCategoryHandler == null) {
             throw new NoSuchElementException("No handler defined for category: " + category);
         }
-        return searchCategoryHandler.search(query, userId, pageDescription);
+        return searchCategoryHandler.search(query, userId, sort, pageDescription);
     }
 }

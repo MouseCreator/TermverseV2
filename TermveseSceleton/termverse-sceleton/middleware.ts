@@ -1,11 +1,9 @@
 import {NextRequest, NextResponse} from "next/server";
-import axios from "axios";
 import {RequestCookies} from "next/dist/compiled/@edge-runtime/cookies";
 import {NextURL} from "next/dist/server/web/next-url";
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import {importJWK, JWTPayload, jwtVerify, KeyLike} from 'jose';
 const notProtected = ['/', '/signin', "/signup"];
-import { getCookie } from 'cookies-next';
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
     const { nextUrl: { pathname }, cookies } = req;
     console.log("PROTECTED")
     if (notProtected.includes(pathname)) {
@@ -13,27 +11,32 @@ export function middleware(req: NextRequest) {
     }
     const url = req.nextUrl.clone();
     url.pathname = '/signin';
-    if (kcPublicKey === null) {
-        kcPublicKey = getKeycloakPublicKey("localhost:8180/termverse-app")
-    }
     if (cookies.has("termverse_access_token")) {
-        const cookie = getCookie("termverse_access_token")!;
-        console.log("HAS TOKEN")
+        const cookie = cookies.get('termverse_access_token')!;
+        console.log("HAS ACCESS TOKEN");
         if (cookie) {
-            const isAccessTokenValid = validateToken(cookie, kcPublicKey)
+            const isAccessTokenValid = validateToken(cookie.value, kcPublicKey)
             if (isAccessTokenValid) {
+                console.log("ACCESS TOKEN IS VALID");
                 return NextResponse.next();
             } else {
+                console.log("ACCESS TOKEN IS INVALID");
                 if (!cookies.has("termverse_refresh_token")) {
+                    console.log("NO REFRESH TOKEN");
                     return NextResponse.redirect(url);
                 }
-                const termverseRefreshToken = getCookie("termverse_refresh_token")!;
-                const isRefreshTokenValid = validateToken(termverseRefreshToken, kcPublicKey);
+                console.log("HAS REFRESH TOKEN");
+                const termverseRefreshToken = cookies.get('termverse_refresh_token')!;
+                const isRefreshTokenValid = validateToken(termverseRefreshToken.value, kcPublicKey);
                 if (!isRefreshTokenValid) {
+                    console.log("REFRESH TOKEN IS INVALID");
                     return NextResponse.redirect(url);
                 }
-                return refresh(termverseRefreshToken, cookies, req, url);
+                console.log("REFRESH TOKEN IS VALID. REFRESHING...")
+                return refresh(termverseRefreshToken.value, cookies, req, url);
             }
+        } else {
+            console.log("NO COOKIE!");
         }
     }
     return NextResponse.redirect(url);
@@ -64,7 +67,8 @@ async function refresh(token: string, cookies: RequestCookies, req: NextRequest,
     }
 }
 
-let kcPublicKey = null;
+const jwk = await getKeycloakPublicKey();
+const kcPublicKey = await importJWK(jwk);
 interface JWK {
     kid: string;
     kty: string;
@@ -80,32 +84,31 @@ interface JWK {
 export interface JWKS {
     keys: JWK[];
 }
-async function getKeycloakPublicKey(realmUrl: string): Promise<string> {
-    let key = "";
+async function getKeycloakPublicKey(): Promise<JWK> {
+    const url = `http://localhost:8180/realms/termverse/protocol/openid-connect/certs`;
     try {
-        const response = await axios.get(`${realmUrl}/protocol/openid-connect/certs`);
-        const jwks: JWKS = response.data;
-        key = jwks.keys.find((k: any) => k.use === 'sig').x5c[0];
+        const response = await fetch(url);
+        const jwks: JWKS = await response.json();
+        const key = jwks.keys.find((k: any) => k.use === 'sig');
+        console.log(`KEY: ${JSON.stringify(key)}`)
+        return key;
     } catch (error) {
-        throw new Error('Failed to fetch public key from Keycloak');
+        throw new Error(`Failed to fetch public key from Keycloak: ${url}. Details: ${error}`);
     }
-    if (key === "") {
-        throw new Error('No signing key found in JWKS');
-    }
-    return  `-----BEGIN CERTIFICATE-----
-    ${key}
-    -----END CERTIFICATE-----`;
 
 }
-function validateToken(token: string, key: string) {
+async function validateToken(token: string, key: KeyLike | Uint8Array ) {
     try {
-        const decoded = jwt.verify(token, key, {algorithms: ['RS256']}) as JwtPayload;
+        console.log(`VALIDATING TOKEN WITH KEY: ${key}`);
+        const decoded: JWTPayload = await jwtVerify(token, key);
+        console.log(JSON.stringify(decoded))
         const currentTime = Math.floor(Date.now() / 1000);
         if (decoded.exp && decoded.exp < currentTime) {
             return false;
         }
         return true;
     } catch (error) {
+        console.log(`VALIDATING ERROR: ${error}`);
         return false;
     }
 }

@@ -31,9 +31,9 @@ public class ValidateToken {
     private ValidationDTO doCreate(Object authObject) {
         boolean authenticated = authService.onAuth(authObject).isAuthenticated();
         if (authenticated) {
-            return new ValidationDTO("token-invalid");
+            return new ValidationDTO("token-valid");
         }
-        return new ValidationDTO("token-valid");
+        return new ValidationDTO("token-invalid");
     }
 
 }

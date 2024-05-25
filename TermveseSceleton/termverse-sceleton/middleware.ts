@@ -99,9 +99,8 @@ async function getKeycloakPublicKey(): Promise<JWK> {
 }
 async function validateToken(token: string, key: KeyLike | Uint8Array ) {
     try {
-        console.log(`VALIDATING TOKEN WITH KEY: ${key}`);
+        console.log(`VALIDATING TOKEN...`);
         const decoded: JWTPayload = await jwtVerify(token, key);
-        console.log(JSON.stringify(decoded))
         const currentTime = Math.floor(Date.now() / 1000);
         if (decoded.exp && decoded.exp < currentTime) {
             return false;

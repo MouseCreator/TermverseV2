@@ -19,9 +19,7 @@ import java.util.List;
 public class SavedSearchCategory implements SearchCategoryHandler{
     private final StudySetRepository studySetRepository;
     private final StudySetWithOwnerMapper studySetWithOwnerMapper;
-
     private final StudySetSorter sorter;
-
     public SavedSearchCategory(StudySetRepository studySetRepository,
                                StudySetWithOwnerMapper studySetWithOwnerMapper,
                                StudySetSorter sorter) {

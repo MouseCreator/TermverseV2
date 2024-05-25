@@ -16,7 +16,6 @@ import java.util.List;
 public class MySearchCategory implements SearchCategoryHandler {
     private final StudySetRepository studySetRepository;
     private final StudySetWithOwnerMapper studySetWithOwnerMapper;
-
     private final StudySetSorter sorter;
 
     public MySearchCategory(StudySetRepository studySetRepository, StudySetWithOwnerMapper studySetWithOwnerMapper, StudySetSorter sorter) {
@@ -33,7 +32,6 @@ public class MySearchCategory implements SearchCategoryHandler {
         return allByNameAndUser.getElements()
                 .stream()
                 .filter(u -> u.getUser().getId().equals(userId))
-                .sorted(sorter.chooseComparator(sort))
                 .map(u -> studySetWithOwnerMapper.toStudySetWithOwner(u.getUser(), u.getStudySet()))
                 .toList();
     }

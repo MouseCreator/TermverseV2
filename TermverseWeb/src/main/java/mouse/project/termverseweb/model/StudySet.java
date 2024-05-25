@@ -9,6 +9,7 @@ import lombok.ToString;
 import mouse.project.lib.data.orm.annotation.Model;
 import mouse.project.lib.data.orm.annotation.NamedColumn;
 import mouse.project.termverseweb.lib.service.model.LongIterable;
+import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class StudySet implements LongIterable {
             joinColumns = @JoinColumn(name = "study_set_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+
     private List<User> users = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @EqualsAndHashCode.Exclude

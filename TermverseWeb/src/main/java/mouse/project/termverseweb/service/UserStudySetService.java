@@ -5,6 +5,7 @@ import mouse.project.termverseweb.dto.user.UserWithRelation;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetCreateDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetUpdateDTO;
+import mouse.project.termverseweb.model.UserStudySet;
 
 import java.util.List;
 
@@ -19,4 +20,5 @@ public interface UserStudySetService {
     UserResponseDTO getOwnerOfStudySet(Long id);
     List<UserWithRelation> getUsersByStudySet(Long id);
     void remove(Long userId, Long setId);
+    List<UserStudySet> getAllModels();
 }

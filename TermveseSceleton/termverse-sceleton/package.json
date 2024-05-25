@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@react-keycloak/ssr": "^3.3.0",
+    "@types/jsonwebtoken": "^9.0.6",
     "axios": "^1.6.8",
     "cookie": "^0.6.0",
+    "cookies-next": "^4.2.1",
+    "jsonwebtoken": "^9.0.2",
     "keycloak-js": "^24.0.3",
     "next": "^14.2.1",
     "next-cookies": "^2.0.3",

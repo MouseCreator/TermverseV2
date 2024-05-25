@@ -5,11 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
+import mouse.project.termverseweb.defines.UserStudySetRelation;
 import mouse.project.termverseweb.dto.studyset.*;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
+import mouse.project.termverseweb.model.User;
+import mouse.project.termverseweb.model.UserStudySet;
 import mouse.project.termverseweb.resolver.CurrentUserContext;
 import mouse.project.termverseweb.service.StudySetService;
 import mouse.project.termverseweb.service.UserStudySetService;
@@ -18,7 +21,9 @@ import mouse.project.termverseweb.service.optimized.OptimizedStudySetService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/sets")
@@ -42,8 +47,15 @@ public class StudySetController {
 
     @NotNull
     private List<StudySetWithOwnerDTO> toOwnerStudySet(List<StudySetResponseDTO> all) {
+        List<UserStudySet> userStudySets = userStudySetService.getAllModels();
+        Map<Long, User> ownerMap = new HashMap<>();
+        for (UserStudySet uss : userStudySets) {
+            if (uss.getType().equals(UserStudySetRelation.OWNER)) {
+                ownerMap.put(uss.getStudySet().getId(), uss.getUser());
+            }
+        }
         return all.stream().map(s -> {
-            UserResponseDTO owner = userStudySetService.getOwnerOfStudySet(s.getId());
+            User owner = ownerMap.get(s.getId());
             return new StudySetWithOwnerDTO(s, owner.getName());
         }).toList();
     }

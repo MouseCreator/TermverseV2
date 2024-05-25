@@ -1,7 +1,6 @@
 package mouse.project.termverseweb.service;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
@@ -35,11 +34,9 @@ public class StudySetServiceImpl implements StudySetService {
 
     @Override
     public List<StudySetResponseDTO> findAll() {
-        List<StudySetResponseDTO> to = services.crud(repository)
+        return services.crud(repository)
                 .findAll()
                 .to(studySetMapper::toResponse);
-        System.out.println(to);
-        return to;
     }
 
     private void assignTime(StudySet studySet) {

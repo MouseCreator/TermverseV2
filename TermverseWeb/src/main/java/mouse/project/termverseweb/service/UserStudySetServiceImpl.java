@@ -142,4 +142,10 @@ public class UserStudySetServiceImpl implements UserStudySetService {
     public void remove(Long userId, Long setId) {
         repository.deleteByUserAndStudySet(userId, setId);
     }
+
+    @Override
+    @Transactional
+    public List<UserStudySet> getAllModels() {
+        return services.use(repository).multi(UserStudySetRepository::findAll).getRaw();
+    }
 }

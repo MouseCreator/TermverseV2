@@ -68,7 +68,7 @@ public class URLService {
             return;
         }
         int nSize = size - 1;
-        builder.append( nodes.get(0).first() );
+        builder.append(nodes.getFirst().first() );
         for (int i = 0; i < nSize; i++) {
             builder.append( nodes.get(i).write() );
             builder.append( nodes.get(i).next() );
@@ -135,6 +135,9 @@ public class URLService {
         return createFrom(params, "&", str ->{
             String[] split = str.split("=");
             if (split.length != 2) {
+                if (str.endsWith("=")) {
+                    return new URLParamNode(split[0], "");
+                }
                 throw new URLException("Unexpected parameter structure: " + str);
             }
             return new URLParamNode(split[0], split[1]);

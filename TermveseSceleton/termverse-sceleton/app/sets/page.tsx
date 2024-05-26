@@ -20,17 +20,17 @@ export default function Page() {
 
     const fetchSets = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/sets`, {
+            const response = await axios.get(`http://localhost:8080/sets/search`, {
                 params: {
-                    page,
+                    page: page,
                     size: 10,
-                    search,
-                    sort,
-                    category
+                    q: search,
+                    sort: sort,
+                    category: category
                 }
             });
-           // setSets(response.data.sets);
-           // setTotalPages(response.data.totalPages);
+            setSets(response.data.sets);
+            setTotalPages(response.data.totalPages);
         } catch (error) {
             console.error('Error fetching sets:', error);
         }

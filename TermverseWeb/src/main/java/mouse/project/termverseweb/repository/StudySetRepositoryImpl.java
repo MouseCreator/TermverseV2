@@ -13,7 +13,6 @@ import mouse.project.lib.ioc.annotation.Dao;
 import mouse.project.termverseweb.repository.transform.UserStudySetTransformer;
 import mouse.project.termverseweb.service.sort.StudySetSorter;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.time.LocalDateTime;
@@ -176,7 +175,7 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     }
 
     @Override
-    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndUser(String name, Long userId, String type, Pageable pageable, Sort sort) {
+    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndUser(String name, Long userId, String type, Pageable pageable) {
         throw new UnsupportedOperationException();
     }
 
@@ -208,7 +207,7 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     }
 
     @Override
-    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndType(String query, String type, Pageable page, Sort sort) {
+    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndType(String query, String type, Pageable page) {
         throw new UnsupportedOperationException();
     }
 

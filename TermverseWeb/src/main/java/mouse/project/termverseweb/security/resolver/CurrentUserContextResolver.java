@@ -21,7 +21,7 @@ public class CurrentUserContextResolver implements HandlerMethodArgumentResolver
     public Object resolveArgument(@NotNull MethodParameter parameter,
                                   ModelAndViewContainer mavContainer,
                                   @NotNull NativeWebRequest webRequest,
-                                  org.springframework.web.bind.support.WebDataBinderFactory binderFactory) throws Exception {
+                                  org.springframework.web.bind.support.WebDataBinderFactory binderFactory) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return OptionalAuthentication.empty();

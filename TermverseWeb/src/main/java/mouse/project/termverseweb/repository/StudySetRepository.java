@@ -93,15 +93,15 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
             "AND uss.user.id = :userId AND uss.user.deletedAt IS NULL AND uss.studySet.deletedAt IS NULL)" )
     Page<UserStudySet> findAllByNameAndUser(@Param("name") String name, @Param("userId") Long userId,
-                                            @Param("type") String type, Pageable pageable, Sort sort);
+                                            @Param("type") String type, Pageable pageable);
 
     default mouse.project.lib.data.page.Page<UserStudySet> findAllByNameAndUser(String name,
                                                                                 Long userId,
                                                                                 String type,
                                                                                 PageDescription pageDescription, String sortBy) {
         Sort orders = StudySetSorter.sortBy(sortBy);
-        PageRequest pages = PageRequest.of(pageDescription.number(), pageDescription.size());
-        Page<UserStudySet> p = findAllByNameAndUser(name, userId, type, pages, orders);
+        PageRequest pages = PageRequest.of(pageDescription.number(), pageDescription.size(), orders);
+        Page<UserStudySet> p = findAllByNameAndUser(name, userId, type, pages);
         List<UserStudySet> studySets = p.stream().toList();
         return new PageImpl<>(studySets, pageDescription);
     }
@@ -110,15 +110,15 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "LEFT JOIN FETCH us.studySet u " +
             "WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')) AND us.type = :type " +
             "AND us.user.id = :userId AND s.deletedAt IS NULL AND u.deletedAt IS NULL" )
-    Page<UserStudySet> findAllByNameAndType(@Param("name") String query, @Param("type") String type, Pageable page, Sort sort);
+    Page<UserStudySet> findAllByNameAndType(@Param("name") String query, @Param("type") String type, Pageable page);
 
     default mouse.project.lib.data.page.Page<UserStudySet> findAllByNameAndType(String name,
                                                                                 String type,
                                                                                 PageDescription pageDescription,
                                                                                 String sortBy) {
         Sort orders = StudySetSorter.sortBy(sortBy);
-        PageRequest pages = PageRequest.of(pageDescription.number(), pageDescription.size());
-        Page<UserStudySet> p = findAllByNameAndType(name, type, pages, orders);
+        PageRequest pages = PageRequest.of(pageDescription.number(), pageDescription.size(), orders);
+        Page<UserStudySet> p = findAllByNameAndType(name, type, pages);
         List<UserStudySet> studySets = p.stream().toList();
         return new PageImpl<>(studySets, pageDescription);
     }

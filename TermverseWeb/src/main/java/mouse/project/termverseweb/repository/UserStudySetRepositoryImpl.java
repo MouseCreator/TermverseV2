@@ -2,12 +2,9 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.data.executor.Executor;
 import mouse.project.lib.ioc.annotation.Auto;
-import mouse.project.termverseweb.model.StudySet;
-import mouse.project.termverseweb.model.User;
-import mouse.project.termverseweb.model.UserStudySet;
-import mouse.project.termverseweb.model.UserStudySetModel;
-import mouse.project.lib.ioc.annotation.After;
+import mouse.project.termverseweb.model.*;
 import mouse.project.lib.ioc.annotation.Dao;
+import mouse.project.termverseweb.repository.transform.UserStudySetTransformer;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
@@ -16,54 +13,37 @@ import java.util.Optional;
 @NoRepositoryBean
 public class UserStudySetRepositoryImpl implements UserStudySetRepository {
     private final Executor executor;
-    private UserRepository userRepository = null;
-    private StudySetRepository studySetRepository = null;
+    private final UserStudySetTransformer transformer;
     @Auto
-    public UserStudySetRepositoryImpl(Executor executor) {
+    public UserStudySetRepositoryImpl(Executor executor, UserStudySetTransformer transformer) {
         this.executor = executor;
-    }
-    @After
-    public void setRepositories(UserRepository userRepository, StudySetRepository studySetRepository) {
-        this.userRepository = userRepository;
-        this.studySetRepository = studySetRepository;
+        this.transformer = transformer;
     }
 
     @Override
     public List<UserStudySet> findAll() {
         return executor.read(e -> e.executeQuery(
-                "SELECT * FROM users_study_sets us " +
+                "SELECT u.*, s.*, us.type FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
                     "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE s.deleted_at IS NULL AND u.deleted_at IS NULL"
-        ).adjustedList(UserStudySetModel.class).map(this::transform).get());
+        ).adjustedList(UserStudySetModelFull.class).map(this::transform).get());
     }
 
     @Override
     public Optional<UserStudySet> findByUserAndStudySet(Long user, Long studySetId) {
         return executor.read(e -> e.executeQuery(
-                "SELECT * " +
+                "SELECT u.*, s.*, us.type " +
                     "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
                     "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE u.id = ? AND s.id = ? " +
                     "AND u.deleted_at IS NULL ANd s.deleted_at IS NULL", user, studySetId
-        ).adjustedOptional(UserStudySetModel.class).map(this::transform).get());
+        ).adjustedOptional(UserStudySetModelFull.class).map(this::transform).get());
     }
 
-    private UserStudySet transform(UserStudySetModel model) {
-        UserStudySet userStudySet = new UserStudySet();
-
-        userStudySet.setType(model.getType());
-
-        Long userId = model.getUserId();
-        Optional<User> userOptional = userRepository.findById(userId);
-        userOptional.ifPresent(userStudySet::setUser);
-
-        Long setId = model.getSetId();
-        Optional<StudySet> studySetOptional = studySetRepository.findById(setId);
-        studySetOptional.ifPresent(userStudySet::setStudySet);
-
-        return userStudySet;
+    private UserStudySet transform(UserStudySetModelFull model) {
+       return transformer.transform(model);
     }
 
     @Override
@@ -86,35 +66,36 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
     @Override
     public List<UserStudySet> findByUserAndType(Long userId, String type) {
         return executor.read(e -> e.executeQuery(
-                "SELECT * " +
+                "SELECT u.*, s.*, us.type " +
                     "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
                     "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE u.id = ? AND us.type = ? " +
                     "AND u.deleted_at IS NULL AND s.deleted_at IS NULL", userId, type
-        ).adjustedList(UserStudySetModel.class).map(this::transform).get());
+        ).adjustedList(UserStudySetModelFull.class).map(this::transform).get());
     }
 
     @Override
     public List<UserStudySet> findByStudySetAndType(Long setId, String type) {
         return executor.read(e -> e.executeQuery(
-                "SELECT * " +
+                "SELECT u.*, s.*, us.type " +
                         "FROM users_study_sets us " +
                         "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                         "INNER JOIN users u ON u.id = us.user_id " +
                         "WHERE s.id = ? AND us.type = ? " +
                         "AND s.deleted_at IS NULL AND u.deleted_at IS NULL", setId, type
-        ).adjustedList(UserStudySetModel.class).map(this::transform).get());
+        ).adjustedList(UserStudySetModelFull.class).map(this::transform).get());
     }
 
     @Override
     public List<UserStudySet> findByUser(Long userId) {
         return executor.read(e -> e.executeQuery(
-                "SELECT * " +
+                "SELECT u.*, s.*, us.type " +
                     "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
+                    "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE u.id = ? " +
-                    "AND u.deleted_at IS NULL", userId
-        ).adjustedList(UserStudySetModel.class).map(this::transform).get());
+                    "AND u.deleted_at IS NULL AND s.deleted_at IS NULL", userId
+        ).adjustedList(UserStudySetModelFull.class).map(this::transform).get());
     }
 }

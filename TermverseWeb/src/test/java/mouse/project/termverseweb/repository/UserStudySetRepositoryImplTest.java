@@ -46,7 +46,7 @@ class UserStudySetRepositoryImplTest {
     private List<UserStudySet> insertData(String base, int count) {
         List<User> users = insertions.generateUsers(base, 1);
         List<User> savedUsers = insertions.saveAll(userRepository, users);
-        User user = savedUsers.get(0);
+        User user = savedUsers.getFirst();
 
         List<StudySet> sets = insertions.generateStudySets(base, count);
         List<StudySet> savedSets = insertions.saveAll(studySetRepository, sets);

@@ -67,7 +67,7 @@ public class UserTermRepositoryImpl implements UserTermRepository {
                 "DELETE FROM users_terms ut WHERE ut.user_id = ? AND ut.term_id IN %s", qm
         );
         List<Long> args = new ArrayList<>(termIds);
-        args.add(0, id);
+        args.addFirst(id);
         executor.write(e -> e.executeListed(sql, args));
     }
 

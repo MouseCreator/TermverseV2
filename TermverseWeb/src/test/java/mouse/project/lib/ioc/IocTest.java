@@ -61,4 +61,12 @@ class IocTest {
         assertThrows(NoCardDefinitionException.class, () -> main.get(ForbiddenToRelease.class));
         assertDoesNotThrow(() -> other.get(ForbiddenToRelease.class));
     }
+
+    @Test
+    void loadCardAnnotated() {
+        Inj main = getMainConfig();
+        LoadedCard loadedCard = main.get(LoadedCard.class);
+        assertNotNull(loadedCard);
+        assertEquals("Loaded", loadedCard.getState());
+    }
 }

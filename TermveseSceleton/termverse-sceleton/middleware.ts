@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
         const cookie = cookies.get('termverse_access_token')!;
         console.log("HAS ACCESS TOKEN");
         if (cookie) {
-            const isAccessTokenValid = validateToken(cookie.value, kcPublicKey)
+            const isAccessTokenValid = await validateToken(cookie.value, kcPublicKey)
             if (isAccessTokenValid) {
                 console.log("ACCESS TOKEN IS VALID");
                 return NextResponse.next();
@@ -27,7 +27,7 @@ export async function middleware(req: NextRequest) {
                 }
                 console.log("HAS REFRESH TOKEN");
                 const termverseRefreshToken = cookies.get('termverse_refresh_token')!;
-                const isRefreshTokenValid = validateToken(termverseRefreshToken.value, kcPublicKey);
+                const isRefreshTokenValid = await validateToken(termverseRefreshToken.value, kcPublicKey);
                 if (!isRefreshTokenValid) {
                     console.log("REFRESH TOKEN IS INVALID");
                     return NextResponse.redirect(url);

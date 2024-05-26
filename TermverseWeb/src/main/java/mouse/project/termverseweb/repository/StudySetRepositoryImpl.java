@@ -18,6 +18,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 @Dao
 @NoRepositoryBean
 public class StudySetRepositoryImpl implements StudySetRepository {
@@ -119,7 +120,7 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     @Override
     public List<StudySet> findAllByUserId(Long userId) {
         return executor.read(e -> e.executeQuery(
-                "SELECT * " +
+                "SELECT s.* " +
                     "FROM study_sets s " +
                     "INNER JOIN users_study_sets us ON s.id = us.study_set_id " +
                     "INNER JOIN users u ON u.id = us.user_id " +
@@ -183,7 +184,7 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     public Page<UserStudySet> findAllByNameAndUser(String name, Long userId, String type, PageDescription pageDescription, String sortBy) {
         List<UserStudySet> list = executor.read(e ->
                 e.executeQuery(
-                        "SELECT u.*, s.*, us.type " +
+                            "SELECT u.*, s.*, us.type " +
                                 "FROM users_study_sets us " +
                                 "JOIN users u ON us.user_id = u.id " +
                                 "JOIN study_sets s ON us.study_set_id = s.id " +

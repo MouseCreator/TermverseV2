@@ -43,10 +43,10 @@ class ModelDescriptorImplTest {
         assertNotNull(described.getConstructor());
         assertEquals(expectedConstructor, described.getConstructor());
 
-        List<FieldDescription> fields = described.getFields();
+        List<FieldDescription> fields = described.getFields().getDescriptions();
         assertEquals(1, fields.size());
 
-        FieldDescription fieldDescription = fields.get(0);
+        FieldDescription fieldDescription = fields.getFirst();
 
         assertEquals(String.class, fieldDescription.requiredClass());
         Field expectedField = helper.getField(ModelA.class, "name");
@@ -66,10 +66,10 @@ class ModelDescriptorImplTest {
         ModelDescription<ModelB> described = descriptor.describe(ModelB.class);
         assertEquals(ModelB.class, described.forClass());
 
-        List<FieldDescription> fields = described.getFields();
+        List<FieldDescription> fields = described.getFields().getDescriptions();
         assertEquals(1, fields.size());
 
-        FieldDescription fieldDescription = fields.get(0);
+        FieldDescription fieldDescription = fields.getFirst();
         assertEquals(Long.class, fieldDescription.requiredClass());
         assertEquals("autonamed", fieldDescription.columnName());
     }

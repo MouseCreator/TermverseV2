@@ -6,6 +6,7 @@ import mouse.project.lib.ioc.annotation.After;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Collect;
 import mouse.project.lib.ioc.annotation.Service;
+import mouse.project.lib.web.exception.BadRequestException;
 import mouse.project.termverseweb.dto.studyset.StudySetWithOwnerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,7 +43,7 @@ public class StudySetSearch {
     public List<StudySetWithOwnerDTO> search(String category, String query, Long userId, String sort, PageDescription pageDescription) {
         SearchCategoryHandler searchCategoryHandler = handlers.get(category);
         if (searchCategoryHandler == null) {
-            throw new NoSuchElementException("No handler defined for category: " + category);
+            throw new BadRequestException("No handler defined for category: " + category);
         }
         return searchCategoryHandler.search(query, userId, sort, pageDescription);
     }

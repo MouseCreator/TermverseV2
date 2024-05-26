@@ -24,10 +24,11 @@ export default function Page() {
                 params: {
                     page: page,
                     size: 10,
-                    q: search,
-                    sort: sort,
-                    category: category
-                }
+                    q: search.trim(),
+                    sort: sort.toLowerCase(),
+                    category: category.toLowerCase()
+                },
+                withCredentials: true
             });
             setSets(response.data.sets);
             setTotalPages(response.data.totalPages);

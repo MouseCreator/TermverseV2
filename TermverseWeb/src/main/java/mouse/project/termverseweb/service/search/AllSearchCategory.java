@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import mouse.project.lib.data.page.Page;
 import mouse.project.lib.data.page.PageDescription;
 import mouse.project.lib.ioc.annotation.Auto;
+import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.termverseweb.defines.Categories;
 import mouse.project.termverseweb.defines.UserStudySetRelation;
 import mouse.project.termverseweb.dto.studyset.StudySetWithOwnerDTO;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 @Component
+@Service
 public class AllSearchCategory implements SearchCategoryHandler {
     private final StudySetRepository studySetRepository;
     private final StudySetWithOwnerMapper studySetWithOwnerMapper;

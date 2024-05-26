@@ -1,10 +1,9 @@
 package mouse.project.lib.web.mapper;
 
+import lombok.extern.log4j.Log4j2;
 import mouse.project.lib.ioc.Ioc;
 import mouse.project.lib.web.dispatcher.ReqRespContext;
 import mouse.project.lib.web.register.RequestMethod;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -12,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
-
+@Log4j2
 public class WebMapper extends HttpServlet {
     @Serial
     private static final long serialVersionUID = -8925159744550576756L;
@@ -21,8 +20,6 @@ public class WebMapper extends HttpServlet {
     public WebMapper(Class<?> configClass) {
         this.configClass = configClass;
     }
-
-    private final static Logger logger = LogManager.getLogger(WebMapper.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
@@ -61,7 +58,7 @@ public class WebMapper extends HttpServlet {
     }
 
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
             processRequest(req, RequestMethod.OPTIONS, resp);
         } catch (IOException e) {
@@ -70,10 +67,10 @@ public class WebMapper extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, RequestMethod method, HttpServletResponse resp) throws IOException {
-        logger.debug("Receive request: " + method + " " + URLTransform.getFullURL(req));
+        log.debug("Receive request: " + method + " " + URLTransform.getFullURL(req));
         Ioc.getConfiguredInjector(configClass)
                 .get(ReqRespContext.class)
                 .useAndExecute(method, req, resp, configClass);
-        logger.debug("Process request: " + method + " " + URLTransform.getFullURL(req));
+        log.debug("Process request: " + method + " " + URLTransform.getFullURL(req));
     }
 }

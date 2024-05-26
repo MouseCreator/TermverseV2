@@ -17,7 +17,7 @@ public class UserStudySetModelFull {
     private String userName;
     @NamedColumn("users.profile_picture_url")
     private String userPictureUrl;
-    @NamedColumn("users_study_sets.type")
+    @NamedColumn("type")
     private String type;
     @NamedColumn("study_sets.id")
     private Long setId;

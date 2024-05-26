@@ -14,6 +14,8 @@ import java.util.Optional;
 public class UserStudySetRepositoryImpl implements UserStudySetRepository {
     private final Executor executor;
     private final UserStudySetTransformer transformer;
+
+
     @Auto
     public UserStudySetRepositoryImpl(Executor executor, UserStudySetTransformer transformer) {
         this.executor = executor;
@@ -23,7 +25,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
     @Override
     public List<UserStudySet> findAll() {
         return executor.read(e -> e.executeQuery(
-                "SELECT u.*, s.*, us.type FROM users_study_sets us " +
+                "SELECT u.*, s.*, us.type " + "FROM users_study_sets us " +
                     "INNER JOIN users u ON u.id = us.user_id " +
                     "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE s.deleted_at IS NULL AND u.deleted_at IS NULL"

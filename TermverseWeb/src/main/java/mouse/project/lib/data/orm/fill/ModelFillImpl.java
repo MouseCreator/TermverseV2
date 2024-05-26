@@ -1,7 +1,9 @@
 package mouse.project.lib.data.orm.fill;
 
+import mouse.project.lib.data.exception.ExecutorException;
 import mouse.project.lib.data.exception.ORMException;
 import mouse.project.lib.data.orm.desc.FieldDescription;
+import mouse.project.lib.data.orm.desc.FieldDescriptions;
 import mouse.project.lib.data.orm.desc.ModelDescription;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Service;
@@ -9,6 +11,7 @@ import mouse.project.lib.ioc.annotation.Service;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,19 +63,47 @@ public class ModelFillImpl implements ModelFill {
     }
 
     private <T> T processInstance(ResultSet set,  ModelDescription<T> description) {
-        List<FieldDescription> fields = description.getFields();
+        FieldDescriptions fields = description.getFields();
         Constructor<T> constructor = description.getConstructor();
         T instance = fillUtil.construct(constructor);
-        for (FieldDescription desc : fields) {
-            try {
-                Object object = set.getObject(desc.columnName(), desc.requiredClass());
-                Field field = desc.field();
-                fillUtil.assign(instance, object, field);
-            } catch (SQLException e) {
-                throw new ORMException("Cannot get column " + desc.columnName()
-                        + " of type " + desc.requiredClass(), e);
+        ResultSetMetaData metaData = getMetaData(set);
+        try {
+            for (int i = metaData.getColumnCount(); i >= 1; i--) {
+                final int index = i;
+                String table = metaData.getTableName(i).toLowerCase();
+                String column = metaData.getColumnName(i).toLowerCase();
+
+                Optional<FieldDescription> justColumn = fields.getFieldDescriptionByName(column);
+                justColumn.ifPresent(j ->  fromSet(set, j, index, instance));
+
+                String combo = table + "." + column;
+                Optional<FieldDescription> withTable = fields.getFieldDescriptionByName(combo);
+                withTable.ifPresent(j ->  fromSet(set, j, index, instance));
             }
+        } catch (SQLException ex) {
+            throw new ORMException(ex);
         }
         return instance;
+    }
+
+    private <T> void fromSet(ResultSet set, FieldDescription description, int i, T instance) {
+        Class<?> targetType = description.requiredClass();
+        String targetColumn = description.columnName();
+        try {
+            Object object = set.getObject(i, targetType);
+            Field field = description.field();
+            fillUtil.assign(instance, object, field);
+        } catch (SQLException e) {
+            throw new ORMException("Cannot get column " + targetColumn
+                    + " of type " + targetType, e);
+        }
+    }
+
+    private static ResultSetMetaData getMetaData(ResultSet set) {
+        try {
+            return set.getMetaData();
+        } catch (SQLException e) {
+            throw new ExecutorException(e);
+        }
     }
 }

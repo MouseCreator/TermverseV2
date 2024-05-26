@@ -70,7 +70,7 @@ class SetTagRepositoryImplTest {
     }
     @Test
     void getSetTagById() {
-        SetTag setTag = insertData("get-all", 1).get(0);
+        SetTag setTag = insertData("get-all", 1).getFirst();
         Long userId = setTag.getUser().getId();
         Long setId = setTag.getStudySet().getId();
         Long tagId = setTag.getTag().getId();

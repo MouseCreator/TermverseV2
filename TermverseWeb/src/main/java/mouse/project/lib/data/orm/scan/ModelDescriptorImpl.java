@@ -45,7 +45,7 @@ public class ModelDescriptorImpl implements ModelDescriptor {
     private FieldDescription describeField(Field field) {
         NamedColumn annotation = field.getAnnotation(NamedColumn.class);
         assert annotation != null;
-        String name = annotation.value();
+        String name = annotation.value().toLowerCase();
         if (name.isEmpty()) {
             Column column = field.getAnnotation(Column.class);
             if (column == null || column.name().isEmpty()) {

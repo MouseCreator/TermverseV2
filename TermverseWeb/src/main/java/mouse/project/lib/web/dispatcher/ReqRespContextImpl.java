@@ -1,5 +1,6 @@
 package mouse.project.lib.web.dispatcher;
 
+import lombok.extern.log4j.Log4j2;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Prototype;
 import mouse.project.lib.ioc.annotation.Service;
@@ -15,10 +16,13 @@ import mouse.project.lib.web.response.WebResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.io.IOException;
 
 @Service
 @Prototype
+@Log4j2
 public class ReqRespContextImpl implements ReqRespContext {
     private final WebContext webContext;
     private final RequestPreinitializer requestPreinitializer;
@@ -55,10 +59,16 @@ public class ReqRespContextImpl implements ReqRespContext {
             WebResponse webResponse = dispatcher.onRequest(requestURL);
             onSuccess(resp, webResponse);
         } catch (ControllerException controllerException) {
+            log.error("Controller error: " + controllerException);
+            log.error(ExceptionUtils.getStackTrace(controllerException));
             onError(resp, controllerException);
         } catch (StatusException statusException) {
+            log.error("Status exception: " + statusException);
+            log.error(ExceptionUtils.getStackTrace(statusException));
             errorHandlerInvoker.processError(statusException, resp);
         } catch (RuntimeException e) {
+            log.error("Fatal error: " + e);
+            log.error(ExceptionUtils.getStackTrace(e));
             onFatalError(e, resp);
         }
 
@@ -70,6 +80,7 @@ public class ReqRespContextImpl implements ReqRespContext {
 
     private void onError(HttpServletResponse resp, ControllerException controllerException) {
         Throwable cause = controllerException.getCause();
+
         if (cause instanceof RuntimeException) {
             errorHandlerInvoker.processError((RuntimeException) cause, resp);
         }

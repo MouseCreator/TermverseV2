@@ -19,22 +19,19 @@ import java.util.List;
 public class AllSearchCategory implements SearchCategoryHandler {
     private final StudySetRepository studySetRepository;
     private final StudySetWithOwnerMapper studySetWithOwnerMapper;
-    private final StudySetSorter sorter;
     @Auto
     @Autowired
-    public AllSearchCategory(StudySetRepository studySetRepository, StudySetWithOwnerMapper studySetWithOwnerMapper, StudySetSorter sort) {
+    public AllSearchCategory(StudySetRepository studySetRepository, StudySetWithOwnerMapper studySetWithOwnerMapper) {
         this.studySetRepository = studySetRepository;
         this.studySetWithOwnerMapper = studySetWithOwnerMapper;
-        this.sorter = sort;
     }
 
     @Override
     @Transactional
     public List<StudySetWithOwnerDTO> search(String query, Long userId, String sort, PageDescription page) {
-        Page<UserStudySet> allByNameAndUser = studySetRepository.findAllByNameAndType(query, UserStudySetRelation.OWNER, page);
+        Page<UserStudySet> allByNameAndUser = studySetRepository.findAllByNameAndType(query, UserStudySetRelation.OWNER, page, sort);
         return allByNameAndUser.getElements()
                 .stream()
-                .sorted(sorter.chooseComparator(sort))
                 .map(u -> studySetWithOwnerMapper.toStudySetWithOwner(u.getUser(), u.getStudySet()))
                 .toList();
     }

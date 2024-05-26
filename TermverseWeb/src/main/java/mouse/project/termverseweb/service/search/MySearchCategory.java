@@ -16,19 +16,17 @@ import java.util.List;
 public class MySearchCategory implements SearchCategoryHandler {
     private final StudySetRepository studySetRepository;
     private final StudySetWithOwnerMapper studySetWithOwnerMapper;
-    private final StudySetSorter sorter;
 
-    public MySearchCategory(StudySetRepository studySetRepository, StudySetWithOwnerMapper studySetWithOwnerMapper, StudySetSorter sorter) {
+    public MySearchCategory(StudySetRepository studySetRepository, StudySetWithOwnerMapper studySetWithOwnerMapper) {
         this.studySetRepository = studySetRepository;
         this.studySetWithOwnerMapper = studySetWithOwnerMapper;
-        this.sorter = sorter;
     }
 
     @Override
     @Transactional
     public List<StudySetWithOwnerDTO> search(String query, Long userId, String sort, PageDescription page) {
         Page<UserStudySet> allByNameAndUser = studySetRepository.findAllByNameAndUser(query,
-                userId, UserStudySetRelation.OWNER, page);
+                userId, UserStudySetRelation.OWNER, page, sort);
         return allByNameAndUser.getElements()
                 .stream()
                 .filter(u -> u.getUser().getId().equals(userId))

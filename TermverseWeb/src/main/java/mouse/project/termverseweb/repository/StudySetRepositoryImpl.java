@@ -2,6 +2,7 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.data.executor.Executor;
 import mouse.project.lib.data.executor.result.Raw;
+import mouse.project.lib.data.sort.SortOrder;
 import mouse.project.termverseweb.model.*;
 import mouse.project.lib.data.page.Page;
 import mouse.project.lib.data.page.PageDescription;
@@ -10,7 +11,9 @@ import mouse.project.lib.ioc.annotation.After;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Dao;
 import mouse.project.termverseweb.repository.transform.UserStudySetTransformer;
+import mouse.project.termverseweb.service.sort.StudySetSorter;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.time.LocalDateTime;
@@ -173,12 +176,12 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     }
 
     @Override
-    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndUser(String name, Long userId, String type, Pageable pageable) {
+    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndUser(String name, Long userId, String type, Pageable pageable, Sort sort) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Page<UserStudySet> findAllByNameAndUser(String name, Long userId, String type, PageDescription pageDescription) {
+    public Page<UserStudySet> findAllByNameAndUser(String name, Long userId, String type, PageDescription pageDescription, String sortBy) {
         List<UserStudySet> list = executor.read(e ->
                 e.executeQuery(
                         "SELECT u.*, s.*, us.type " +
@@ -205,12 +208,12 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     }
 
     @Override
-    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndType(String query, String type, Pageable page) {
+    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndType(String query, String type, Pageable page, Sort sort) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Page<UserStudySet> findAllByNameAndType(String name, String type, PageDescription pageDescription) {
+    public Page<UserStudySet> findAllByNameAndType(String name, String type, PageDescription pageDescription, String sortBy) {
         List<UserStudySet> list = executor.read(e ->
                 e.executeQuery(
                                 "SELECT u.*, s.*, us.type " +
@@ -223,7 +226,8 @@ public class StudySetRepositoryImpl implements StudySetRepository {
                                         "  AND u.deleted_at IS NULL"
                                 , name, type).adjustedList(UserStudySetModelFull.class).map(userStudySetTransformer::transform)
                         .get());
-        return pages.pageOf(list, pageDescription);
+        SortOrder<UserStudySet> sortOrder = StudySetSorter.chooseSortOrder(sortBy);
+        return pages.applyPageDescription(list, pageDescription, sortOrder);
     }
 
 

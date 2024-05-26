@@ -287,7 +287,7 @@ class StudySetRepositoryImplTest {
         UserStudySet u11 = userStudySetRepository.save(new UserStudySet(user1, set1, UserStudySetRelation.OWNER));
         UserStudySet u22 = userStudySetRepository.save(new UserStudySet(user2, set2, UserStudySetRelation.OWNER));
         UserStudySet u12 = userStudySetRepository.save(new UserStudySet(user1, set2, UserStudySetRelation.VIEWER));
-        Page<UserStudySet> allByNameAndType = repository.findAllByNameAndType("by-name-and-type", UserStudySetRelation.OWNER, new PageDescriptionImpl(0, 3));
+        Page<UserStudySet> allByNameAndType = repository.findAllByNameAndType("by-name-and-type", UserStudySetRelation.OWNER, new PageDescriptionImpl(0, 3), "");
         List<UserStudySet> elements = allByNameAndType.getElements();
         assertEquals(2, elements.size());
         assertTrue(elements.contains(u11));
@@ -309,7 +309,7 @@ class StudySetRepositoryImplTest {
         UserStudySet u11 = userStudySetRepository.save(new UserStudySet(user1, set1, UserStudySetRelation.VIEWER));
         Page<UserStudySet> allByNameAndType = repository.
                 findAllByNameAndUser("by-name-and-user", user1.getId(),
-                UserStudySetRelation.OWNER, new PageDescriptionImpl(0, 3));
+                UserStudySetRelation.OWNER, new PageDescriptionImpl(0, 3), "");
         List<UserStudySet> elements = allByNameAndType.getElements();
         assertEquals(1, elements.size(), "Unexpected elements: " + elements);
         assertTrue(elements.contains(u21));

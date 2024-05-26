@@ -8,10 +8,12 @@ import mouse.project.termverseweb.lib.service.repository.SoftDeleteCrudRepositor
 import mouse.project.termverseweb.model.SizedStudySet;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.UserStudySet;
+import mouse.project.termverseweb.service.sort.StudySetSorter;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -91,13 +93,15 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
             "AND uss.user.id = :userId AND uss.user.deletedAt IS NULL AND uss.studySet.deletedAt IS NULL)" )
     Page<UserStudySet> findAllByNameAndUser(@Param("name") String name, @Param("userId") Long userId,
-                                            @Param("type") String type, Pageable pageable);
+                                            @Param("type") String type, Pageable pageable, Sort sort);
 
     default mouse.project.lib.data.page.Page<UserStudySet> findAllByNameAndUser(String name,
                                                                                 Long userId,
                                                                                 String type,
-                                                                                PageDescription pageDescription) {
-        Page<UserStudySet> p = findAllByNameAndUser(name, userId, type, PageRequest.of(pageDescription.number(), pageDescription.size()));
+                                                                                PageDescription pageDescription, String sortBy) {
+        Sort orders = StudySetSorter.sortBy(sortBy);
+        PageRequest pages = PageRequest.of(pageDescription.number(), pageDescription.size());
+        Page<UserStudySet> p = findAllByNameAndUser(name, userId, type, pages, orders);
         List<UserStudySet> studySets = p.stream().toList();
         return new PageImpl<>(studySets, pageDescription);
     }
@@ -106,12 +110,15 @@ public interface StudySetRepository extends Repository<StudySet, Long>, SoftDele
             "LEFT JOIN FETCH us.studySet u " +
             "WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')) AND us.type = :type " +
             "AND us.user.id = :userId AND s.deletedAt IS NULL AND u.deletedAt IS NULL" )
-    Page<UserStudySet> findAllByNameAndType(@Param("name") String query, @Param("type") String type, Pageable page);
+    Page<UserStudySet> findAllByNameAndType(@Param("name") String query, @Param("type") String type, Pageable page, Sort sort);
 
     default mouse.project.lib.data.page.Page<UserStudySet> findAllByNameAndType(String name,
                                                                                 String type,
-                                                                                PageDescription pageDescription) {
-        Page<UserStudySet> p = findAllByNameAndType(name, type, PageRequest.of(pageDescription.number(), pageDescription.size()));
+                                                                                PageDescription pageDescription,
+                                                                                String sortBy) {
+        Sort orders = StudySetSorter.sortBy(sortBy);
+        PageRequest pages = PageRequest.of(pageDescription.number(), pageDescription.size());
+        Page<UserStudySet> p = findAllByNameAndType(name, type, pages, orders);
         List<UserStudySet> studySets = p.stream().toList();
         return new PageImpl<>(studySets, pageDescription);
     }

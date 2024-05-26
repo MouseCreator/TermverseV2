@@ -11,7 +11,7 @@ import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
-import mouse.project.termverseweb.resolver.CurrentUserContext;
+import mouse.project.termverseweb.security.resolver.CurrentUserContext;
 import mouse.project.termverseweb.service.StudySetService;
 import mouse.project.termverseweb.service.UserStudySetService;
 import mouse.project.termverseweb.service.help.AuthService;

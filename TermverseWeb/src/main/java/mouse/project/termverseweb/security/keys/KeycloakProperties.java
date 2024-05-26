@@ -1,4 +1,4 @@
-package mouse.project.termverseweb.keys;
+package mouse.project.termverseweb.security.keys;
 
 import lombok.Data;
 

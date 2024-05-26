@@ -1,4 +1,4 @@
-package mouse.project.termverseweb.resolver;
+package mouse.project.termverseweb.security.resolver;
 
 import mouse.project.termverseweb.exception.UnexpectedAuthTypeException;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;

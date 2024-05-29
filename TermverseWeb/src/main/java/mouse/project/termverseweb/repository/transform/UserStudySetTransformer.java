@@ -4,11 +4,11 @@ import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.termverseweb.model.StudySet;
 import mouse.project.termverseweb.model.User;
 import mouse.project.termverseweb.model.UserStudySet;
-import mouse.project.termverseweb.model.UserStudySetModelFull;
+import mouse.project.termverseweb.model.UserStudySetModel;
 @Service
 public class UserStudySetTransformer {
 
-    public UserStudySet transform(UserStudySetModelFull model) {
+    public UserStudySet transform(UserStudySetModel model) {
         UserStudySet userStudySet = new UserStudySet();
         User user = new User();
         user.setId(model.getUserId());

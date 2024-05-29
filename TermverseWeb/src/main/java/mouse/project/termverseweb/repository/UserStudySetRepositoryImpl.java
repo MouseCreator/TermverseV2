@@ -29,7 +29,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
                     "INNER JOIN users u ON u.id = us.user_id " +
                     "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE s.deleted_at IS NULL AND u.deleted_at IS NULL"
-        ).adjustedList(UserStudySetModelFull.class).map(this::transform).get());
+        ).adjustedList(UserStudySetModel.class).map(this::transform).get());
     }
 
     @Override
@@ -41,10 +41,10 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
                     "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE u.id = ? AND s.id = ? " +
                     "AND u.deleted_at IS NULL ANd s.deleted_at IS NULL", user, studySetId
-        ).adjustedOptional(UserStudySetModelFull.class).map(this::transform).get());
+        ).adjustedOptional(UserStudySetModel.class).map(this::transform).get());
     }
 
-    private UserStudySet transform(UserStudySetModelFull model) {
+    private UserStudySet transform(UserStudySetModel model) {
        return transformer.transform(model);
     }
 
@@ -74,7 +74,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
                     "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE u.id = ? AND us.type = ? " +
                     "AND u.deleted_at IS NULL AND s.deleted_at IS NULL", userId, type
-        ).adjustedList(UserStudySetModelFull.class).map(this::transform).get());
+        ).adjustedList(UserStudySetModel.class).map(this::transform).get());
     }
 
     @Override
@@ -86,7 +86,7 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
                         "INNER JOIN users u ON u.id = us.user_id " +
                         "WHERE s.id = ? AND us.type = ? " +
                         "AND s.deleted_at IS NULL AND u.deleted_at IS NULL", setId, type
-        ).adjustedList(UserStudySetModelFull.class).map(this::transform).get());
+        ).adjustedList(UserStudySetModel.class).map(this::transform).get());
     }
 
     @Override
@@ -98,6 +98,6 @@ public class UserStudySetRepositoryImpl implements UserStudySetRepository {
                     "INNER JOIN study_sets s ON s.id = us.study_set_id " +
                     "WHERE u.id = ? " +
                     "AND u.deleted_at IS NULL AND s.deleted_at IS NULL", userId
-        ).adjustedList(UserStudySetModelFull.class).map(this::transform).get());
+        ).adjustedList(UserStudySetModel.class).map(this::transform).get());
     }
 }

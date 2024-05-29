@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Model
-public class UserStudySetModelFull {
+public class UserStudySetModel {
     @NamedColumn("users.id")
     private Long userId;
     @NamedColumn("users.name")

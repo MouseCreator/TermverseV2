@@ -202,7 +202,7 @@ public class StudySetRepositoryImpl implements StudySetRepository {
                                         "AND ss.deleted_at IS NULL " +
                                         "AND uu.deleted_at IS NULL " +
                                 ")"
-                        , name, type, name, userId).adjustedList(UserStudySetModelFull.class).map(userStudySetTransformer::transform)
+                        , name, type, name, userId).adjustedList(UserStudySetModel.class).map(userStudySetTransformer::transform)
                         .get());
         return pages.pageOf(list, pageDescription);
     }
@@ -224,7 +224,7 @@ public class StudySetRepositoryImpl implements StudySetRepository {
                                         "  AND us.type = ?" +
                                         "  AND s.deleted_at IS NULL" +
                                         "  AND u.deleted_at IS NULL"
-                                , name, type).adjustedList(UserStudySetModelFull.class).map(userStudySetTransformer::transform)
+                                , name, type).adjustedList(UserStudySetModel.class).map(userStudySetTransformer::transform)
                         .get());
         SortOrder<UserStudySet> sortOrder = StudySetSorter.chooseSortOrder(sortBy);
         return pages.applyPageDescription(list, pageDescription, sortOrder);

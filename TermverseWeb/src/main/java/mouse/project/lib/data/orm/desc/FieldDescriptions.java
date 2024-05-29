@@ -5,5 +5,5 @@ import java.util.Optional;
 
 public interface FieldDescriptions {
     List<FieldDescription> getDescriptions();
-    Optional<FieldDescription> getFieldDescriptionByName(String name);
+    Optional<FieldDescription> getFieldDescriptionByNameAndType(String name, FieldDescType type);
 }

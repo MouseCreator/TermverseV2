@@ -6,4 +6,5 @@ public interface FieldDescription {
     String columnName();
     Field field();
     Class<?> requiredClass();
+    FieldDescType type();
 }

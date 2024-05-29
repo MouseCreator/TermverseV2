@@ -58,15 +58,10 @@ public class StudySetTermRepositoryImpl implements StudySetTermRepository {
 
     private SetTerm mapper (SetTermModel model) {
         SetTerm setTerm = new SetTerm();
-
-        Long setId = model.getSetId();
-        Optional<StudySet> setById = setRepository.findById(setId);
-        setById.ifPresent(setTerm::setSet);
-
-        Long termId = model.getTermId();
-        Optional<Term> termById = termRepository.findById(termId);
-        termById.ifPresent(setTerm::setTerm);
-
+        StudySet studySet = model.getStudySet();
+        Term term = model.getTerm();
+        setTerm.setSet(studySet);
+        setTerm.setTerm(term);
         return setTerm;
     }
 

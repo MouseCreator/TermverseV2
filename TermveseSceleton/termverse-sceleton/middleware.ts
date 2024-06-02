@@ -2,6 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {RequestCookies} from "next/dist/compiled/@edge-runtime/cookies";
 import {NextURL} from "next/dist/server/web/next-url";
 import {importJWK, JWTPayload, jwtVerify, KeyLike} from 'jose';
+import {jwtDecode} from "jwt-decode";
 const notProtected = ['/', '/signin', "/signup"];
 export async function middleware(req: NextRequest) {
     const { nextUrl: { pathname }, cookies } = req;
@@ -27,7 +28,7 @@ export async function middleware(req: NextRequest) {
                 }
                 console.log("HAS REFRESH TOKEN");
                 const termverseRefreshToken = cookies.get('termverse_refresh_token')!;
-                const isRefreshTokenValid = await validateToken(termverseRefreshToken.value, kcPublicKey);
+                const isRefreshTokenValid = await validateRefreshToken(termverseRefreshToken.value, kcPublicKey);
                 if (!isRefreshTokenValid) {
                     console.log("REFRESH TOKEN IS INVALID");
                     return NextResponse.redirect(url);
@@ -101,6 +102,21 @@ async function validateToken(token: string, key: KeyLike | Uint8Array ) {
     try {
         console.log(`VALIDATING TOKEN...`);
         const decoded: JWTPayload = await jwtVerify(token, key);
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp && decoded.exp < currentTime) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.log(`VALIDATING ERROR: ${error}`);
+        return false;
+    }
+}
+
+async function validateRefreshToken(token: string, key: KeyLike | Uint8Array ) {
+    try {
+        console.log(`VALIDATING REFRESH TOKEN...`);
+        const decoded: JWTPayload = await jwtDecode(token);
         const currentTime = Math.floor(Date.now() / 1000);
         if (decoded.exp && decoded.exp < currentTime) {
             return false;

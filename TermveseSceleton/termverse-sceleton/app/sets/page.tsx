@@ -107,6 +107,11 @@ export default function Page() {
                                 </li>
                             ))}
                         </ul>
+                        <Link href="/sets/create">
+                            <div className="w-1/2 text-center bg-purple-600 rounded text-white h-8 hover:bg-purple-400">
+                                Create Study Set
+                            </div>
+                        </Link>
                     </div>
                 </div>
 

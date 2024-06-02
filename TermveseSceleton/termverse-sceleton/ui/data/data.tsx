@@ -35,7 +35,6 @@ export interface StudySetResponse {
     name: string
     pictureUrl: string | null
     createdAt: string | null
-    owner: string | null
 }
 
 export interface StudySetResponseFull {

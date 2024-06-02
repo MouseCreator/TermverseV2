@@ -87,10 +87,10 @@ public class StudySetController {
     @URL("/byuser/[id]")
     @Get
     @GetMapping("/byuser/{id}")
-    public List<StudySetWithOwnerDTO> findAllByUser(@PathVariable("id") @FromURL("id") Long id) {
+    public List<StudySetResponseDTO> findAllByUser(@PathVariable("id") @FromURL("id") Long id) {
         List<StudySetResponseDTO> studySetsByUser = service.findStudySetsByUser(id);
         log.debug("Found all study sets by user with id: " + id);
-        return List.of();
+        return studySetsByUser;
     }
 
     @URL

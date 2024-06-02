@@ -65,7 +65,7 @@ public class FilterChainFactory {
         if (targetNodes.isEmpty()) {
             return true;
         }
-        URLPathNode last = targetNodes.get(targetNodes.size() - 1);
+        URLPathNode last = targetNodes.getLast();
         if (isStarNode(last)) {
             return isPartialMatch(input, target);
         } else {

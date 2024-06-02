@@ -204,7 +204,8 @@ public class StudySetRepositoryImpl implements StudySetRepository {
                                 ")"
                         , name, type, name, userId).adjustedList(UserStudySetModel.class).map(userStudySetTransformer::transform)
                         .get());
-        return pages.pageOf(list, pageDescription);
+        SortOrder<UserStudySet> sortOrder = StudySetSorter.chooseSortOrder(sortBy);
+        return pages.applyPageDescription(list, pageDescription, sortOrder);
     }
 
     @Override
@@ -229,7 +230,6 @@ public class StudySetRepositoryImpl implements StudySetRepository {
         SortOrder<UserStudySet> sortOrder = StudySetSorter.chooseSortOrder(sortBy);
         return pages.applyPageDescription(list, pageDescription, sortOrder);
     }
-
 
     @Override
     public Optional<SizedStudySet> findByIdWithSize(Long id) {

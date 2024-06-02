@@ -1,13 +1,14 @@
 'use client'
-import {StudSetList} from "@/ui/components/study_set";
-import { StudySetResponseList} from "@/ui/data/data";
+import {StudSetList, StudSetListCombined} from "@/ui/components/study_set";
+import {StudySetCombinedList, StudySetResponseList} from "@/ui/data/data";
 import React, { useEffect, useState } from 'react';
 import {fetchAllSets} from "@/ui/data/sets";
 import Link from "next/link";
 import axios from "axios";
+import {list} from "postcss";
 export default function Page() {
 
-    const [sets, setSets] = useState([]);
+    const [sets, setSets] = useState<StudySetCombinedList>({list: []});
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState('Saved');
@@ -16,30 +17,56 @@ export default function Page() {
 
     useEffect(() => {
         fetchSets();
+        fetchTotalPages();
     }, [page, search, category, sort]);
+
+    function mapCategory(category: string) {
+        if (category === "All") return "all";
+        if (category === "My study sets") return "my_sets";
+        if (category === "Saved") return "saved";
+        return "all";
+    }
 
     const fetchSets = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/sets/search`, {
                 params: {
-                    page: page,
+                    page: page-1,
                     size: 10,
                     q: search.trim(),
                     sort: sort.toLowerCase(),
-                    category: category.toLowerCase()
+                    category: mapCategory(category)
                 },
                 withCredentials: true
             });
-            setSets(response.data.sets);
+            setSets({list: response.data});
+        } catch (error) {
+            console.error('Error fetching sets:', error);
+        }
+    };
+
+    const fetchTotalPages = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/sets/search/total`, {
+                params: {
+                    page: page-1,
+                    size: 10,
+                    q: search.trim(),
+                    sort: sort.toLowerCase(),
+                    category: mapCategory(category)
+                },
+                withCredentials: true
+            });
             setTotalPages(response.data.totalPages);
+            console.log(totalPages)
         } catch (error) {
             console.error('Error fetching sets:', error);
         }
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="container mx-auto p-4 w-full ">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
                 {/* Options Column */}
                 <div className="col-span-1">
                     <div className="mb-4">
@@ -84,34 +111,29 @@ export default function Page() {
                 </div>
 
                 {/* Sets Column */}
-                <div className="col-span-3">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {sets.map((set) => (
-                            <div key={set.id} className="p-4 border rounded">
-                                {/* Display set details */}
-                                <h3 className="text-xl font-semibold">{set.name}</h3>
-                                {/* Other details can be added here */}
-                            </div>
-                        ))}
-                    </div>
+                <div className="col-span-3 w-full">
                     {/* Pagination */}
                     <div className="flex justify-center mt-4">
                         <button
                             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                             disabled={page === 1}
-                            className="p-2 border rounded-l"
+                            className="p-2 border rounded-l disabled:bg-slate-50"
                         >
                             Previous
                         </button>
-                        <span className="p-2 border-t border-b">{page}</span>
+                        <span className="p-2 px-6 border-t border-b">{page}</span>
                         <button
                             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
                             disabled={page === totalPages}
-                            className="p-2 border rounded-r"
+                            className="p-2 border rounded-r disabled:bg-slate-50"
                         >
                             Next
                         </button>
                     </div>
+                    <div className="md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                        <StudSetListCombined props={ sets }/>
+                    </div>
+
                 </div>
             </div>
         </div>

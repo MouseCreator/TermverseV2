@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
 import mouse.project.termverseweb.dto.data.StudySetSearchParams;
+import mouse.project.termverseweb.dto.pages.TotalPagesDTO;
 import mouse.project.termverseweb.dto.studyset.*;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
@@ -35,9 +36,8 @@ public class StudySetController {
     @URL
     @Get
     @GetMapping
-    public List<StudySetWithOwnerDTO> findAll() {
-        List<StudySetResponseDTO> all = service.findAll();
-        return List.of();
+    public List<StudySetResponseDTO> findAll() {
+        return service.findAll();
     }
 
     @URL("/search")
@@ -60,6 +60,28 @@ public class StudySetController {
                 .user(auth.onAuth(userAuth).toUserId())
                 .get();
         return service.findAllBySearchParams(searchParams);
+    }
+
+    @URL("/search/total")
+    @Get
+    @GetMapping("/search/total")
+    public TotalPagesDTO findTotalPages(
+            @Param("page") @RequestParam("page") int pageNumber,
+            @Param("size") @RequestParam("size") int pageSize,
+            @Param("q") @RequestParam("q") String searchParam,
+            @Param("category") @RequestParam("category") String category,
+            @Param("sort") @RequestParam("sort") String sortBy,
+            @FromAttribute(Args.OPT_AUTH) @CurrentUserContext OptionalAuthentication userAuth
+    ) {
+        StudySetSearchParams searchParams = StudySetSearchParams.build()
+                .pageNumber(pageNumber)
+                .pageSize(pageSize)
+                .searchParam(searchParam)
+                .category(category)
+                .sort(sortBy)
+                .user(auth.onAuth(userAuth).toUserId())
+                .get();
+        return service.totalPages(searchParams);
     }
 
     @URL("/byuser/[id]")

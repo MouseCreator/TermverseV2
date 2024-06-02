@@ -5,6 +5,7 @@ import mouse.project.lib.data.page.PageDescription;
 import mouse.project.lib.data.page.PageDescriptionImpl;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.termverseweb.dto.data.StudySetSearchParams;
+import mouse.project.termverseweb.dto.pages.TotalPagesDTO;
 import mouse.project.termverseweb.dto.studyset.*;
 
 import mouse.project.termverseweb.lib.service.container.ServiceProviderContainer;
@@ -130,5 +131,14 @@ public class StudySetServiceImpl implements StudySetService {
         String sort = searchParams.getSortBy();
         Long userId = searchParams.getUserId();
         return studySetSearch.search(category, query, userId, sort, pageDescription);
+    }
+
+    @Override
+    public TotalPagesDTO totalPages(StudySetSearchParams searchParams) {
+        PageDescription pageDescription = new PageDescriptionImpl(searchParams.getPageNumber(), searchParams.getPageSize());
+        String query = searchParams.getSearchParam();
+        String category = searchParams.getCategory();
+        Long userId = searchParams.getUserId();
+        return studySetSearch.totalPages(category, query, userId, pageDescription);
     }
 }

@@ -28,7 +28,7 @@ public class RawResultImpl implements RawResult {
     }
 
     @Override
-    public void map(Consumer<ResultSet> consumer) {
+    public void consume(Consumer<ResultSet> consumer) {
         consumer.accept(resultSet);
     }
 }

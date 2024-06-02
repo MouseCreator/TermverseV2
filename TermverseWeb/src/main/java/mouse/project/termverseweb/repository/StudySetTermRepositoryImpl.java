@@ -18,7 +18,6 @@ import java.util.Optional;
 public class StudySetTermRepositoryImpl implements StudySetTermRepository {
 
     private final Executor executor;
-
     private StudySetRepository setRepository = null;
     private TermRepository termRepository = null;
     @After

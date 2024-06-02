@@ -1,10 +1,13 @@
 package mouse.project.lib.web.tool;
 
+import jakarta.servlet.http.HttpServletRequest;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.exception.URLException;
+import mouse.project.lib.web.mapper.URLTransform;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -186,5 +189,34 @@ public class URLService {
 
     public boolean isArgument(String str) {
         return (str.startsWith("[") && str.endsWith("]"));
+    }
+
+    public FullURL create(HttpServletRequest req) {
+        String strUrl = URLTransform.getFullURL(req);
+        strUrl = formatURL(strUrl);
+        String[] strings =  separateURL(strUrl);
+        Map<String, String[]> parameterMap = req.getParameterMap();
+        List<URLPathNode> urlPathNodes = createPath(strings[0]);
+
+        URLPath path = new URLPathImpl();
+        path.appendAll(urlPathNodes);
+        URLParams urlParams = new URLParamsImpl();
+        List<URLParamNode> paramNodes = createParams(parameterMap);
+        urlParams.appendAll(paramNodes);
+
+        URLFragmentNode fragmentNode = new URLFragmentNode(strings[2]);
+        URLFragment urlFragment = new URLFragmentImpl(fragmentNode);
+        return new FullURLImpl(path, urlParams, urlFragment);
+    }
+
+    private List<URLParamNode> createParams(Map<String, String[]> parameterMap) {
+        List<URLParamNode> urlParamNodes = new ArrayList<>();
+        for (String key : parameterMap.keySet()) {
+            String[] values = parameterMap.get(key);
+            for (String v : values) {
+                urlParamNodes.add(new URLParamNode(key, v));
+            }
+        }
+        return urlParamNodes;
     }
 }

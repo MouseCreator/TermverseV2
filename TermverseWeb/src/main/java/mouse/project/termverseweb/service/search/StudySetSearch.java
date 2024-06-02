@@ -7,6 +7,7 @@ import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Collect;
 import mouse.project.lib.ioc.annotation.Service;
 import mouse.project.lib.web.exception.BadRequestException;
+import mouse.project.termverseweb.dto.pages.TotalPagesDTO;
 import mouse.project.termverseweb.dto.studyset.StudySetWithOwnerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,5 +47,13 @@ public class StudySetSearch {
             throw new BadRequestException("No handler defined for category: " + category);
         }
         return searchCategoryHandler.search(query, userId, sort, pageDescription);
+    }
+
+    public TotalPagesDTO totalPages(String category, String query, Long userId, PageDescription pageDescription) {
+        SearchCategoryHandler searchCategoryHandler = handlers.get(category);
+        if (searchCategoryHandler == null) {
+            throw new BadRequestException("No handler defined for category: " + category);
+        }
+        return searchCategoryHandler.totalPages(query, userId, category, pageDescription);
     }
 }

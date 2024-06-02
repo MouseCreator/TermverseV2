@@ -2,6 +2,7 @@ package mouse.project.termverseweb.service;
 
 
 import mouse.project.termverseweb.dto.data.StudySetSearchParams;
+import mouse.project.termverseweb.dto.pages.TotalPagesDTO;
 import mouse.project.termverseweb.dto.studyset.*;
 
 
@@ -23,4 +24,5 @@ public interface StudySetService {
     StudySetResponseDTO saveWithCustomTime(StudySetCreateDTO createDTO, LocalDateTime customTime);
     StudySetWithTermsResponseDTO findByIdWithTerms(Long id);
     List<StudySetWithOwnerDTO> findAllBySearchParams(StudySetSearchParams searchParams);
+    TotalPagesDTO totalPages(StudySetSearchParams searchParams);
 }

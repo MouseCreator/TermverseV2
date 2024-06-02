@@ -1,6 +1,7 @@
 package mouse.project.lib.ioc.injector;
 
 import mouse.project.lib.exception.ScanException;
+import mouse.project.lib.ioc.annotation.Card;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.ioc.annotation.Dao;
 import mouse.project.lib.ioc.annotation.Service;
@@ -14,7 +15,8 @@ public class AnnotationManagerImpl implements AnnotationManager {
             List.of(
                 Controller.class,
                 Dao.class,
-                Service.class
+                Service.class,
+                Card.class
             );
     @Override
     public List<Class<? extends Annotation>> getTargetAnnotations() {

@@ -5,10 +5,8 @@ import mouse.project.lib.web.annotation.*;
 import mouse.project.termverseweb.dto.valid.ValidationDTO;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
-import mouse.project.termverseweb.resolver.CurrentUserContext;
+import mouse.project.termverseweb.security.resolver.CurrentUserContext;
 import mouse.project.termverseweb.service.help.AuthService;
-import org.springframework.security.core.annotation.CurrentSecurityContext;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,9 +29,9 @@ public class ValidateToken {
     private ValidationDTO doCreate(Object authObject) {
         boolean authenticated = authService.onAuth(authObject).isAuthenticated();
         if (authenticated) {
-            return new ValidationDTO("token-invalid");
+            return new ValidationDTO("token-valid");
         }
-        return new ValidationDTO("token-valid");
+        return new ValidationDTO("token-invalid");
     }
 
 }

@@ -6,6 +6,10 @@ export interface StudySetPropsListProps {
     props: StudySetResponseList
 }
 
+export interface StudySetCombinedProps {
+    props: StudySetCombinedList
+}
+
 export interface StudySetPropsList {
     list: StudySetDescription[]
 }
@@ -31,7 +35,6 @@ export interface StudySetResponse {
     name: string
     pictureUrl: string | null
     createdAt: string | null
-    owner: string | null
 }
 
 export interface StudySetResponseFull {
@@ -40,6 +43,18 @@ export interface StudySetResponseFull {
     pictureUrl: string | null
     createdAt: string | null
     terms: TermResponseDTO[]
+}
+
+export interface StudySetCombined {
+    id: number,
+    name: string,
+    pictureUrl: string | null
+    createdAt: string | null,
+    owner: UserDescription
+}
+
+export interface StudySetCombinedList {
+    list: StudySetCombined[]
 }
 
 export interface StudySetResponseList {
@@ -66,6 +81,8 @@ export interface TermResponseDTO {
         picture_url: string | null,
         order: number
 }
+
+
 export interface TermsProps {
     terms: TermResponseDTO[]
 }

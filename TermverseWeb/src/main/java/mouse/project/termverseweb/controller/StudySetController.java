@@ -5,17 +5,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import mouse.project.lib.ioc.annotation.Controller;
 import mouse.project.lib.web.annotation.*;
+import mouse.project.termverseweb.dto.data.StudySetSearchParams;
+import mouse.project.termverseweb.dto.pages.TotalPagesDTO;
 import mouse.project.termverseweb.dto.studyset.*;
 import mouse.project.termverseweb.dto.user.UserResponseDTO;
 import mouse.project.termverseweb.dto.userstudyset.UserStudySetResponseDTO;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
-import mouse.project.termverseweb.resolver.CurrentUserContext;
+import mouse.project.termverseweb.security.resolver.CurrentUserContext;
 import mouse.project.termverseweb.service.StudySetService;
 import mouse.project.termverseweb.service.UserStudySetService;
 import mouse.project.termverseweb.service.help.AuthService;
 import mouse.project.termverseweb.service.optimized.OptimizedStudySetService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,26 +36,61 @@ public class StudySetController {
     @URL
     @Get
     @GetMapping
-    public List<StudySetWithOwnerDTO> findAll() {
-        List<StudySetResponseDTO> all = service.findAll();
-        return toOwnerStudySet(all);
+    public List<StudySetResponseDTO> findAll() {
+        return service.findAll();
     }
 
-    @NotNull
-    private List<StudySetWithOwnerDTO> toOwnerStudySet(List<StudySetResponseDTO> all) {
-        return all.stream().map(s -> {
-            UserResponseDTO owner = userStudySetService.getOwnerOfStudySet(s.getId());
-            return new StudySetWithOwnerDTO(s, owner.getName());
-        }).toList();
+    @URL("/search")
+    @Get
+    @GetMapping("/search")
+    public List<StudySetWithOwnerDTO> findBySearchParams(
+            @Param("page") @RequestParam("page") int pageNumber,
+            @Param("size") @RequestParam("size") int pageSize,
+            @Param("q") @RequestParam("q") String searchParam,
+            @Param("category") @RequestParam("category") String category,
+            @Param("sort") @RequestParam("sort") String sortBy,
+            @FromAttribute(Args.OPT_AUTH) @CurrentUserContext OptionalAuthentication userAuth
+    ) {
+        StudySetSearchParams searchParams = StudySetSearchParams.build()
+                .pageNumber(pageNumber)
+                .pageSize(pageSize)
+                .searchParam(searchParam)
+                .category(category)
+                .sort(sortBy)
+                .user(auth.onAuth(userAuth).toUserId())
+                .get();
+        return service.findAllBySearchParams(searchParams);
+    }
+
+    @URL("/search/total")
+    @Get
+    @GetMapping("/search/total")
+    public TotalPagesDTO findTotalPages(
+            @Param("page") @RequestParam("page") int pageNumber,
+            @Param("size") @RequestParam("size") int pageSize,
+            @Param("q") @RequestParam("q") String searchParam,
+            @Param("category") @RequestParam("category") String category,
+            @Param("sort") @RequestParam("sort") String sortBy,
+            @FromAttribute(Args.OPT_AUTH) @CurrentUserContext OptionalAuthentication userAuth
+    ) {
+        StudySetSearchParams searchParams = StudySetSearchParams.build()
+                .pageNumber(pageNumber)
+                .pageSize(pageSize)
+                .searchParam(searchParam)
+                .category(category)
+                .sort(sortBy)
+                .user(auth.onAuth(userAuth).toUserId())
+                .get();
+        return service.totalPages(searchParams);
     }
 
     @URL("/byuser/[id]")
     @Get
     @GetMapping("/byuser/{id}")
-    public List<StudySetWithOwnerDTO> findAllByUser(@PathVariable("id") @FromURL("id") Long id) {
+    public List<StudySetResponseDTO> findAllByUser(@PathVariable("id") @FromURL("id") Long id) {
         List<StudySetResponseDTO> studySetsByUser = service.findStudySetsByUser(id);
         log.debug("Found all study sets by user with id: " + id);
-        return toOwnerStudySet(studySetsByUser);
+        return studySetsByUser;
     }
 
     @URL
@@ -133,9 +169,6 @@ public class StudySetController {
         Long userId = auth.onAuth(optionalAuthentication).toUserId();
         log.debug("Getting all study sets of user " + userId);
         List<StudySetDescriptionDTO> studySetsByUser = optimized.getStudySetsByUser(userId);
-        return studySetsByUser.stream().map(s -> {
-            UserResponseDTO owner = userStudySetService.getOwnerOfStudySet(s.getId());
-            return new StudySetWithOwnerDTO(s, owner.getName());
-        }).toList();
+        return List.of();
     }
 }

@@ -1,11 +1,10 @@
 import {NextRequest, NextResponse} from "next/server";
-import axios from "axios";
 import {RequestCookies} from "next/dist/compiled/@edge-runtime/cookies";
 import {NextURL} from "next/dist/server/web/next-url";
-
+import {importJWK, JWTPayload, jwtVerify, KeyLike} from 'jose';
+import {jwtDecode} from "jwt-decode";
 const notProtected = ['/', '/signin', "/signup"];
-
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
     const { nextUrl: { pathname }, cookies } = req;
     console.log("PROTECTED")
     if (notProtected.includes(pathname)) {
@@ -14,27 +13,34 @@ export function middleware(req: NextRequest) {
     const url = req.nextUrl.clone();
     url.pathname = '/signin';
     if (cookies.has("termverse_access_token")) {
-        const cookie = cookies.get("termverse_access_token");
-        console.log("HAS TOKEN")
-        if (cookie)
-            return validateToken(cookie.value).then(result => {
-            if (result) {
+        const cookie = cookies.get('termverse_access_token')!;
+        console.log("HAS ACCESS TOKEN");
+        if (cookie) {
+            const isAccessTokenValid = await validateToken(cookie.value, kcPublicKey)
+            if (isAccessTokenValid) {
+                console.log("ACCESS TOKEN IS VALID");
                 return NextResponse.next();
             } else {
+                console.log("ACCESS TOKEN IS INVALID");
                 if (!cookies.has("termverse_refresh_token")) {
+                    console.log("NO REFRESH TOKEN");
                     return NextResponse.redirect(url);
                 }
-                const termverseRefreshToken = cookies.get("termverse_refresh_token");
-                if (!termverseRefreshToken?.value) {
+                console.log("HAS REFRESH TOKEN");
+                const termverseRefreshToken = cookies.get('termverse_refresh_token')!;
+                const isRefreshTokenValid = await validateRefreshToken(termverseRefreshToken.value, kcPublicKey);
+                if (!isRefreshTokenValid) {
+                    console.log("REFRESH TOKEN IS INVALID");
                     return NextResponse.redirect(url);
                 }
-                return refresh(termverseRefreshToken?.value, cookies, req, url);
+                console.log("REFRESH TOKEN IS VALID. REFRESHING...")
+                return refresh(termverseRefreshToken.value, cookies, req, url);
             }
-        });
+        } else {
+            console.log("NO COOKIE!");
+        }
     }
-    return NextResponse.redirect(url, {
-        status: 303
-    });
+    return NextResponse.redirect(url);
 }
 async function refresh(token: string, cookies: RequestCookies, req: NextRequest, url: NextURL) {
     try {
@@ -58,24 +64,66 @@ async function refresh(token: string, cookies: RequestCookies, req: NextRequest,
         nextResponse.headers.set("Set-Cookie", `termverse_access_token=${accessToken}; Path=/; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}\``)
         return nextResponse;
     } catch (Error) {
-        return  NextResponse.redirect(new URL('/signin', req.url), {
-            status: 303
-        });
+        return NextResponse.redirect(new URL('/signin', req.url));
     }
 }
 
-async function validateToken(token: string) {
+const jwk = await getKeycloakPublicKey();
+const kcPublicKey = await importJWK(jwk);
+interface JWK {
+    kid: string;
+    kty: string;
+    alg: string;
+    use: string;
+    n: string;
+    e: string;
+    x5c: string[];
+    x5t: string;
+    'x5t#256': string;
+}
+
+export interface JWKS {
+    keys: JWK[];
+}
+async function getKeycloakPublicKey(): Promise<JWK> {
+    const url = `http://localhost:8180/realms/termverse/protocol/openid-connect/certs`;
     try {
-        const response = await fetch('http://localhost:8080/validate', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        });
-        const jsonData = await response.json();
-        const data = jsonData.status;
-        return data === "token-valid";
+        const response = await fetch(url);
+        const jwks: JWKS = await response.json();
+        const key = jwks.keys.find((k: any) => k.use === 'sig');
+        console.log(`Successfully got KEY for middleware.`)
+        return key;
     } catch (error) {
-        console.error('Error validating token:', error);
+        throw new Error(`Failed to fetch public key from Keycloak: ${url}. Details: ${error}`);
+    }
+
+}
+async function validateToken(token: string, key: KeyLike | Uint8Array ) {
+    try {
+        console.log(`VALIDATING TOKEN...`);
+        const decoded: JWTPayload = await jwtVerify(token, key);
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp && decoded.exp < currentTime) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.log(`VALIDATING ERROR: ${error}`);
+        return false;
+    }
+}
+
+async function validateRefreshToken(token: string, key: KeyLike | Uint8Array ) {
+    try {
+        console.log(`VALIDATING REFRESH TOKEN...`);
+        const decoded: JWTPayload = await jwtDecode(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (decoded.exp && decoded.exp < currentTime) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.log(`VALIDATING ERROR: ${error}`);
         return false;
     }
 }

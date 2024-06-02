@@ -25,12 +25,12 @@ public class DefinitionsInspector {
         return new FieldInfo(new Implementation<>(requiredType, named), null);
     }
 
-    public ParameterDefinition inspectParameter(Parameter parameter, int order) {
+    public ParameterDefinition inspectParameter(Parameter parameter, int order, String metadata) {
         UseNamed annotation = parameter.getAnnotation(UseNamed.class);
         String named = annotation == null ? null : annotation.name();
         Class<?> requiredType = parameter.getType();
         if (isCollection(parameter)) {
-            return inspectCollectionParameter(named, parameter, order);
+            return inspectCollectionParameter(named, parameter, order, metadata);
         } else {
             Implementation<?> implementation = new Implementation<>(requiredType, named);
             return new ParameterDefinitionImpl(implementation, order, null);
@@ -41,21 +41,28 @@ public class DefinitionsInspector {
         Implementation<?> implementation = toCollectedImplementation(named, field);
         return new FieldInfo(implementation, collection);
     }
-
-    private Implementation<?> toCollectedImplementation(String named, AnnotatedElement el) {
+    private Implementation<?> toCollectedImplementation(String named, AnnotatedElement el, String metadata) {
         Collect collect = el.getAnnotation(Collect.class);
         if (collect == null) {
-            throw new MissingAnnotationException("Collection field/parameter must be annotated with @Collect " +
-                    "and specify collection generic type " + el);
+            String message = "Collection field/parameter must be annotated with @Collect " +
+                    "and specify collection generic type " + el;
+            if (metadata != null && !metadata.isEmpty()) {
+                message += "Details: ";
+                message += metadata;
+            }
+            throw new MissingAnnotationException(message);
         }
         Class<?> type = collect.value();
         return new Implementation<>(type, named);
     }
+    private Implementation<?> toCollectedImplementation(String named, AnnotatedElement el) {
+       return toCollectedImplementation(named, el, "");
+    }
 
 
-    private ParameterDefinition inspectCollectionParameter(String named, Parameter parameter, int order) {
+    private ParameterDefinition inspectCollectionParameter(String named, Parameter parameter, int order, String metadata) {
         Class<?> collection = parameter.getType();
-        Implementation<?> implementation = toCollectedImplementation(named, parameter);
+        Implementation<?> implementation = toCollectedImplementation(named, parameter, metadata);
         return new ParameterDefinitionImpl(implementation, order, collection);
     }
 
@@ -69,11 +76,11 @@ public class DefinitionsInspector {
         return TypeUtils.isCollectionType(type);
     }
 
-    public Parameters inspectParameters(Parameter[] parameters) {
+    public Parameters inspectParameters(Parameter[] parameters, String metadata) {
         ParametersImpl result = new ParametersImpl();
         int order = 0;
         for (Parameter parameter : parameters) {
-            ParameterDefinition pd = inspectParameter(parameter, order);
+            ParameterDefinition pd = inspectParameter(parameter, order, metadata);
             result.add(pd);
             order++;
         }
@@ -81,11 +88,11 @@ public class DefinitionsInspector {
     }
 
     public Parameters inspectConstructor(Constructor<?> constructor) {
-        return inspectParameters(constructor.getParameters());
+        return inspectParameters(constructor.getParameters(), constructor.toString());
     }
 
     public Parameters inspectMethod(Method method) {
-        return inspectParameters(method.getParameters());
+        return inspectParameters(method.getParameters(), method.toString());
     }
 
     public Implementation<?> getMethodReturnType(Method method) {

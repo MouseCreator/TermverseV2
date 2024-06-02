@@ -9,7 +9,7 @@ import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
 import mouse.project.termverseweb.mapper.UserMapper;
 import mouse.project.termverseweb.model.User;
-import mouse.project.termverseweb.resolver.CurrentUserContext;
+import mouse.project.termverseweb.security.resolver.CurrentUserContext;
 import mouse.project.termverseweb.service.UserService;
 import mouse.project.termverseweb.service.help.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;

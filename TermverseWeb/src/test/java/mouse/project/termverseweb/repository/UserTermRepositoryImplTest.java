@@ -84,12 +84,12 @@ class UserTermRepositoryImplTest {
         List<Term> terms = userTerms.stream().map(UserTerm::getTerm).toList();
         List<Long> ids = terms.stream().map(Term::getId).toList();
 
-        Long userId = userTerms.get(0).getUser().getId();
+        Long userId = userTerms.getFirst().getUser().getId();
         List<UserTerm> byIds = repository.findByUserAndTerms(userId, ids);
         MTest.compareUnordered(userTerms, byIds);
 
-        Long Id1 = ids.get(0);
-        UserTerm first = userTerms.get(0);
+        Long Id1 = ids.getFirst();
+        UserTerm first = userTerms.getFirst();
         List<UserTerm> firstOnly = repository.findByUserAndTerms(userId, List.of(Id1));
         MTest.compareUnordered(List.of(first), firstOnly);
 

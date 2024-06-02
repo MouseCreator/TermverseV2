@@ -1,10 +1,9 @@
 package mouse.project.termverseweb.service;
 
 
-import mouse.project.termverseweb.dto.studyset.StudySetCreateDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetResponseDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetUpdateDTO;
-import mouse.project.termverseweb.dto.studyset.StudySetWithTermsResponseDTO;
+import mouse.project.termverseweb.dto.data.StudySetSearchParams;
+import mouse.project.termverseweb.dto.pages.TotalPagesDTO;
+import mouse.project.termverseweb.dto.studyset.*;
 
 
 import java.time.LocalDateTime;
@@ -24,4 +23,6 @@ public interface StudySetService {
     List<StudySetResponseDTO> findStudySetsByUser(Long userId);
     StudySetResponseDTO saveWithCustomTime(StudySetCreateDTO createDTO, LocalDateTime customTime);
     StudySetWithTermsResponseDTO findByIdWithTerms(Long id);
+    List<StudySetWithOwnerDTO> findAllBySearchParams(StudySetSearchParams searchParams);
+    TotalPagesDTO totalPages(StudySetSearchParams searchParams);
 }

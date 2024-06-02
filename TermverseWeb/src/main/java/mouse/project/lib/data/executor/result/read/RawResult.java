@@ -7,5 +7,5 @@ import java.util.function.Function;
 public interface RawResult {
     <U> U map(Function<ResultSet, U> mapper);
     RawResult action(Consumer<ResultSet> consumer);
-    void map(Consumer<ResultSet> consumer);
+    void consume(Consumer<ResultSet> consumer);
 }

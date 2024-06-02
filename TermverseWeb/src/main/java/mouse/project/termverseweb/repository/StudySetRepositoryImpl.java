@@ -2,27 +2,30 @@ package mouse.project.termverseweb.repository;
 
 import mouse.project.lib.data.executor.Executor;
 import mouse.project.lib.data.executor.result.Raw;
-import mouse.project.termverseweb.model.SizedStudySet;
-import mouse.project.termverseweb.model.StudySet;
-import mouse.project.termverseweb.model.Term;
+import mouse.project.lib.data.sort.SortOrder;
+import mouse.project.termverseweb.model.*;
 import mouse.project.lib.data.page.Page;
 import mouse.project.lib.data.page.PageDescription;
 import mouse.project.lib.data.page.PageFactory;
 import mouse.project.lib.ioc.annotation.After;
 import mouse.project.lib.ioc.annotation.Auto;
 import mouse.project.lib.ioc.annotation.Dao;
+import mouse.project.termverseweb.repository.transform.UserStudySetTransformer;
+import mouse.project.termverseweb.service.sort.StudySetSorter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 @Dao
 @NoRepositoryBean
 public class StudySetRepositoryImpl implements StudySetRepository {
     private final Executor executor;
     private final PageFactory pages;
     private TermRepository termRepository = null;
+    private UserStudySetTransformer userStudySetTransformer;
     @Auto
     public StudySetRepositoryImpl(Executor executor, PageFactory pages) {
         this.executor = executor;
@@ -31,6 +34,10 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     @After
     public void setTermRepository(TermRepository termRepository) {
         this.termRepository = termRepository;
+    }
+    @After
+    public void setUserStudySetTransformer(UserStudySetTransformer userStudySetTransformer) {
+        this.userStudySetTransformer = userStudySetTransformer;
     }
 
     @Override
@@ -113,7 +120,7 @@ public class StudySetRepositoryImpl implements StudySetRepository {
     @Override
     public List<StudySet> findAllByUserId(Long userId) {
         return executor.read(e -> e.executeQuery(
-                "SELECT * " +
+                "SELECT s.* " +
                     "FROM study_sets s " +
                     "INNER JOIN users_study_sets us ON s.id = us.study_set_id " +
                     "INNER JOIN users u ON u.id = us.user_id " +
@@ -167,6 +174,63 @@ public class StudySetRepositoryImpl implements StudySetRepository {
                             "WHERE s.id = ? AND s.deleted_at IS NULL AND t.deleted_at IS NULL", setId
             ).getRaw().map(Raw::getInt));
     }
+
+    @Override
+    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndUser(String name, Long userId, String type, Pageable pageable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Page<UserStudySet> findAllByNameAndUser(String name, Long userId, String type, PageDescription pageDescription, String sortBy) {
+        List<UserStudySet> list = executor.read(e ->
+                e.executeQuery(
+                            "SELECT u.*, s.*, us.type " +
+                                "FROM users_study_sets us " +
+                                "JOIN users u ON us.user_id = u.id " +
+                                "JOIN study_sets s ON us.study_set_id = s.id " +
+                                "WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', ?, '%'))" +
+                                "  AND us.type = ?" +
+                                "  AND s.deleted_at IS NULL" +
+                                "  AND u.deleted_at IS NULL" +
+                                "  AND s.id IN " +
+                                        "(SELECT uss.study_set_id " +
+                                        "FROM users_study_sets uss " +
+                                        "JOIN users uu ON uss.user_id = uu.id " +
+                                        "JOIN study_sets ss ON uss.study_set_id = ss.id " +
+                                        "WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', ?, '%')) " +
+                                        "AND uu.id = ? " +
+                                        "AND ss.deleted_at IS NULL " +
+                                        "AND uu.deleted_at IS NULL " +
+                                ")"
+                        , name, type, name, userId).adjustedList(UserStudySetModel.class).map(userStudySetTransformer::transform)
+                        .get());
+        SortOrder<UserStudySet> sortOrder = StudySetSorter.chooseSortOrder(sortBy);
+        return pages.applyPageDescription(list, pageDescription, sortOrder);
+    }
+
+    @Override
+    public org.springframework.data.domain.Page<UserStudySet> findAllByNameAndType(String query, String type, Pageable page) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Page<UserStudySet> findAllByNameAndType(String name, String type, PageDescription pageDescription, String sortBy) {
+        List<UserStudySet> list = executor.read(e ->
+                e.executeQuery(
+                                "SELECT u.*, s.*, us.type " +
+                                        "FROM users_study_sets us " +
+                                        "JOIN users u ON us.user_id = u.id " +
+                                        "JOIN study_sets s ON us.study_set_id = s.id " +
+                                        "WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', ?, '%'))" +
+                                        "  AND us.type = ?" +
+                                        "  AND s.deleted_at IS NULL" +
+                                        "  AND u.deleted_at IS NULL"
+                                , name, type).adjustedList(UserStudySetModel.class).map(userStudySetTransformer::transform)
+                        .get());
+        SortOrder<UserStudySet> sortOrder = StudySetSorter.chooseSortOrder(sortBy);
+        return pages.applyPageDescription(list, pageDescription, sortOrder);
+    }
+
     @Override
     public Optional<SizedStudySet> findByIdWithSize(Long id) {
         Optional<StudySet> studySet = findById(id);

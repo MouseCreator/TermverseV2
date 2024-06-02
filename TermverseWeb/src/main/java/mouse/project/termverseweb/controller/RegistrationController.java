@@ -9,7 +9,7 @@ import mouse.project.termverseweb.exception.AlreadyAuthorizedException;
 import mouse.project.termverseweb.exception.NoSuchUserException;
 import mouse.project.termverseweb.filters.argument.Args;
 import mouse.project.termverseweb.filters.argument.OptionalAuthentication;
-import mouse.project.termverseweb.resolver.CurrentUserContext;
+import mouse.project.termverseweb.security.resolver.CurrentUserContext;
 import mouse.project.termverseweb.service.help.AuthContext;
 import mouse.project.termverseweb.service.help.AuthService;
 import mouse.project.termverseweb.service.register.RegisterService;

@@ -5,14 +5,26 @@ import lombok.NoArgsConstructor;
 import mouse.project.lib.data.orm.annotation.Model;
 import mouse.project.lib.data.orm.annotation.NamedColumn;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @Model
 public class UserStudySetModel {
-    @NamedColumn("user_id")
+    @NamedColumn("users.id")
     private Long userId;
-    @NamedColumn("study_set_id")
-    private Long setId;
+    @NamedColumn("users.name")
+    private String userName;
+    @NamedColumn("users.profile_picture_url")
+    private String userPictureUrl;
     @NamedColumn("type")
     private String type;
+    @NamedColumn("study_sets.id")
+    private Long setId;
+    @NamedColumn("study_sets.name")
+    private String setName;
+    @NamedColumn("study_sets.created_at")
+    private LocalDateTime setCreatedAt;
+    @NamedColumn("study_sets.picture_url")
+    private String setPictureUrl;
 }

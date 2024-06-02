@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 public record FieldDescriptionRecord(String columnName,
                                      Field field,
-                                     Class<?> requiredClass) implements FieldDescription {
+                                     Class<?> requiredClass,
+                                     FieldDescType type) implements FieldDescription {
 
 }

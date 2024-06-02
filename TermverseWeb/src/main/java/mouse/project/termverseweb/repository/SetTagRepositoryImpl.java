@@ -73,7 +73,7 @@ public class SetTagRepositoryImpl implements SetTagRepository {
     public List<StudySet> getStudySetsByUserAndTags(Long userId, List<Long> tagIds) {
         String qMarksList = daoUtils.qMarksList(tagIds);
         List<Long> arguments = new ArrayList<>(tagIds);
-        arguments.add(0, userId);
+        arguments.addFirst(userId);
         String sql = String.format(
             "SELECT * " +
             "FROM study_sets s " +

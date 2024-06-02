@@ -89,15 +89,15 @@ public class DispatcherMapImpl implements DispatcherMap {
         if (lastStar != null) {
             return getStar(url, lastStar);
         }
-        throw new NotFoundException("No invoker defined for url: " + url);
+        throw new NotFoundException("No invoker defined for url: " + urlService.write(url));
 
     }
 
     @NotNull
-    private static ControllerInvoker getStar(FullURL url, MapNode lastStar) {
+    private ControllerInvoker getStar(FullURL url, MapNode lastStar) {
         Optional<ControllerInvoker> optInvoker = lastStar.getInvoker();
         if (optInvoker.isEmpty()) {
-            throw new NotFoundException("No invoker defined for url: " + url);
+            throw new NotFoundException("No invoker defined for url: " + urlService.write(url));
         }
         return optInvoker.get();
     }

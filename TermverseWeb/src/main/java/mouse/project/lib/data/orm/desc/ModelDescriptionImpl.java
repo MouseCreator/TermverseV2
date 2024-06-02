@@ -21,8 +21,8 @@ public class ModelDescriptionImpl<T> implements ModelDescription<T> {
     }
 
     @Override
-    public List<FieldDescription> getFields() {
-        return new ArrayList<>(fieldDescriptions);
+    public FieldDescriptionsMap getFields() {
+        return FieldDescriptionsMap.of(fieldDescriptions);
     }
 
     @Override

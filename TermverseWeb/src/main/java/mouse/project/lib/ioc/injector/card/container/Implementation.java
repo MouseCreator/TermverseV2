@@ -15,7 +15,7 @@ public class Implementation<T> {
         name = null;
         primary = false;
         prototype = false;
-        order = 256;
+        order = Integer.MAX_VALUE;
     }
 
     public Implementation(Class<T> clazz, String name) {
@@ -23,7 +23,7 @@ public class Implementation<T> {
         this.name = name;
         this.primary = false;
         prototype = false;
-        order = 256;
+        order = Integer.MAX_VALUE;
     }
 
     public boolean isNamed() {

@@ -69,7 +69,8 @@ public class ExecutorResultImpl implements ReadResult {
 
     @Override
     public <T> AdjustedResultList<T> adjustedList(Class<T> model) {
-         return new AdjustedResultListImpl<>(list(model));
+        List<T> list = list(model);
+        return new AdjustedResultListImpl<>(list);
     }
 
     @Override

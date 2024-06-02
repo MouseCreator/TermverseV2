@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 @Service
 public class RequestPreinitializer {
@@ -42,8 +43,7 @@ public class RequestPreinitializer {
     }
 
     public FullURL getRequestUrl(HttpServletRequest req) {
-        String strUrl = URLTransform.getFullURL(req);
-        return urlService.create(strUrl);
+        return urlService.create(req);
     }
 
     private HashMap<String, Object> createMap(HttpServletRequest req) {

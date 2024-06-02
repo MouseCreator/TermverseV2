@@ -1,6 +1,6 @@
 package mouse.project.termverseweb.config;
 
-import mouse.project.termverseweb.resolver.CurrentUserContextResolver;
+import mouse.project.termverseweb.security.resolver.CurrentUserContextResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
